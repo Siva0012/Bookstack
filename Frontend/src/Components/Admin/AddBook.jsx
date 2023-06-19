@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 
 //toaster
 import { ToastContainer, toast } from "react-toastify";

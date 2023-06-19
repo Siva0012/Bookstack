@@ -6,6 +6,11 @@ const bcrypt = require('bcrypt')
 const { tokenGenerator } = require('../utils/jwt-generator')
 const { response } = require('express')
 
+//cloudinary
+const { uploadToCloudinary } = require('../config/cloudinary')
+const { removeFromCloudinary } = require('../config/cloudinary')
+
+
 const verifyMember = async (req, res, next) => {
     try {
         const memberId = req.memberId
@@ -78,10 +83,10 @@ const login = async (req, res, next) => {
                 }
                 const token = tokenGenerator(payLoad)
                 const userData = {
-                    memberId : memberExists._id,
-                    name : memberExists.name,
-                    email : memberExists.email,
-                    date : memberExists.dateOfJoin,
+                    memberId: memberExists._id,
+                    name: memberExists.name,
+                    email: memberExists.email,
+                    date: memberExists.dateOfJoin,
 
                 }
                 res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, user: userData })
@@ -182,6 +187,81 @@ const getBooksByCat = async (req, res, next) => {
     }
 }
 
+const getMember = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        console.log("This is member idddd", memberId);
+        const memberData = await Members.findOne(
+            { _id: memberId },
+            { password: 0 }
+        )
+        if (memberData) {
+            console.log("This is member data at server", memberData);
+            res.status(200).json({ message: "send member data", memberData: memberData })
+        } else {
+            res.status(404).json({ error: "no member exists" })
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const updateImage = async (req, res, next) => {
+    try {
+        const profilePicture = req.file.path
+        console.log("///////////////", profilePicture);
+        const memberId = req.memberId
+        if (profilePicture) {
+            const isImageExists = await Members.findOne({ _id: memberId, profilePicture: { $exists: true } })
+            if (!isImageExists) {
+                //uploading to cloudinary
+                console.log("no image existssssssssssssssssssss");
+                const data = await uploadToCloudinary(profilePicture, "members-profile-pictures")
+                if (data) {
+                    //updating database
+                    const updateResponse = await Members.updateOne(
+                        { _id: memberId },
+                        { $set: { profilePicture: data.url, publicId: data.public_id } }
+                    )
+                    if (updateResponse) {
+                        res.status(200).json({ message: "Image updated successfully" })
+                    } else {
+                        res.status(404).json({ message: "Couldn't upload image" })
+                    }
+                }
+            } else {
+                console.log("removing imageeeeeeeeeeeee");
+                //removing image from cloudinary
+                const existingPublicId = isImageExists.publicId
+                const responseData = await removeFromCloudinary(existingPublicId)
+
+                //uploading new image to cloudinary
+                const data = await uploadToCloudinary(profilePicture, "members-profile-pictures")
+                if (data) {
+                    //updating database
+                    const updateResponse = await Members.updateOne(
+                        { _id: memberId },
+                        {
+                            $set: { profilePicture: data.url, publicId: data.public_id }
+                        }
+                    )
+                    if (updateResponse) {
+                        res.status(200).json({ message: "Updated image" , image : data.url })
+                    } else {
+                        res.status(404).json({ message: "Failed to update database" })
+                    }
+                } else {
+                    res.status(404).json({ message: "Failed to upload image to cloudinary" })
+                }
+
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 
 
 module.exports = {
@@ -191,5 +271,7 @@ module.exports = {
     googleLogin,
     getBooks,
     getCategories,
-    getBooksByCat
+    getBooksByCat,
+    getMember,
+    updateImage
 }

@@ -21,7 +21,10 @@ export default {
         "button-green": "#3B8382",
         "user-sign-from": "#DFC4B3",
         "user-sign-to": "#9C6846",
-        "user-footer": "#73482C"
+        "user-footer": "#73482C",
+        "user-profile-from" : "#DFC4B3",
+        "user-profile-to" : "#9C6846",
+        "user-sidebar-menu" : "#AF7752"
       },
       fontFamily: {
         'nunito': ["nunito", "sans-serif"],

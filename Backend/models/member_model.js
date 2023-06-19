@@ -37,6 +37,9 @@ const memberSchema = new mongoose.Schema({
     },
     profilePicture : {
         type : String,
+    },
+    publicId : {
+        type : String
     }
 
 })
