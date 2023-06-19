@@ -29,6 +29,14 @@ const getBooksByCategory = (id) => {
     return memberAxiosInstance.get(`/books/${id}`)
 }
 
+const getMember = () => {
+    return memberAxiosInstance.get(`/get-member`)
+}
+
+const updateImage = (data) => {
+    return memberAxiosInstance.post('/update-profile-picture' , data)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -36,5 +44,7 @@ export {
     googleLogin,
     getBooks,
     getCategories,
-    getBooksByCategory
+    getBooksByCategory,
+    getMember,
+    updateImage
 }

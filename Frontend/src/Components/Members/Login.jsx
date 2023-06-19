@@ -80,7 +80,6 @@ export default function Login() {
 
   //formik on submit
   const onSubmit = async (values) => {
-    console.log("submitting form");
     memberLogin(values)
       .then((response) => {
         if (response.data) {
