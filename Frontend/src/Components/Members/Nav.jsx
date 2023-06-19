@@ -14,8 +14,8 @@ function Nav() {
 
   return (
     <>
-      <div className="bg-user-nav w-full py-5 top-0 fixed z-50">
-        <div className="px-6 bg-gray-50 py-2 border border-1 rounded-3xl mx-auto w-3/4">
+      <div className="bg-user-nav w-full py-5 fixed top-0 z-10">
+        <div className="px-6 bg-gray-50 py-2 border-1 rounded-3xl mx-auto lg:w-[1150px]">
           <div className="flex justify-between items-center">
             <div id="logo">
               <h1 className="font-nunito text-2xl">BOOKSTACK</h1>
