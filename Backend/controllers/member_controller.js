@@ -190,13 +190,11 @@ const getBooksByCat = async (req, res, next) => {
 const getMember = async (req, res, next) => {
     try {
         const memberId = req.memberId
-        console.log("This is member idddd", memberId);
         const memberData = await Members.findOne(
             { _id: memberId },
             { password: 0 }
         )
         if (memberData) {
-            console.log("This is member data at server", memberData);
             res.status(200).json({ message: "send member data", memberData: memberData })
         } else {
             res.status(404).json({ error: "no member exists" })
@@ -210,13 +208,11 @@ const getMember = async (req, res, next) => {
 const updateImage = async (req, res, next) => {
     try {
         const profilePicture = req.file.path
-        console.log("///////////////", profilePicture);
         const memberId = req.memberId
         if (profilePicture) {
             const isImageExists = await Members.findOne({ _id: memberId, profilePicture: { $exists: true } })
             if (!isImageExists) {
                 //uploading to cloudinary
-                console.log("no image existssssssssssssssssssss");
                 const data = await uploadToCloudinary(profilePicture, "members-profile-pictures")
                 if (data) {
                     //updating database
@@ -227,11 +223,10 @@ const updateImage = async (req, res, next) => {
                     if (updateResponse) {
                         res.status(200).json({ message: "Image updated successfully" })
                     } else {
-                        res.status(404).json({ message: "Couldn't upload image" })
+                        res.status(404).json({ error: "Couldn't upload image" })
                     }
                 }
             } else {
-                console.log("removing imageeeeeeeeeeeee");
                 //removing image from cloudinary
                 const existingPublicId = isImageExists.publicId
                 const responseData = await removeFromCloudinary(existingPublicId)
@@ -247,12 +242,12 @@ const updateImage = async (req, res, next) => {
                         }
                     )
                     if (updateResponse) {
-                        res.status(200).json({ message: "Updated image" , image : data.url })
+                        res.status(200).json({ message: "Updated your profile picture !!." , image : data.url })
                     } else {
-                        res.status(404).json({ message: "Failed to update database" })
+                        res.status(404).json({ error: "Failed to update image !!." })
                     }
                 } else {
-                    res.status(404).json({ message: "Failed to upload image to cloudinary" })
+                    res.status(404).json({ error: "Failed to upload image !!." })
                 }
 
             }
@@ -262,6 +257,34 @@ const updateImage = async (req, res, next) => {
     }
 }
 
+const updateProfileFields = async (req , res , next) => {
+    try{
+        
+        console.log("this is req. body at edit profile" , req.body);
+        const {fieldName , fieldValue } = req.body
+        const memberId = req.memberId
+        if(fieldValue === "") {
+            res.status(404).json({error : "Required field"})
+        } else {
+            const update = {
+                [fieldName] : fieldValue
+            }
+            const updateResponse = await Members.updateOne(
+                {_id : memberId},
+                {$set : update}
+            )
+            const memberData = await Members.findOne({_id : memberId})
+            if(updateResponse) {
+                res.status(200).json({message : `Updated user name to "${memberData.name}"`})
+            } else {
+                res.status(404).json({error : "Couldn't update the user name"})
+            }
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 
 module.exports = {
@@ -273,5 +296,6 @@ module.exports = {
     getCategories,
     getBooksByCat,
     getMember,
-    updateImage
+    updateImage,
+    updateProfileFields
 }

@@ -15,5 +15,6 @@ member_router.get('/books' , verifyMemberToken , memberController.getBooks)
 member_router.get('/books/:catId' , verifyMemberToken , memberController.getBooksByCat)
 member_router.get('/get-member' , verifyMemberToken , memberController.getMember)
 member_router.post('/update-profile-picture' , verifyMemberToken , upload.single('profilePicture') , memberController.updateImage)
+member_router.post('/update-profile-fields' , verifyMemberToken , memberController.updateProfileFields)
 
 module.exports = member_router

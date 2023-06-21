@@ -37,6 +37,10 @@ const updateImage = (data) => {
     return memberAxiosInstance.post('/update-profile-picture' , data)
 }
 
+const updateProfileFields = (data) => {
+    return memberAxiosInstance.post('update-profile-fields' , data)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -46,5 +50,6 @@ export {
     getCategories,
     getBooksByCategory,
     getMember,
-    updateImage
+    updateImage,
+    updateProfileFields    
 }
