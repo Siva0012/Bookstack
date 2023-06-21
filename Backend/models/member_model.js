@@ -40,6 +40,9 @@ const memberSchema = new mongoose.Schema({
     },
     publicId : {
         type : String
+    },
+    address : {
+        type : String
     }
 
 })

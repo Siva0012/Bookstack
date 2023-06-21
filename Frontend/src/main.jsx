@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
     <GoogleOAuthProvider clientId='422107966113-26n4bt3jhmjj36rshaspbnhips35jfjt.apps.googleusercontent.com' >
         <Provider store={Store} >
-            <ToastContainer />
+            <ToastContainer autoClose={1500} hideProgressBar={true} />
             <App />
         </Provider>
     </GoogleOAuthProvider>
