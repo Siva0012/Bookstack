@@ -242,11 +242,14 @@ const updateImage = async (req, res, next) => {
                         }
                     )
                     if (updateResponse) {
+                        console.log("updateresponse");
                         res.status(200).json({ message: "Updated your profile picture !!." , image : data.url })
                     } else {
+                        console.log("no updater response");
                         res.status(404).json({ error: "Failed to update image !!." })
                     }
                 } else {
+                    console.log("cloudinary error");
                     res.status(404).json({ error: "Failed to upload image !!." })
                 }
 

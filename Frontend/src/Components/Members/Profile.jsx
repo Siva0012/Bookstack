@@ -75,11 +75,13 @@ function Profile() {
           profilePicture: response.data.image,
         });
         setimageLoader(false);
+        console.log("sjfoaisyriuweviotuwenovtunoieuroweurwjmoeuwmiojero");
         setshowModal(false);
         toast.success(response.data.message);
       })
       .catch((err) => {
         setimageLoader(false);
+        console.log("catch errorrrrrr" , err);
         toast.error(err.response.data.error);
       });
   };

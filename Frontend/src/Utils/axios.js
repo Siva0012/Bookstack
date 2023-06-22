@@ -7,7 +7,7 @@ const createAxiosClient = (baseUrl) => {
     const client = axios.create(
         {
             baseURL : baseUrl,
-            timeout : 5000,
+            timeout : 8000,
             timeoutErrorMessage : "Request timeout... Please try again"
         }
     )
