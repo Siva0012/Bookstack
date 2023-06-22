@@ -15,7 +15,7 @@ function ProfileSidebar() {
                 <Link className='ms-2'>Reserved books</Link>
             </div>
             <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
-                <Link className='ms-2'>Membership</Link>
+                <Link to={'/membership'} className='ms-2'>Membership</Link>
             </div>
             <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
                 <Link className='ms-2'>Checkout cart</Link>

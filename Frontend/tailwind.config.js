@@ -37,8 +37,10 @@ export default {
       },
       minWidth : {
         "home-content" : "500px"
+      },
+      listStyleType : {
+        "list-default" : "default"
       }
-
     }
   },
   plugins: [
