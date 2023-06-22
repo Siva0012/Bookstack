@@ -7,6 +7,7 @@ import RegisterPage from "../pages/Members/register";
 import LoginPage from "../Pages/Members/Login";
 import Profile from "../Pages/Members/Profile";
 import Books from "../Pages/Members/Books";
+import MembeshipPage from "../Pages/Members/MembeshipPage";
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import MemberLayout from "../Layout/MemberLayout";
 import { Modal } from "flowbite";
@@ -22,6 +23,7 @@ function UserRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/books/:catId" element={<Books />} />
+          <Route path="/membership" element={<MembeshipPage />} />
         </Route>
       </Route>
     </Routes>
