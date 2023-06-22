@@ -27,6 +27,9 @@ const memberSchema = new mongoose.Schema({
     membershipType : {
         type : String,
     },
+    memberSince : {
+        type : Date
+    },
     isBlocked : {
         type : Boolean,
         default : false

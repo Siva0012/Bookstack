@@ -11,6 +11,7 @@ import MembeshipPage from "../Pages/Members/MembeshipPage";
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import MemberLayout from "../Layout/MemberLayout";
 import { Modal } from "flowbite";
+import PaymentPage from "../Pages/Members/PaymentPage";
 
 function UserRoutes() {
   return (
@@ -24,6 +25,7 @@ function UserRoutes() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/books/:catId" element={<Books />} />
           <Route path="/membership" element={<MembeshipPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
         </Route>
       </Route>
     </Routes>

@@ -1,10 +1,10 @@
 const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
+require('dotenv').config()
 
 const bcrypt = require('bcrypt')
 const { tokenGenerator } = require('../utils/jwt-generator')
-const { response } = require('express')
 
 //cloudinary
 const { uploadToCloudinary } = require('../config/cloudinary')
@@ -243,7 +243,7 @@ const updateImage = async (req, res, next) => {
                     )
                     if (updateResponse) {
                         console.log("updateresponse");
-                        res.status(200).json({ message: "Updated your profile picture !!." , image : data.url })
+                        res.status(200).json({ message: "Updated your profile picture !!.", image: data.url })
                     } else {
                         console.log("no updater response");
                         res.status(404).json({ error: "Failed to update image !!." })
@@ -260,31 +260,77 @@ const updateImage = async (req, res, next) => {
     }
 }
 
-const updateProfileFields = async (req , res , next) => {
-    try{
-        
-        console.log("this is req. body at edit profile" , req.body);
-        const {fieldName , fieldValue } = req.body
+const updateProfileFields = async (req, res, next) => {
+    try {
+
+        console.log("this is req. body at edit profile", req.body);
+        const { fieldName, fieldValue } = req.body
         const memberId = req.memberId
-        if(fieldValue === "") {
-            res.status(404).json({error : "Required field"})
+        if (fieldValue === "") {
+            res.status(404).json({ error: "Required field" })
         } else {
             const update = {
-                [fieldName] : fieldValue
+                [fieldName]: fieldValue
             }
             const updateResponse = await Members.updateOne(
-                {_id : memberId},
-                {$set : update}
+                { _id: memberId },
+                { $set: update }
             )
-            const memberData = await Members.findOne({_id : memberId})
-            if(updateResponse) {
-                res.status(200).json({message : `Updated user name to "${memberData.name}"`})
+            const memberData = await Members.findOne({ _id: memberId })
+            if (updateResponse) {
+                res.status(200).json({ message: `Updated user name to "${memberData.name}"` })
             } else {
-                res.status(404).json({error : "Couldn't update the user name"})
+                res.status(404).json({ error: "Couldn't update the user name" })
             }
         }
 
     } catch (err) {
+        console.log(err);
+    }
+}
+
+const createPaymentIntent = async (req, res, next) => {
+
+    try {
+        const {memberShipType} = req.body
+        console.log("called function" , memberShipType);
+
+        const calculatePrice = (memberShipType) => {
+            if(memberShipType === 'student') {
+                return 999 * 100
+            } else if (memberShipType === 'premium') {
+                return 1399 * 100
+            }
+        }
+
+        const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: calculatePrice(memberShipType),
+            currency: "inr",
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+        console.log(paymentIntent , "payment INtente ttTTTt");
+        res.send({
+            clientSecret: paymentIntent.client_secret
+        })
+    } catch (err) {
+        console.log(err);
+    }
+
+
+}
+
+const addMemberShip = async (req , res , next) => {
+    try{
+        const {memberShipType} = req.body
+        console.log("this is memberShipType" , memberShipType);
+        const update = {
+            
+        }
+    }catch(err){
         console.log(err);
     }
 }
@@ -300,5 +346,7 @@ module.exports = {
     getBooksByCat,
     getMember,
     updateImage,
-    updateProfileFields
+    updateProfileFields,
+    createPaymentIntent,
+    addMemberShip
 }
