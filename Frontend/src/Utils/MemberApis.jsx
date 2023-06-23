@@ -1,7 +1,6 @@
 import { memberAxiosInstance } from "./axios";
 
 const isMemberAuth = () => {
-    console.log("isMemberAuth called");
     return memberAxiosInstance.get('/is-member-auth')
 }
 

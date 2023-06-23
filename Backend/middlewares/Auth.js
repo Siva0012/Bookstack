@@ -18,7 +18,7 @@ module.exports.verifyAdminToken = async (req , res , next) => {
         }
     }catch(err) {
         console.log(err);
-        res.json({message : "try catch err in verifyadmin token"})
+        // res.json({message : "try catch err in verifyadmin token"})
     }
 }
 
@@ -41,6 +41,6 @@ module.exports.verifyMemberToken = async (req , res , next) => {
         }
     } catch(err) {
         console.log(err);
-        res.json({message : "try catch err in verifyuser token"})
+        // res.json({message : "try catch err in verifyuser token"})
     }
 }

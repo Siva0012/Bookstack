@@ -1,21 +1,23 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {updateMembershipType} from '../../Redux/Member/MembershipPlanSlice'
+import { updateMembershipType } from "../../Redux/Member/MembershipPlanSlice";
+import { useSelector } from "react-redux";
 
 function Membership() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const handleClick = (memberShipType) => {
-    dispatch(updateMembershipType(memberShipType))
-    navigate('/payment')
-  }
+    dispatch(updateMembershipType(memberShipType));
+    navigate("/payment");
+  };
+  const memberData = useSelector((state) => state.memberData.value);
 
   return (
     <div className="w-[600px] h-[420px] p-3 ">
       <div className="bg-gray-100 rounded-md">
         <div className="p-4">
           <div className="text-center">
-            <h1>Hi user</h1>
+            <h1>{memberData.name}</h1>
             <p>Please select a membership plan</p>
           </div>
           <div
@@ -44,7 +46,7 @@ function Membership() {
                 </ul>
               </div>
               <div
-                onClick={() => handleClick('student')}
+                onClick={() => handleClick("student")}
                 className="bg-green-600 text-white text-center py-1 mt-2 rounded-sm font-semibold hover:cursor-pointer"
               >
                 Be a Student Member
@@ -72,8 +74,9 @@ function Membership() {
                 </ul>
               </div>
               <div
-                onClick={() => handleClick('premium')}
-               className="bg-green-600 text-white text-center py-1 mt-2 rounded-sm font-semibold hover:cursor-pointer">
+                onClick={() => handleClick("premium")}
+                className="bg-green-600 text-white text-center py-1 mt-2 rounded-sm font-semibold hover:cursor-pointer"
+              >
                 Be a Premium Member
               </div>
             </div>

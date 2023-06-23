@@ -4,6 +4,8 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { updateMemberData } from "../../Redux/Member/MemberDataSlice";
 
 //react icons
 import { FcGoogle } from "react-icons/fc";
@@ -39,8 +41,10 @@ const toastError = (message) => {
   return toast.error(message);
 };
 
+//component
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const [user, setUser] = useState({});
 
@@ -62,6 +66,7 @@ export default function Login() {
         }
       )
       .then((res) => {
+        console.log('userdata' , res);
         setUser(res.data);
       })
       .catch((err) => console.log(err));
@@ -84,6 +89,7 @@ export default function Login() {
       .then((response) => {
         if (response.data) {
           localStorage.setItem("userJwt", response.data.token);
+          dispatch(updateMemberData(response.data.member))
           navigate("/");
           notify(response.data.message);
         }

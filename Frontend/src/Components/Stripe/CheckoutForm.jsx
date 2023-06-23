@@ -26,7 +26,7 @@ export default function CheckoutForm() {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const memberShipType = useSelector(state => state.action)
+  const memberShipType = useSelector(state => state.memberShipType.value)
 
   useEffect(() => {
     if (!stripe) {

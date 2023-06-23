@@ -6,6 +6,8 @@ require('dotenv').config()
 const bcrypt = require('bcrypt')
 const { tokenGenerator } = require('../utils/jwt-generator')
 
+const { v4: uuidv4 } = require('uuid');
+
 //cloudinary
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
@@ -82,14 +84,16 @@ const login = async (req, res, next) => {
                     data: memberExists.dateOfJoin
                 }
                 const token = tokenGenerator(payLoad)
-                const userData = {
-                    memberId: memberExists._id,
-                    name: memberExists.name,
-                    email: memberExists.email,
-                    date: memberExists.dateOfJoin,
+                // const userData = {
+                //     memberId: memberExists._id,
+                //     name: memberExists.name,
+                //     email: memberExists.email,
+                //     date: memberExists.dateOfJoin,
 
-                }
-                res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, user: userData })
+                // }
+                const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
+                console.log("userdata after login" , userData);
+                res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, member: userData })
             } else {
                 res.status(401).json({ message: "Password doesn't match", error: "Invalid password" })
             }
@@ -114,7 +118,8 @@ const googleLogin = async (req, res, next) => {
                 date: isExists.dateOfJoin
             }
             const token = tokenGenerator(payLoad)
-            res.status(200).json({ message: `Signed in as ${isExists.name}`, memberData: isExists, token: token })
+            const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
+            res.status(200).json({ message: `Signed in as ${isExists.name}`, member : userData, token: token })
         } else {
             const password = await bcrypt.hash(id, 10)
             const member = new Members(
@@ -139,7 +144,6 @@ const googleLogin = async (req, res, next) => {
                         res.status(404).json({ message: "failed to register" })
                     }
                 })
-                .catch(err => console.log(err))
         }
 
     } catch (err) {
@@ -326,9 +330,19 @@ const createPaymentIntent = async (req, res, next) => {
 const addMemberShip = async (req , res , next) => {
     try{
         const {memberShipType} = req.body
-        console.log("this is memberShipType" , memberShipType);
+        const memberId = req.memberId
+        const membershipId = uuidv4()
         const update = {
-            
+            isMember : true,
+            membershipType : memberShipType,
+            membershipId : membershipId,
+            memberSince : Date.now()
+        }
+        const updateResponse = await Members.updateOne({_id : memberId} , update)
+        if(updateResponse) {
+            res.status(200).json({message : "updated membership"})
+        } else {
+            res.status(404).json({error : "failed to udpate the membership"})
         }
     }catch(err){
         console.log(err);
