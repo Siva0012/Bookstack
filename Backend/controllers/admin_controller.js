@@ -251,6 +251,16 @@ const updateBook = async (req, res, next) => {
 
 const removeBook = async (req, res, next) => {
     try {
+
+        // Books.find({})
+        // .then((books) => {
+        //     const promises = books.map((book) => {
+        //         book.availableStock = book.stock
+        //         return book.save()
+        //     })
+        //     return Promise.all(promises)
+        // })
+
         const bookId = req.params.bookId
         let isListed = req.params.isListed
 

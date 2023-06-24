@@ -53,6 +53,19 @@ const bookSchema = new mongoose.Schema(
         dateAdded : {
             type : Date,
             default : Date.now()
+        },
+        availableStock : {
+            type : Number,
+            required : true,
+            validate : {
+                validator : function (value) {
+                    return value <= this.stock
+                },
+                message : "Available stock cannot be greater than total stock"
+            },
+            default : function () {
+                return this.stock
+            }
         }
 
     }

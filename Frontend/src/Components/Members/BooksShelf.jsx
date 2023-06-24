@@ -98,9 +98,19 @@ function BooksShelf() {
                       </div>
                     </div>
                     <div className="mt-4">
-                      <button className="bg-button-green text-white font-bold w-full py-2 rounded-md">
+                      {
+                        bookData.availableStock > 0 ? 
+                        (
+                          <button className="bg-button-green text-white font-bold w-full py-2 rounded-md">
                         Checkout
                       </button>
+                        ) : (
+                          <button className="bg-red-500  text-white font-bold w-full py-2 rounded-md">
+                        Reserve
+                      </button>
+                        )
+                      }
+                      
                     </div>
                   </div>
                 </>

@@ -75,6 +75,9 @@ function BooksTable() {
                 Stock
               </th>
               <th scope="col" className="px-6 py-3">
+                Available books
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Actions
               </th>
             </tr>
@@ -103,6 +106,7 @@ function BooksTable() {
                       </td>
                       <td className="px-6 py-4">{book.edition}</td>
                       <td className="px-6 py-4">{book.stock}</td>
+                      <td className="px-6 py-4">{book.availableStock}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-between">
                           <button
