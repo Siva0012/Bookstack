@@ -21,5 +21,6 @@ member_router.post('/add-membership' , verifyMemberToken , memberController.addM
 member_router.get('/add-to-book-bag/:bookId' , verifyMemberToken , memberController.addToBookBag)
 member_router.get('/get-book-bag' , verifyMemberToken , memberController.getBookBag)
 member_router.get('/remove-from-book-bag/:bookId' , verifyMemberToken , memberController.removeFromBookBag)
+member_router.get('/checkout-books' , verifyMemberToken , memberController.checkoutBooks)
 
 module.exports = member_router

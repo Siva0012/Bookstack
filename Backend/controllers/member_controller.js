@@ -365,7 +365,7 @@ const addToBookBag = async (req, res, next) => {
         const memberId = req.memberId
         const bookId = req.params.bookId
         const memberData = await Members.findOne({ _id: memberId })
-        const bookData = await Books.findOne({ _id : bookId })
+        const bookData = await Books.findOne({ _id: bookId })
 
         if (!memberData.isMember) {
             return res.status(404).json({ error: "You are not a member" })
@@ -390,29 +390,6 @@ const addToBookBag = async (req, res, next) => {
             },
         )
 
-        //creating lender history for book
-        // const checkoutDate = new Date()
-        // const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 1000)
-        // const lenderHistory = new LenderHistory({
-        //     member: memberId,
-        //     book: bookId,
-        //     checkoutDate: checkoutDate,
-        //     dueDate: dueDate,
-        //     returnDate: null,
-        //     fineAmount: 0,
-        //     status: 'Borrowed'
-        // })
-        // const createLenderHistory = await lenderHistory.save()
-
-        //update available stock
-        // const bookUpdate = await Books.findOneAndUpdate(
-        //     {
-        //         _id: bookId
-        //     },
-        //     {
-        //         $inc: { availableStock: -1 }
-        //     },
-        // )
         if (updateBookInMember) {
             res.status(200).json({ message: `Added "${bookData.title}" to book-bag` })
         } else {
@@ -425,46 +402,84 @@ const addToBookBag = async (req, res, next) => {
     }
 }
 
-const removeFromBookBag = async (req , res , next) => {
-    try{
+const removeFromBookBag = async (req, res, next) => {
+    try {
         const memberId = req.memberId
         const bookId = req.params.bookId
-        const bookData = await Books.findOne({_id : bookId})
+        const bookData = await Books.findOne({ _id: bookId })
         const updateBookBag = await Members.findOneAndUpdate(
             {
-                _id : memberId
+                _id: memberId
             },
             {
-                $pull : {bookBag : {book : bookId}}
+                $pull: { bookBag: { book: bookId } }
             }
         )
-        if(updateBookBag) {
-            res.status(200).json({message : `Removed "${bookData.title}" from book bag`})
+        if (updateBookBag) {
+            res.status(200).json({ message: `Removed "${bookData.title}" from book bag` })
         } else {
-            res.status(404).json({error : "Couldn't update bookbag"})
+            res.status(404).json({ error: "Couldn't update bookbag" })
         }
 
-    }catch(err) {
+    } catch (err) {
         console.log(err);
     }
 }
 
-const getBookBag = async (req , res , next) => {
-    try{
+const getBookBag = async (req, res, next) => {
+    try {
         const memberId = req.memberId
-        const memberData = await Members.findOne({_id : memberId}).populate('bookBag.book').select('-password')
-        if(memberData) {
-            console.log(memberData);
-            res.status(200).json({message : "Populated book-bag" , memberData : memberData})
+        const memberData = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-password')
+        if (memberData) {
+            res.status(200).json({ message: "Populated book-bag", memberData: memberData })
         } else {
-            res.status(404).json({error : "Couldn't find the member"})
+            res.status(404).json({ error: "Couldn't find the member" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
     }
 }
 
+const checkoutBooks = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
 
+        const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
+        bookIds.bookBag.forEach(async (data) => {
+
+            //updating available stock
+            await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
+
+            // creating lender history for the book
+            const checkoutDate = new Date()
+            const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 1000)
+            const lenderHistory = new LenderHistory({
+                member: memberId,
+                book: data.book._id,
+                checkoutDate: checkoutDate,
+                dueDate: dueDate,
+                returnDate: null,
+                fineAmount: 0,
+                status: 'Borrowed'
+            })
+            await lenderHistory.save()
+
+            //removing books from book-bag
+            await Members.findOneAndUpdate(
+                {
+                    _id: memberId
+                },
+                {
+                    $pull: { bookBag: { book: data.book._id } }
+                }
+            )
+        })
+        res.status(200).json({ message: "Checkout successfull" })
+
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
 
 module.exports = {
     register,
@@ -481,5 +496,6 @@ module.exports = {
     addMembership,
     addToBookBag,
     getBookBag,
-    removeFromBookBag
+    removeFromBookBag,
+    checkoutBooks
 }

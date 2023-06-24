@@ -60,6 +60,10 @@ const removeFromBookBag = (bookId) => {
     return memberAxiosInstance.get(`/remove-from-book-bag/${bookId}`)
 }
 
+const checkoutBooks = () => {
+    return memberAxiosInstance.get('/checkout-books')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -75,5 +79,6 @@ export {
     addMemberShip,
     addToBookBag,
     getBookBag,
-    removeFromBookBag
+    removeFromBookBag,
+    checkoutBooks
 }
