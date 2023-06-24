@@ -16,7 +16,6 @@ function NavDropdown() {
     useEffect(() => {
         getCategories()
         .then((response) => {
-            console.log(response);
             setCatData(response.data.catData)
         })
     } , [])

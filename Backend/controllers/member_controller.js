@@ -1,16 +1,22 @@
 const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
+require('dotenv').config()
 
+//bcrypt
 const bcrypt = require('bcrypt')
+
+//generate token
 const { tokenGenerator } = require('../utils/jwt-generator')
-const { response } = require('express')
+
+//uuid
+const { v4: uuidv4 } = require('uuid');
 
 //cloudinary
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
 
-
+//member apis
 const verifyMember = async (req, res, next) => {
     try {
         const memberId = req.memberId
@@ -82,14 +88,15 @@ const login = async (req, res, next) => {
                     data: memberExists.dateOfJoin
                 }
                 const token = tokenGenerator(payLoad)
-                const userData = {
-                    memberId: memberExists._id,
-                    name: memberExists.name,
-                    email: memberExists.email,
-                    date: memberExists.dateOfJoin,
+                // const userData = {
+                //     memberId: memberExists._id,
+                //     name: memberExists.name,
+                //     email: memberExists.email,
+                //     date: memberExists.dateOfJoin,
 
-                }
-                res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, user: userData })
+                // }
+                const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
+                res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, member: userData })
             } else {
                 res.status(401).json({ message: "Password doesn't match", error: "Invalid password" })
             }
@@ -114,7 +121,8 @@ const googleLogin = async (req, res, next) => {
                 date: isExists.dateOfJoin
             }
             const token = tokenGenerator(payLoad)
-            res.status(200).json({ message: `Signed in as ${isExists.name}`, memberData: isExists, token: token })
+            const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
+            res.status(200).json({ message: `Signed in as ${isExists.name}`, member : userData, token: token })
         } else {
             const password = await bcrypt.hash(id, 10)
             const member = new Members(
@@ -139,7 +147,6 @@ const googleLogin = async (req, res, next) => {
                         res.status(404).json({ message: "failed to register" })
                     }
                 })
-                .catch(err => console.log(err))
         }
 
     } catch (err) {
@@ -243,7 +250,7 @@ const updateImage = async (req, res, next) => {
                     )
                     if (updateResponse) {
                         console.log("updateresponse");
-                        res.status(200).json({ message: "Updated your profile picture !!." , image : data.url })
+                        res.status(200).json({ message: "Updated your profile picture !!.", image: data.url })
                     } else {
                         console.log("no updater response");
                         res.status(404).json({ error: "Failed to update image !!." })
@@ -260,31 +267,92 @@ const updateImage = async (req, res, next) => {
     }
 }
 
-const updateProfileFields = async (req , res , next) => {
-    try{
-        
-        console.log("this is req. body at edit profile" , req.body);
-        const {fieldName , fieldValue } = req.body
+const updateProfileFields = async (req, res, next) => {
+    try {
+
+        console.log("this is req. body at edit profile", req.body);
+        const { fieldName, fieldValue } = req.body
         const memberId = req.memberId
-        if(fieldValue === "") {
-            res.status(404).json({error : "Required field"})
+        if (fieldValue === "") {
+            res.status(404).json({ error: "Required field" })
         } else {
             const update = {
-                [fieldName] : fieldValue
+                [fieldName]: fieldValue
             }
             const updateResponse = await Members.updateOne(
-                {_id : memberId},
-                {$set : update}
+                { _id: memberId },
+                { $set: update }
             )
-            const memberData = await Members.findOne({_id : memberId})
-            if(updateResponse) {
-                res.status(200).json({message : `Updated user name to "${memberData.name}"`})
+            const memberData = await Members.findOne({ _id: memberId })
+            if (updateResponse) {
+                res.status(200).json({ message: `Updated user name to "${memberData.name}"` })
             } else {
-                res.status(404).json({error : "Couldn't update the user name"})
+                res.status(404).json({ error: "Couldn't update the user name" })
             }
         }
 
     } catch (err) {
+        console.log(err);
+    }
+}
+
+const createPaymentIntent = async (req, res, next) => {
+
+    try {
+        const {memberShipType} = req.body
+        console.log("called function" , memberShipType);
+
+        const calculatePrice = (memberShipType) => {
+            if(memberShipType === 'student') {
+                return 999 * 100
+            } else if (memberShipType === 'premium') {
+                return 1399 * 100
+            }
+        }
+
+        const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: calculatePrice(memberShipType),
+            currency: "inr",
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+        console.log(paymentIntent , "payment INtente ttTTTt");
+        res.send({
+            clientSecret: paymentIntent.client_secret
+        })
+    } catch (err) {
+        console.log(err);
+    }
+
+
+}
+
+const addMembership = async (req , res , next) => {
+    try{
+        const {memberShipType} = req.body
+        const memberId = req.memberId
+        const membershipId = uuidv4()
+
+        const currentDate = new Date()
+        const memberSince = currentDate
+        const memberUpto = new Date(currentDate.getFullYear() + 1 , currentDate.getMonth() , currentDate.getDate())
+        const update = {
+            isMember : true,
+            membershipType : memberShipType,
+            membershipId : membershipId,
+            memberSince : memberSince,
+            memberUpto : memberUpto
+        }
+        const updateResponse = await Members.updateOne({_id : memberId} , update)
+        if(updateResponse) {
+            res.status(200).json({message : "updated membership"})
+        } else {
+            res.status(404).json({error : "failed to udpate the membership"})
+        }
+    }catch(err){
         console.log(err);
     }
 }
@@ -300,5 +368,7 @@ module.exports = {
     getBooksByCat,
     getMember,
     updateImage,
-    updateProfileFields
+    updateProfileFields,
+    createPaymentIntent,
+    addMembership
 }

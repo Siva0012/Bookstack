@@ -1,7 +1,6 @@
 import { memberAxiosInstance } from "./axios";
 
 const isMemberAuth = () => {
-    console.log("isMemberAuth called");
     return memberAxiosInstance.get('/is-member-auth')
 }
 
@@ -38,7 +37,15 @@ const updateImage = (data) => {
 }
 
 const updateProfileFields = (data) => {
-    return memberAxiosInstance.post('update-profile-fields' , data)
+    return memberAxiosInstance.post('/update-profile-fields' , data)
+}
+
+const createPaymentIntent = (data) => {
+    return memberAxiosInstance.post('/create-payment-intent' , data)
+}
+
+const addMemberShip = (memberShipType) => {
+    return memberAxiosInstance.post('/add-membership' , memberShipType)
 }
 
 export {
@@ -51,5 +58,7 @@ export {
     getBooksByCategory,
     getMember,
     updateImage,
-    updateProfileFields    
+    updateProfileFields,
+    createPaymentIntent,
+    addMemberShip
 }
