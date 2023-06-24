@@ -19,7 +19,6 @@ const memberSchema = new mongoose.Schema({
     },
     dateOfJoin: {
         type: Date,
-        default: Date.now()
     },
     membershipId: {
         type: String,
@@ -52,7 +51,15 @@ const memberSchema = new mongoose.Schema({
     },
     address: {
         type: String
-    }
+    },
+    bookBag: [
+        {
+            book: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Books',
+            }
+        }
+    ]
 
 })
 

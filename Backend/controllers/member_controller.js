@@ -1,6 +1,7 @@
 const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
+const LenderHistory = require('../models/lender_history')
 require('dotenv').config()
 
 //bcrypt
@@ -15,6 +16,7 @@ const { v4: uuidv4 } = require('uuid');
 //cloudinary
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
+const { default: mongoose } = require('mongoose')
 
 //member apis
 const verifyMember = async (req, res, next) => {
@@ -46,7 +48,7 @@ const register = async (req, res, next) => {
             })
         } else {
             const encryptedPassword = await bcrypt.hash(password, 10)
-            const dateOfJoin = Date.now()
+            const dateOfJoin = new Date()
             const members = new Members({
                 name: name,
                 email: email,
@@ -95,7 +97,7 @@ const login = async (req, res, next) => {
                 //     date: memberExists.dateOfJoin,
 
                 // }
-                const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
+                const userData = await Members.findOne({ _id: memberExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
                 res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, member: userData })
             } else {
                 res.status(401).json({ message: "Password doesn't match", error: "Invalid password" })
@@ -121,8 +123,8 @@ const googleLogin = async (req, res, next) => {
                 date: isExists.dateOfJoin
             }
             const token = tokenGenerator(payLoad)
-            const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
-            res.status(200).json({ message: `Signed in as ${isExists.name}`, member : userData, token: token })
+            const userData = await Members.findOne({ _id: memberExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
+            res.status(200).json({ message: `Signed in as ${isExists.name}`, member: userData, token: token })
         } else {
             const password = await bcrypt.hash(id, 10)
             const member = new Members(
@@ -299,11 +301,11 @@ const updateProfileFields = async (req, res, next) => {
 const createPaymentIntent = async (req, res, next) => {
 
     try {
-        const {memberShipType} = req.body
-        console.log("called function" , memberShipType);
+        const { memberShipType } = req.body
+        console.log("called function", memberShipType);
 
         const calculatePrice = (memberShipType) => {
-            if(memberShipType === 'student') {
+            if (memberShipType === 'student') {
                 return 999 * 100
             } else if (memberShipType === 'premium') {
                 return 1399 * 100
@@ -319,7 +321,7 @@ const createPaymentIntent = async (req, res, next) => {
                 enabled: true,
             },
         });
-        console.log(paymentIntent , "payment INtente ttTTTt");
+        console.log(paymentIntent, "payment INtente ttTTTt");
         res.send({
             clientSecret: paymentIntent.client_secret
         })
@@ -330,32 +332,138 @@ const createPaymentIntent = async (req, res, next) => {
 
 }
 
-const addMembership = async (req , res , next) => {
-    try{
-        const {memberShipType} = req.body
+const addMembership = async (req, res, next) => {
+    try {
+        const { memberShipType } = req.body
         const memberId = req.memberId
         const membershipId = uuidv4()
 
         const currentDate = new Date()
         const memberSince = currentDate
-        const memberUpto = new Date(currentDate.getFullYear() + 1 , currentDate.getMonth() , currentDate.getDate())
+        const memberUpto = new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), currentDate.getDate())
         const update = {
-            isMember : true,
-            membershipType : memberShipType,
-            membershipId : membershipId,
-            memberSince : memberSince,
-            memberUpto : memberUpto
+            isMember: true,
+            membershipType: memberShipType,
+            membershipId: membershipId,
+            memberSince: memberSince,
+            memberUpto: memberUpto
         }
-        const updateResponse = await Members.updateOne({_id : memberId} , update)
-        if(updateResponse) {
-            res.status(200).json({message : "updated membership"})
+        const updateResponse = await Members.updateOne({ _id: memberId }, update)
+        if (updateResponse) {
+            res.status(200).json({ message: "updated membership" })
         } else {
-            res.status(404).json({error : "failed to udpate the membership"})
+            res.status(404).json({ error: "failed to udpate the membership" })
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
+
+const addToBookBag = async (req, res, next) => {
+
+    try {
+        const memberId = req.memberId
+        const bookId = req.params.bookId
+        const memberData = await Members.findOne({ _id: memberId })
+        const bookData = await Books.findOne({ _id : bookId })
+
+        if (!memberData.isMember) {
+            return res.status(404).json({ error: "You are not a member" })
+        }
+        if (memberData.membershipType === 'student') {
+            if (memberData.bookBag.length >= 3) {
+                return res.status(404).json({ error: "Your book-bag is full" })
+            }
+        } else if (memberData.membershipType === 'premium') {
+            if (memberData.bookBag.length >= 5) {
+                return res.status(404).json({ error: "Your book-bag is full" })
+            }
+        }
+
+        //updating book in member schema
+        const updateBookInMember = await Members.findOneAndUpdate(
+            {
+                _id: memberId
+            },
+            {
+                $push: { bookBag: { book: bookId } }
+            },
+        )
+
+        //creating lender history for book
+        // const checkoutDate = new Date()
+        // const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 1000)
+        // const lenderHistory = new LenderHistory({
+        //     member: memberId,
+        //     book: bookId,
+        //     checkoutDate: checkoutDate,
+        //     dueDate: dueDate,
+        //     returnDate: null,
+        //     fineAmount: 0,
+        //     status: 'Borrowed'
+        // })
+        // const createLenderHistory = await lenderHistory.save()
+
+        //update available stock
+        // const bookUpdate = await Books.findOneAndUpdate(
+        //     {
+        //         _id: bookId
+        //     },
+        //     {
+        //         $inc: { availableStock: -1 }
+        //     },
+        // )
+        if (updateBookInMember) {
+            res.status(200).json({ message: `Added "${bookData.title}" to book-bag` })
+        } else {
+            throw new Error("Failed to update book-bag")
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err })
+    }
+}
+
+const removeFromBookBag = async (req , res , next) => {
+    try{
+        const memberId = req.memberId
+        const bookId = req.params.bookId
+        const bookData = await Books.findOne({_id : bookId})
+        const updateBookBag = await Members.findOneAndUpdate(
+            {
+                _id : memberId
+            },
+            {
+                $pull : {bookBag : {book : bookId}}
+            }
+        )
+        if(updateBookBag) {
+            res.status(200).json({message : `Removed "${bookData.title}" from book bag`})
+        } else {
+            res.status(404).json({error : "Couldn't update bookbag"})
+        }
+
+    }catch(err) {
+        console.log(err);
+    }
+}
+
+const getBookBag = async (req , res , next) => {
+    try{
+        const memberId = req.memberId
+        const memberData = await Members.findOne({_id : memberId}).populate('bookBag.book').select('-password')
+        if(memberData) {
+            console.log(memberData);
+            res.status(200).json({message : "Populated book-bag" , memberData : memberData})
+        } else {
+            res.status(404).json({error : "Couldn't find the member"})
+        }
+    }catch(err) {
+        console.log(err);
+    }
+}
+
 
 
 module.exports = {
@@ -370,5 +478,8 @@ module.exports = {
     updateImage,
     updateProfileFields,
     createPaymentIntent,
-    addMembership
+    addMembership,
+    addToBookBag,
+    getBookBag,
+    removeFromBookBag
 }

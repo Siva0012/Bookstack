@@ -21,7 +21,6 @@ const lenderHistorySchema = new mongoose.Schema({
      },
      returnDate : {
           type : Date,
-          required : true
      },
      fineAmount : {
           type : Number,
@@ -31,6 +30,9 @@ const lenderHistorySchema = new mongoose.Schema({
           type : String,
           enum : ['Borrowed' , 'Returned'],
           default : 'Borrowed'
+     },
+     remarks : {
+          type : String
      }
 })
 

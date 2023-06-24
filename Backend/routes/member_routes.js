@@ -18,5 +18,8 @@ member_router.post('/update-profile-picture' , verifyMemberToken , upload.single
 member_router.post('/update-profile-fields' , verifyMemberToken , memberController.updateProfileFields)
 member_router.post('/create-payment-intent' ,  verifyMemberToken ,memberController.createPaymentIntent)
 member_router.post('/add-membership' , verifyMemberToken , memberController.addMembership)
+member_router.get('/add-to-book-bag/:bookId' , verifyMemberToken , memberController.addToBookBag)
+member_router.get('/get-book-bag' , verifyMemberToken , memberController.getBookBag)
+member_router.get('/remove-from-book-bag/:bookId' , verifyMemberToken , memberController.removeFromBookBag)
 
 module.exports = member_router

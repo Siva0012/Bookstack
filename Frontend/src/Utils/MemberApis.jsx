@@ -48,6 +48,18 @@ const addMemberShip = (memberShipType) => {
     return memberAxiosInstance.post('/add-membership' , memberShipType)
 }
 
+const addToBookBag = (bookId) => {
+    return memberAxiosInstance.get(`/add-to-book-bag/${bookId}`)
+}
+
+const getBookBag = () => {
+    return memberAxiosInstance.get('/get-book-bag')
+}
+
+const removeFromBookBag = (bookId) => {
+    return memberAxiosInstance.get(`/remove-from-book-bag/${bookId}`)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -60,5 +72,8 @@ export {
     updateImage,
     updateProfileFields,
     createPaymentIntent,
-    addMemberShip
+    addMemberShip,
+    addToBookBag,
+    getBookBag,
+    removeFromBookBag
 }

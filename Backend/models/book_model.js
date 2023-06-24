@@ -71,4 +71,14 @@ const bookSchema = new mongoose.Schema(
     }
 )
 
+bookSchema.pre('findOneAndUpdate' , function(next) {
+    const availableStock = this.getUpdate().$set.availableStock
+    if(availableStock <= 0) {
+        this.updateMany({} , {$set : {isAvailable : false}})
+    } else {
+        this.updateMany({} , {$set : {isAvailable : true}})
+    }
+    next()
+})
+
 module.exports = mongoose.model("Books" , bookSchema)
