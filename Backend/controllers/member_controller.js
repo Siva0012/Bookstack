@@ -169,7 +169,7 @@ const getCategories = async (req, res, next) => {
 
 const getBooks = async (req, res, next) => {
     try {
-        const bookData = await Books.find({ isAvailable: true })
+        const bookData = await Books.find({ isListed: true })
         if (bookData) {
             res.status(200).json({ message: "recieved books", bookData: bookData })
         } else {
@@ -183,7 +183,7 @@ const getBooks = async (req, res, next) => {
 const getBooksByCat = async (req, res, next) => {
     try {
         const catId = req.params.catId
-        const bookData = await Books.find({ $and: [{ category: catId }, { isAvailable: true }] }).populate('category')
+        const bookData = await Books.find({ $and: [{ category: catId }, { listed: true }] }).populate('category')
         if (bookData) {
             res.status(200).json({ message: "recieved books by category", bookData: bookData })
         } else {
