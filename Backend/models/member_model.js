@@ -24,35 +24,35 @@ const memberSchema = new mongoose.Schema({
     membershipId: {
         type: String,
     },
-    displayId : {
-        type : String
+    displayId: {
+        type: String
     },
-    membershipType : {
-    type: String,
-},
-    memberSince : {
-    type: Date
-},
-    memberUpto : {
-    type: Date
-},
-    isBlocked : {
-    type: Boolean,
-    default: false
-},
-    isMember : {
-    type: Boolean,
-    default: false
-},
-    profilePicture : {
-    type: String,
-},
-    publicId : {
-    type: String
-},
-    address : {
-    type: String
-}
+    membershipType: {
+        type: String,
+    },
+    memberSince: {
+        type: Date
+    },
+    memberUpto: {
+        type: Date
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
+    isMember: {
+        type: Boolean,
+        default: false
+    },
+    profilePicture: {
+        type: String,
+    },
+    publicId: {
+        type: String
+    },
+    address: {
+        type: String
+    }
 
 })
 

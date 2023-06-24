@@ -12,15 +12,14 @@ import { updateSingleMember } from '../../Redux/Admin/SingleMemberSlice'
 
 function MembersViewTable() {
 
-    const memberState = useSelector(state => state.members.value)
-    const newMem = useSelector(state => state.singleMember.value)
+    const [members, setmembers] = useState([]);
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const getMembersData = async () => {
         try {
             getMembers()
                 .then((response) => {
-                    dispatch(updateMembers(response.data))
+                    setmembers(response.data.members)
                 })
                 .catch((err) => {
                     throw err
@@ -30,7 +29,6 @@ function MembersViewTable() {
         }
     }
     const handleSubmit = (id , member) => {
-        // dispatch(updateSingleMember(member))
         navigate(`/admin/view-member/${id}`
         )
     }
@@ -39,6 +37,7 @@ function MembersViewTable() {
         getMembersData()
     }, [])
 
+    console.log("memberstate" , members);
 
     return (
         <div>
@@ -57,7 +56,7 @@ function MembersViewTable() {
                                 Date of join
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                isMember
+                                Membership type
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Action
@@ -68,7 +67,7 @@ function MembersViewTable() {
                     <tbody>
 
                         {
-                            memberState.map((member) => {
+                            members.map((member) => {
                                 return (
                                     <React.Fragment key={member._id}>
                                         <tr  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
@@ -83,7 +82,9 @@ function MembersViewTable() {
                                                 {moment(member.dateOfJoin).format('MMMM Do YYYY')}
                                             </td>
                                             <td className="px-6 py-4">
-                                                false
+                                                {
+                                                    member.isMember ? member.membershipType : 'Not a member'
+                                                }
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className='flex justify-between'>
