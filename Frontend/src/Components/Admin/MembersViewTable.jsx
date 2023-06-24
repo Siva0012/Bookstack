@@ -29,7 +29,6 @@ function MembersViewTable() {
             console.log("axios error in members component", err);
         }
     }
-
     const handleSubmit = (id , member) => {
         // dispatch(updateSingleMember(member))
         navigate(`/admin/view-member/${id}`

@@ -3,16 +3,20 @@ const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 require('dotenv').config()
 
+//bcrypt
 const bcrypt = require('bcrypt')
+
+//generate token
 const { tokenGenerator } = require('../utils/jwt-generator')
 
+//uuid
 const { v4: uuidv4 } = require('uuid');
 
 //cloudinary
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
 
-
+//member apis
 const verifyMember = async (req, res, next) => {
     try {
         const memberId = req.memberId
@@ -92,7 +96,6 @@ const login = async (req, res, next) => {
 
                 // }
                 const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
-                console.log("userdata after login" , userData);
                 res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, member: userData })
             } else {
                 res.status(401).json({ message: "Password doesn't match", error: "Invalid password" })
@@ -327,16 +330,21 @@ const createPaymentIntent = async (req, res, next) => {
 
 }
 
-const addMemberShip = async (req , res , next) => {
+const addMembership = async (req , res , next) => {
     try{
         const {memberShipType} = req.body
         const memberId = req.memberId
         const membershipId = uuidv4()
+
+        const currentDate = new Date()
+        const memberSince = currentDate
+        const memberUpto = new Date(currentDate.getFullYear() + 1 , currentDate.getMonth() , currentDate.getDate())
         const update = {
             isMember : true,
             membershipType : memberShipType,
             membershipId : membershipId,
-            memberSince : Date.now()
+            memberSince : memberSince,
+            memberUpto : memberUpto
         }
         const updateResponse = await Members.updateOne({_id : memberId} , update)
         if(updateResponse) {
@@ -362,5 +370,5 @@ module.exports = {
     updateImage,
     updateProfileFields,
     createPaymentIntent,
-    addMemberShip
+    addMembership
 }

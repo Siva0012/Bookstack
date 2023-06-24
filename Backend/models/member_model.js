@@ -1,53 +1,59 @@
 const mongoose = require('mongoose')
 
 const memberSchema = new mongoose.Schema({
-    name : {
-        type : String,
-        required : true
+    name: {
+        type: String,
+        required: true
     },
-    email : {
-        type : String,
-        required : true
+    email: {
+        type: String,
+        required: true
     },
-    phone : {
-        type : String,
-        required : false
+    phone: {
+        type: String,
+        required: false
     },
-    password : {
-        type : String,
-        required : true
+    password: {
+        type: String,
+        required: true
     },
-    dateOfJoin : {
-        type : Date,
-        default : Date.now()
+    dateOfJoin: {
+        type: Date,
+        default: Date.now()
     },
-    membershipId : {
-        type : String,
+    membershipId: {
+        type: String,
+    },
+    displayId : {
+        type : String
     },
     membershipType : {
-        type : String,
-    },
+    type: String,
+},
     memberSince : {
-        type : Date
-    },
+    type: Date
+},
+    memberUpto : {
+    type: Date
+},
     isBlocked : {
-        type : Boolean,
-        default : false
-    },
+    type: Boolean,
+    default: false
+},
     isMember : {
-        type : Boolean,
-        default : false
-    },
+    type: Boolean,
+    default: false
+},
     profilePicture : {
-        type : String,
-    },
+    type: String,
+},
     publicId : {
-        type : String
-    },
+    type: String
+},
     address : {
-        type : String
-    }
+    type: String
+}
 
 })
 
-module.exports = mongoose.model("Members" , memberSchema)
+module.exports = mongoose.model("Members", memberSchema)

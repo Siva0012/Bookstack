@@ -17,6 +17,6 @@ member_router.get('/get-member' , verifyMemberToken , memberController.getMember
 member_router.post('/update-profile-picture' , verifyMemberToken , upload.single('profilePicture') , memberController.updateImage)
 member_router.post('/update-profile-fields' , verifyMemberToken , memberController.updateProfileFields)
 member_router.post('/create-payment-intent' ,  verifyMemberToken ,memberController.createPaymentIntent)
-member_router.post('/add-membership' , verifyMemberToken , memberController.addMemberShip)
+member_router.post('/add-membership' , verifyMemberToken , memberController.addMembership)
 
 module.exports = member_router
