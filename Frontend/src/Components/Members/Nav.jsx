@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import NavDropdown from "../../Pages/Members/NavDropdown";
+import {GiPaperBagOpen} from 'react-icons/gi'
 
 function Nav() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function Nav() {
     localStorage.removeItem("userJwt");
     navigate("/login");
   };
+
 
   return (
     <>
@@ -43,6 +45,10 @@ function Nav() {
                 </Link>
               </ul>
             </div>
+            <div onClick={() => navigate('/book-bag')}>
+              <GiPaperBagOpen className="hover:-translate-y-1 duration-150"  size={19}/>
+            </div>
+
             <div id="search" className="flex items-center">
               <input
                 className="py-1 rounded-2xl"
