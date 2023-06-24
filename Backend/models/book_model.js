@@ -10,6 +10,10 @@ const bookSchema = new mongoose.Schema(
             type : Boolean,
             default : true
         },
+        listed : {
+            type : Boolean,
+            default : true
+        },
         author : {
             type : String,
             required : true

@@ -252,23 +252,22 @@ const updateBook = async (req, res, next) => {
 const removeBook = async (req, res, next) => {
     try {
         const bookId = req.params.bookId
-        let isAvailable = req.params.isAvailable
+        let isListed = req.params.isListed
 
-        isAvailable === 'false' ? isAvailable = false : isAvailable = Boolean(isAvailable)
+        isListed === 'false' ? isListed = false : isListed = Boolean(isListed)
         let response
-
-        isAvailable ?
+        isListed ?
             response = await Books.updateOne(
                 { _id: bookId },
-                { $set: { isAvailable: false } }
+                { $set: { listed: false } }
             ) :
             response = await Books.updateOne(
                 { _id: bookId },
-                { $set: { isAvailable: true } }
+                { $set: { listed: true } }
             )
         if (response) {
             console.log(response);
-            if (isAvailable) {
+            if (isListed) {
                 res.status(200).json({ message: "Book unlisted successfully" })
             } else {
                 res.status(200).json({ message: "Book listed successfully" })

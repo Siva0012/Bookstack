@@ -36,7 +36,7 @@ admin_router.get('/categories', verifyAdminToken, adminController.getCategories)
 admin_router.get('/books', verifyAdminToken, adminController.getBooks)
 admin_router.get('/single-book/:bookId', verifyAdminToken, adminController.getSingleBook)
 admin_router.post('/update-book/:bookId', verifyAdminToken, upload.single('coverPhoto'), adminController.updateBook)
-admin_router.get('/remove-book/:bookId/:isAvailable', verifyAdminToken, adminController.removeBook)
+admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminController.removeBook)
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)
 
 
