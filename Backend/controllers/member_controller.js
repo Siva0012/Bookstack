@@ -2,6 +2,7 @@ const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const LenderHistory = require('../models/lender_history')
+const Banners = require('../models/banner_model')
 require('dotenv').config()
 
 //bcrypt
@@ -481,6 +482,20 @@ const checkoutBooks = async (req, res, next) => {
     }
 }
 
+const getBanners = async (req , res , next) => {
+    try{
+        const bannerData = await Banners.find({})
+        if(bannerData) {
+            res.status(200).json({message : "Sending banner data" , bannerData : bannerData})
+        } else {
+            res.status(404).json({error : "Couldn't fetch banner data"})
+        }
+    }catch(err) {
+        console.log(err.message);
+        res.status(500).json({error : "Internal sever error"})
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -497,5 +512,6 @@ module.exports = {
     addToBookBag,
     getBookBag,
     removeFromBookBag,
-    checkoutBooks
+    checkoutBooks,
+    getBanners
 }

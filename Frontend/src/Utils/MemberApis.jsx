@@ -64,6 +64,10 @@ const checkoutBooks = () => {
     return memberAxiosInstance.get('/checkout-books')
 }
 
+const getBanners = () => {
+    return memberAxiosInstance.get('/get-banners')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -80,5 +84,6 @@ export {
     addToBookBag,
     getBookBag,
     removeFromBookBag,
-    checkoutBooks
+    checkoutBooks,
+    getBanners
 }
