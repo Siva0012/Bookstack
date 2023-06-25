@@ -23,5 +23,6 @@ member_router.get('/get-book-bag' , verifyMemberToken , memberController.getBook
 member_router.get('/remove-from-book-bag/:bookId' , verifyMemberToken , memberController.removeFromBookBag)
 member_router.get('/checkout-books' , verifyMemberToken , memberController.checkoutBooks)
 member_router.get('/get-banners' , verifyMemberToken , memberController.getBanners)
+member_router.get('/get-recent-books' , verifyMemberToken , memberController.recentBooks)
 
 module.exports = member_router

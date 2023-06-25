@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 
 //member APIs
-import { getBanners } from "../../Utils/MemberApis";
+import { getBanners, getRecentBooks } from "../../Utils/MemberApis";
 
 function Home() {
   const [banner, setBanner] = useState([]);
+  const [recentBooks, setRecentBooks] = useState([]);
 
   useEffect(() => {
     getBanners().then((response) => {
       if (response.data) {
         setBanner(response.data.bannerData);
+      }
+    });
+    getRecentBooks().then((response) => {
+      if (response.data.recentBooks) {
+        setRecentBooks(response.data.recentBooks);
       }
     });
   }, []);
@@ -44,20 +50,21 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
         {/* Features */}
         <section className="container mx-auto px-6 p-10 mt-4">
           <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
-          Your Gateway to Knowledge and Imagination!!
+            Your Gateway to Knowledge and Imagination!!
           </h2>
           {banner &&
-            banner.map((banner , i) => {
+            banner.map((banner, i) => {
               return (
                 <>
-                  <div key={banner._id} className="flex items-center flex-wrap mb-20">
+                  <div
+                    key={banner._id}
+                    className="flex items-center flex-wrap mb-20"
+                  >
                     <div className="w-full md:w-1/2 pr-10">
                       <h4 className="text-3xl text-gray-800 font-bold mb-3">
                         {banner.title}
                       </h4>
-                      <p className="text-gray-600 mb-8">
-                        {banner.description}
-                      </p>
+                      <p className="text-gray-600 mb-8">{banner.description}</p>
                     </div>
                     <div className="w-full md:w-1/2">
                       <img
@@ -75,10 +82,10 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
         <section className="bg-gray-100">
           <div className="container mx-auto px-6 py-20">
             <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
-              Artoo expresses
+              Recent Books
             </h2>
             <div className="flex flex-wrap">
-              <div className="w-full h-auto md:w-1/3 px-2 mb-4">
+              {/* <div className="w-full h-auto md:w-1/3 px-2 mb-4">
                 <div className="flex flex-col justify-between h-full bg-white rounded shadow py-2">
                   <p className="text-gray-800 text-base px-6 mb-5">
                     How are you feeling, kid? You don't look so bad to me. In
@@ -89,8 +96,24 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
                     Luke Skywalker
                   </p>
                 </div>
-              </div>
-              <div className="w-full h-auto md:w-1/3 px-2 mb-4">
+              </div> */}
+              {recentBooks &&
+                recentBooks.map((book) => {
+                  return (
+                    <>
+                      <div key={book._id} className="p-8">
+                        <div className="w-[100px]">
+                          <img src={book.coverPhoto} alt="" />
+                        </div>
+                      </div>
+                      <div className="">
+                        <h1>{book.title}</h1>
+                      </div>
+                    </>
+                  );
+                })}
+
+              {/* <div className="w-full h-auto md:w-1/3 px-2 mb-4">
                 <div className="flex flex-col justify-between h-full bg-white rounded shadow py-2">
                   <p className="text-gray-800 text-base px-6 mb-5">
                     That's two you owe me, junior. Well your Worship, looks like
@@ -114,7 +137,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
                     Queen Mother Ta'a Chume
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
