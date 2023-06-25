@@ -388,6 +388,24 @@ const getLenderHistory = async (req , res , next) => {
     }
 }
 
+const changeCheckoutStatus = async (req , res , next) => {
+    try{
+        const lenderId = req.params.lenderId
+        const status = req.params.status
+        const lenderUpdate = await LenderHistory.findOneAndUpdate(
+            {_id : lenderId},
+            {
+                $set : {status : status}
+            }
+        )
+        if(lenderUpdate) {
+            res.status(200).json({message : `Changed status to "${status}" `})
+        }
+    }catch(err) {
+        res.status(500).json({error : err.message})
+    }
+}
+
 module.exports = {
     login,
     getMembers,
@@ -402,5 +420,6 @@ module.exports = {
     updateBook,
     removeBook,
     addBanner,
-    getLenderHistory
+    getLenderHistory,
+    changeCheckoutStatus
 }

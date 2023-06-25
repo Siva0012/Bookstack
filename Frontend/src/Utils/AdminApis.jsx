@@ -53,6 +53,10 @@ const getLenderHistory = () => {
     return adminAxiosInstance.get('/lender-history')
 }
 
+const changeCheckoutStatus = (lenderId , status) => {
+    return adminAxiosInstance.get(`/change-checkout-status/${lenderId}/${status}`)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -66,5 +70,6 @@ export {
     getSingleBook,
     updateBook,
     listOrUnlist,
-    getLenderHistory
+    getLenderHistory,
+    changeCheckoutStatus
 }

@@ -3,7 +3,8 @@ import moment from "moment";
 import DropdownMenu from "./DropdownMenu";
 
 //admin APIs
-import { getLenderHistory } from "../../Utils/AdminApis";
+import { changeCheckoutStatus, getLenderHistory } from "../../Utils/AdminApis";
+import { toast } from "react-toastify";
 
 function LenderTable() {
   const [lenderData, setlenderData] = useState([]);
@@ -13,13 +14,36 @@ function LenderTable() {
   };
 
   useEffect(() => {
-    getLenderHistory().then((response) => {
-      if (response.data.lenderData) {
-        console.log(response.data.lenderData);
+    //     getLenderHistory().then((response) => {
+    //       if (response.data.lenderData) {
+    //         setlenderData(response.data.lenderData);
+    //       }
+    //     });
+    fetchLenderData();
+  }, []);
+
+  const fetchLenderData = async () => {
+    try {
+      const response = await getLenderHistory();
+      if (response) {
         setlenderData(response.data.lenderData);
       }
-    });
-  }, []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const updateStatus = async (lenderId , status) => {
+     try{
+          const udpateResponse = await changeCheckoutStatus(lenderId , status)
+          if(udpateResponse) {
+               toast.success(udpateResponse.data.message)
+          }
+          fetchLenderData()
+     }catch(err) {
+          console.log(err);
+     }
+  }
 
   return (
     <div className="text-white">
@@ -90,7 +114,11 @@ function LenderTable() {
                             </p>
                           </td>
                           <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                            <DropdownMenu status={data.status} />
+                            <DropdownMenu
+                              status={data.status}
+                              lenderId={data._id}
+                              updateStatus={updateStatus}
+                            />
                           </td>
                         </tr>
                       );

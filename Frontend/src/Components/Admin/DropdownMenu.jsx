@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const DropdownMenu = ({ status }) => {
+//admin APIs
+import {changeCheckoutStatus} from '../../Utils/AdminApis'
+
+const DropdownMenu = ({ status , lenderId , updateStatus }) => {
   const stats = ["Pending", "Approved", "Borrowed", "Returned"];
   const [isOpen, setisOpen] = useState(false);
   let filteredStats = [];
@@ -15,6 +18,19 @@ const DropdownMenu = ({ status }) => {
   } else if (status === "Returned") {
     filteredStats = ["Returned"];
   }
+
+  const handleStatus = (lenderId , status) => {
+
+     updateStatus(lenderId , status)
+     // changeCheckoutStatus(lenderId , status)
+     // .then((response) => {
+     //      if(response.data.message) {
+     //           toast.success(response.data.message)
+     //      }
+     // })
+     // .catch((err) => toast.error(err.response.data.error))
+  }
+
   return (
     <div className="relative">
       <span
@@ -23,7 +39,7 @@ const DropdownMenu = ({ status }) => {
             setisOpen((prev) => !prev);
           } else {
             setisOpen(false);
-            toast.warning("Returned book");
+            toast.warning("Book has been already returned");
           }
         }}
         className=" w-[100px] text-center hover:cursor-pointer relative inline-block px-3 py-1 font-semibold  bg-green-200 rounded-full text-green-900 leading-tight"
@@ -35,6 +51,7 @@ const DropdownMenu = ({ status }) => {
           {filteredStats.map((data, i) => {
             return (
               <span
+              onClick={() => handleStatus(lenderId , data)}
                 key={i}
                 className={` ${
                   i !== 0 ? "mt-2" : ""
