@@ -38,6 +38,7 @@ admin_router.get('/single-book/:bookId', verifyAdminToken, adminController.getSi
 admin_router.post('/update-book/:bookId', verifyAdminToken, upload.single('coverPhoto'), adminController.updateBook)
 admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminController.removeBook)
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)
+admin_router.get('/lender-history' , verifyAdminToken, adminController.getLenderHistory)
 
 
 module.exports = admin_router

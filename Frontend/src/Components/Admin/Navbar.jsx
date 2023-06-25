@@ -4,7 +4,7 @@ function Test() {
     return (
 
         <>
-            <div id='color-div' className='py-10 px-5 bg-bg-admin-navbar'>
+            <div id='color-div' className='py-4 px-3 bg-[#7E7C73] w-screen'>
                 <div id='flex-div' className='flex align-middle w-full h-full'>
                     <div id='first-div' className='flex justify-between align-middle w-1/2'>
                         <div className='text-white font-roboto text-logo '>

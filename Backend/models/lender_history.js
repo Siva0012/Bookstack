@@ -28,8 +28,8 @@ const lenderHistorySchema = new mongoose.Schema({
      },
      status : {
           type : String,
-          enum : ['Borrowed' , 'Returned'],
-          default : 'Borrowed'
+          enum : ['Pending' , 'Approved' , 'Borrowed' , 'Returned'],
+          default : 'Pending'
      },
      remarks : {
           type : String

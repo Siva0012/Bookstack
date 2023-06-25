@@ -7,11 +7,11 @@ const AdminLayout = () => {
   return (
     <>
       <Navbar />
-      <div className="flex bg-bg-admin-sidebar">
+      <div className="flex bg-bg-admin-sidebar w-screen">
         <div className=" bg-bg-admin-sidebar basis-[18%]">
           <Sidebar />
         </div>
-        <div className="basis-[88%] rounded-tl-3xl bg-black">
+        <div className="basis-[88%] rounded-tl-3xl bg-black w-screen">
           <div>
             <AdminHeader />
           </div>
@@ -20,6 +20,9 @@ const AdminLayout = () => {
           </div>
         </div>
       </div>
+      {/* <div id="body" className=" bg-[#140005] w-screen h-screen">
+        <Navbar />
+      </div> */}
     </>
   );
 };

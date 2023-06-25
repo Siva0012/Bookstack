@@ -5,6 +5,7 @@ const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const Banners = require('../models/banner_model')
+const LenderHistory = require('../models/lender_history')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
@@ -374,6 +375,18 @@ const bannerImageUpdate = async (req, res, next) => {
     }
 }
 
+const getLenderHistory = async (req , res , next) => {
+    try{
+
+        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
+        lenderData ? res.status(200).json({message : "lender history" , lenderData : lenderData}) :
+        res.status(404).json({error : "no lender data"})
+
+    }catch(err) {
+        console.log(err);
+        res.status(500).jso({error : err.message})
+    }
+}
 
 module.exports = {
     login,
@@ -388,5 +401,6 @@ module.exports = {
     getSingleBook,
     updateBook,
     removeBook,
-    addBanner
+    addBanner,
+    getLenderHistory
 }

@@ -49,6 +49,10 @@ const listOrUnlist = (id , data) => {
     return adminAxiosInstance.get(`/remove-book/${id}/${data}`)
 }
 
+const getLenderHistory = () => {
+    return adminAxiosInstance.get('/lender-history')
+}
+
 export {
     adminLogin , 
     addBook,
@@ -61,5 +65,6 @@ export {
     getBooks,
     getSingleBook,
     updateBook,
-    listOrUnlist
+    listOrUnlist,
+    getLenderHistory
 }

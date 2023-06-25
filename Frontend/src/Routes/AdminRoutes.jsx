@@ -14,24 +14,30 @@ import SingleBookPage from "../Pages/Admin/SingleBookPage";
 
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import AdminLayout from "../Layout/AdminLayout";
+import LenderHistory from "../Pages/Admin/LenderHistory";
 
 function AdminRoutes() {
   return (
-    <Routes>
-      <Route path="/login" element={<AdminLogin />} />
-      <Route element={<ProtectedRoutes role={"admin"} route={"/admin/login"} />}>
-        <Route element={<AdminLayout />}>
-          <Route path="/" element={<AdminHome />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/view-member/:memberId" element={<ViewMember />} />
-          <Route path="/add-book" element={<AddBook />} />
-          <Route path="/books" element={<AdminBooks />} />
-          <Route path="/categories" element={<AdminCategories />} />
-          <Route path="/add-category" element={<AddCategoryPage />} />
-          <Route path="/view-book/:bookId" element={<SingleBookPage />} />
+    <div className="admin-side">
+      <Routes>
+        <Route path="/login" element={<AdminLogin />} />
+        <Route
+          element={<ProtectedRoutes role={"admin"} route={"/admin/login"} />}
+        >
+          <Route element={<AdminLayout />}>
+            <Route path="/" element={<AdminHome />} />
+            <Route path="/members" element={<MembersPage />} />
+            <Route path="/view-member/:memberId" element={<ViewMember />} />
+            <Route path="/add-book" element={<AddBook />} />
+            <Route path="/books" element={<AdminBooks />} />
+            <Route path="/categories" element={<AdminCategories />} />
+            <Route path="/add-category" element={<AddCategoryPage />} />
+            <Route path="/view-book/:bookId" element={<SingleBookPage />} />
+            <Route path="/lender-history" element={<LenderHistory />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </div>
   );
 }
 
