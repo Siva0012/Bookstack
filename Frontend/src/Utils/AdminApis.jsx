@@ -57,6 +57,10 @@ const changeCheckoutStatus = (lenderId , status) => {
     return adminAxiosInstance.get(`/change-checkout-status/${lenderId}/${status}`)
 }
 
+const addBanner = (data) => {
+    return adminAxiosInstance.post('/add-banner' , data)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -71,5 +75,6 @@ export {
     updateBook,
     listOrUnlist,
     getLenderHistory,
-    changeCheckoutStatus
+    changeCheckoutStatus,
+    addBanner
 }

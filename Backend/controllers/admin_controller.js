@@ -293,9 +293,8 @@ const removeBook = async (req, res, next) => {
 
 const addBanner = async (req, res, next) => {
     try {
-        const { title, subtitle } = req.body
+        const { title, description } = req.body
         const bannerImage = req.file.path
-
         const isExists = await Banners.findOne({ title: title })
         if (!isExists) {
 
@@ -303,14 +302,12 @@ const addBanner = async (req, res, next) => {
             const imageUploaded = await uploadToCloudinary(bannerImage, "banner-images")
 
             //adding to database
-            const update = {
+            const banner = new Banners({
                 title: title,
-                subtitle: subtitle,
+                description: description,
                 image: imageUploaded.url,
                 publicId: imageUploaded.public_id
-            }
-
-            const banner = new Banners(update)
+            })
             const updateResponse = await banner.save()
             if (updateResponse) {
                 res.status(201).json({ message: `Created new Banner !!` })
@@ -324,6 +321,7 @@ const addBanner = async (req, res, next) => {
 
     } catch (err) {
         console.log(err);
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -331,23 +329,24 @@ const editBanner = async (req, res, next) => {
     try {
         console.log("edit banner called");
         const bannerId = req.params.bannerId
-        const { title, subtitle } = req.body
+        const { title, description } = req.body
         const update = {}
         if (title) {
             update.title = title
         }
-        if (subtitle) {
-            update.subtitle = subtitle
+        if (description) {
+            update.description = description
         }
 
         const updateResponse = await Banners.updateOne({ _id: bannerId }, { $set: update })
         updateResponse ?
             res.status(200).json({ message: "Banner updated successfully" })
             :
-            res.status(404).json({ message: "Could'nt update banner" })
+            res.status(404).json({ error: "Could'nt update banner" })
 
     } catch (err) {
         console.log(err);
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -358,12 +357,12 @@ const bannerImageUpdate = async (req, res, next) => {
 
 
         //finding the public id
-        const isExists = await Banners.findOne({_id : bannerId})
-        if(isExists) {
-            const publicId = isExists.publicId            
-            const {bannerPhoto} = req.file.path
+        const isExists = await Banners.findOne({ _id: bannerId })
+        if (isExists) {
+            const publicId = isExists.publicId
+            const { bannerPhoto } = req.file.path
             const update = {}
-            if(bannerPhoto) {
+            if (bannerPhoto) {
                 update.image = bannerPhoto
             }
         } else {
@@ -375,36 +374,37 @@ const bannerImageUpdate = async (req, res, next) => {
     }
 }
 
-const getLenderHistory = async (req , res , next) => {
-    try{
+const getLenderHistory = async (req, res, next) => {
+    try {
 
         const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
-        lenderData ? res.status(200).json({message : "lender history" , lenderData : lenderData}) :
-        res.status(404).json({error : "no lender data"})
+        lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
+            res.status(404).json({ error: "no lender data" })
 
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).jso({error : err.message})
+        res.status(500).jso({ error: err.message })
     }
 }
 
-const changeCheckoutStatus = async (req , res , next) => {
-    try{
+const changeCheckoutStatus = async (req, res, next) => {
+    try {
         const lenderId = req.params.lenderId
         const status = req.params.status
         const lenderUpdate = await LenderHistory.findOneAndUpdate(
-            {_id : lenderId},
+            { _id: lenderId },
             {
-                $set : {status : status}
+                $set: { status: status }
             }
         )
-        if(lenderUpdate) {
-            res.status(200).json({message : `Changed status to "${status}" `})
+        if (lenderUpdate) {
+            res.status(200).json({ message: `Changed status to "${status}" ` })
         }
-    }catch(err) {
-        res.status(500).json({error : err.message})
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
+
 
 module.exports = {
     login,

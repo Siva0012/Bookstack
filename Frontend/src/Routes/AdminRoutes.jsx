@@ -15,6 +15,7 @@ import SingleBookPage from "../Pages/Admin/SingleBookPage";
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import AdminLayout from "../Layout/AdminLayout";
 import LenderHistory from "../Pages/Admin/LenderHistory";
+import BannersPage from "../Pages/Admin/BannersPage";
 
 function AdminRoutes() {
   return (
@@ -34,6 +35,7 @@ function AdminRoutes() {
             <Route path="/add-category" element={<AddCategoryPage />} />
             <Route path="/view-book/:bookId" element={<SingleBookPage />} />
             <Route path="/lender-history" element={<LenderHistory />} />
+            <Route path="/banners" element={<BannersPage />} />
           </Route>
         </Route>
       </Routes>

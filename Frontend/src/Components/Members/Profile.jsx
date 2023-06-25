@@ -58,8 +58,6 @@ function Profile() {
 
   // image update
   const handleImageChange = (e) => {
-    console.log("handle image change");
-    console.log(e.target.files[0]);
     setImage(e.target.files[0]);
   };
 

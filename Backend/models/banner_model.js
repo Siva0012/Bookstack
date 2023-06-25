@@ -6,8 +6,12 @@ const bannerSchema = new mongoose.Schema(
         title : {
             type : String
         },
-        subTitle : {
+        description : {
             type : String
+        },
+        active : {
+            type : Boolean,
+            default : true
         },
         image : {
             type : String,
@@ -15,7 +19,11 @@ const bannerSchema = new mongoose.Schema(
         public_id : {
             type : String
         },
-        dateAdded : {
+        createdAt : {
+            type : Date,
+            default : Date.now()
+        },
+        updatedAt : {
             type : Date,
             default : Date.now()
         }
