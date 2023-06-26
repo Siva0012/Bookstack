@@ -484,7 +484,7 @@ const checkoutBooks = async (req, res, next) => {
 
 const getBanners = async (req , res , next) => {
     try{
-        const bannerData = await Banners.find({})
+        const bannerData = await Banners.find({active : true})
         if(bannerData) {
             res.status(200).json({message : "Sending banner data" , bannerData : bannerData})
         } else {

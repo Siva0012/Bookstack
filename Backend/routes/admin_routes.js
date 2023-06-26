@@ -40,6 +40,8 @@ admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminContro
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)
 admin_router.get('/lender-history' , verifyAdminToken, adminController.getLenderHistory)
 admin_router.get('/change-checkout-status/:lenderId/:status' , verifyAdminToken , adminController.changeCheckoutStatus)
+admin_router.get('/get-banners' , verifyAdminToken , adminController.getBanners)
+admin_router.post('/change-banner-status' , verifyAdminToken , adminController.changeBannerStatus)
 
 
 module.exports = admin_router

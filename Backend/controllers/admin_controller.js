@@ -325,6 +325,20 @@ const addBanner = async (req, res, next) => {
     }
 }
 
+const getBanners = async (req , res , next) => {
+    try{
+        const bannerData = await Banners.find({})
+        if(bannerData) {
+            res.status(200).json({message : "banner data" , bannerData : bannerData})
+        } else {
+            res.status(404).json({error : "Couldn't find banner data"})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server error"})
+    }
+}
+
 const editBanner = async (req, res, next) => {
     try {
         console.log("edit banner called");
@@ -347,6 +361,25 @@ const editBanner = async (req, res, next) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: err.message })
+    }
+}
+
+const changeBannerStatus = async (req , res , next) => {
+    try{
+        const {bannerId , status} = req.body
+        const udpate = !status
+        const updateResponse = await Banners.findOneAndUpdate({_id : bannerId} , {$set : {active : udpate}})
+        if(updateResponse) {
+            let message = ''
+            status ? message = "Banner disabled" : message = "Banner enabled"
+            res.status(200).json({message : message})
+        } else {
+            res.status(404).json({error : "Couldn't update the status"})
+        }
+
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -420,6 +453,8 @@ module.exports = {
     updateBook,
     removeBook,
     addBanner,
+    getBanners,
     getLenderHistory,
-    changeCheckoutStatus
+    changeCheckoutStatus,
+    changeBannerStatus
 }
