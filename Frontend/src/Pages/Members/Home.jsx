@@ -48,8 +48,8 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
           </div>
         </div>
         {/* Features */}
-        <section className="container mx-auto px-6 p-10 mt-4">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
+        <section className="container mx-auto py-4 mt-12">
+          <h2 className="text-4xl font-bold text-center text-white mb-7">
             Your Gateway to Knowledge and Imagination!!
           </h2>
           {banner &&
@@ -58,7 +58,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
                 <>
                   <div
                     key={banner._id}
-                    className="flex items-center flex-wrap mb-20"
+                    className="flex items-center flex-wrap mb-10 px-2 py-4 bg-white rounded-md"
                   >
                     <div className="w-full md:w-1/2 pr-10">
                       <h4 className="text-3xl text-gray-800 font-bold mb-3">
@@ -79,65 +79,35 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
             })}
         </section>
         {/* Testimonials */}
-        <section className="bg-gray-100">
-          <div className="container mx-auto px-6 py-20">
+        <section className="bg-gray-100 rounded-md">
+          <div className="container mx-auto px-6 py-10">
             <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
-              Recent Books
+              Recently added books
             </h2>
-            <div className="flex flex-wrap">
-              {/* <div className="w-full h-auto md:w-1/3 px-2 mb-4">
-                <div className="flex flex-col justify-between h-full bg-white rounded shadow py-2">
-                  <p className="text-gray-800 text-base px-6 mb-5">
-                    How are you feeling, kid? You don't look so bad to me. In
-                    fact, you look strong enough to pull the ears off a Gundark.
-                    Thanks to you.
-                  </p>
-                  <p className="text-gray-500 text-xs md:text-sm px-6">
-                    Luke Skywalker
-                  </p>
-                </div>
-              </div> */}
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-6">
+             
               {recentBooks &&
                 recentBooks.map((book) => {
                   return (
-                    <>
-                      <div key={book._id} className="p-8">
-                        <div className="w-[100px]">
-                          <img src={book.coverPhoto} alt="" />
+                    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 rounded-xl">
+                      <div className="w-full">
+                      <div className="w-[180px] h-[250px] mx-auto">
+                      <img src={book.coverPhoto} className="object-contain w-[100%] h-[100%]" />
+                      </div>
+
+                      </div>
+                    <div className="px-4 py-3 w-72">
+                      <span className="text-black mr-3 uppercase text-sm font-semibold">{book.title}</span>
+                      <p className="text-lg font-bold text-black truncate block capitalize">{book.author}</p>
+                      <div className="flex items-center">
+                        <p className="text-lg font-semibold text-black cursor-auto my-3">{book.category.name}</p>
+                        <div className="ml-auto">
                         </div>
                       </div>
-                      <div className="">
-                        <h1>{book.title}</h1>
-                      </div>
-                    </>
+                    </div>
+                  </div>
                   );
                 })}
-
-              {/* <div className="w-full h-auto md:w-1/3 px-2 mb-4">
-                <div className="flex flex-col justify-between h-full bg-white rounded shadow py-2">
-                  <p className="text-gray-800 text-base px-6 mb-5">
-                    That's two you owe me, junior. Well your Worship, looks like
-                    you managed to keep me around for a little while longer. I
-                    had nothing to do with it.
-                  </p>
-                  <p className="text-gray-500 text-xs md:text-sm px-6">
-                    Emperor's Royal Guards
-                  </p>
-                </div>
-              </div>
-              <div className="w-full h-auto md:w-1/3 px-2 mb-4">
-                <div className="flex flex-col justify-between h-full bg-white rounded shadow py-2">
-                  <p className="text-gray-800 text-base px-6 mb-5">
-                    General Rieekan thinks it's dangerous for any ships to leave
-                    the system until we've activated the energy shield. That's a
-                    good story. I think you just can't bear to let a gorgeous
-                    guy like me out of your sight
-                  </p>
-                  <p className="text-gray-500 text-xs md:text-sm px-6">
-                    Queen Mother Ta'a Chume
-                  </p>
-                </div>
-              </div> */}
             </div>
           </div>
         </section>

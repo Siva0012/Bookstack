@@ -17,7 +17,6 @@ const ProtectedRoutes = ({ role, route }) => {
         if (role === "admin") {
             isAdminAuth()
                 .then((response) => {
-                    console.log(response.data);
                     if (response.data.isAdmin) {
                         setAuth('isAdmin')
                     } else {
@@ -27,13 +26,11 @@ const ProtectedRoutes = ({ role, route }) => {
                     console.log("auth", auth);
                 })
                 .catch((err) => {
-                    console.log("Redirecting to login" , err)
                     navigate('/admin/login')
                 })
         } else if (role === 'user') {
             isMemberAuth()
                 .then((response) => {
-                    console.log(response.data);
                     if (response.data.isMember) {
                         setAuth(response.data.isMember) ///////////////////////////////
                     }
