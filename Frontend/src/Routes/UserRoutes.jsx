@@ -42,10 +42,12 @@ function UserRoutes() {
           <Route path="/membership" element={<MembeshipPage />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/book-bag" element={<BookBagPage />} />
+          <Route path="/upgrade-to-premium" element={<UpgradePage />} />
         </Route>
       </Route>
     </Routes>
   );
 }
+import UpgradePage from "../Pages/Members/UpgradePage";
 
 export default UserRoutes;

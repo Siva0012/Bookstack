@@ -302,27 +302,26 @@ const updateProfileFields = async (req, res, next) => {
 const createPaymentIntent = async (req, res, next) => {
 
     try {
-        const { memberShipType } = req.body
-        console.log("called function", memberShipType);
-
-        const calculatePrice = (memberShipType) => {
-            if (memberShipType === 'student') {
+        const { membershipType } = req.body
+        const calculatePrice = (membershipType) => {
+            if (membershipType === 'student') {
                 return 999 * 100
-            } else if (memberShipType === 'premium') {
+            } else if (membershipType === 'premium') {
                 return 1399 * 100
+            } else if (membershipType === 'upgrade') {
+                return 400 * 100
             }
         }
 
         const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
         // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: calculatePrice(memberShipType),
+            amount: calculatePrice(membershipType),
             currency: "inr",
             automatic_payment_methods: {
                 enabled: true,
             },
         });
-        console.log(paymentIntent, "payment INtente ttTTTt");
         res.send({
             clientSecret: paymentIntent.client_secret
         })
@@ -330,14 +329,18 @@ const createPaymentIntent = async (req, res, next) => {
         console.log(err);
     }
 
-
 }
+
 
 const addMembership = async (req, res, next) => {
     try {
-        const { memberShipType } = req.body
+        let { memberShipType } = req.body
         const memberId = req.memberId
         const membershipId = uuidv4()
+        
+        if(memberShipType === 'upgrade') {
+            memberShipType = 'premium'
+        }
 
         const currentDate = new Date()
         const memberSince = currentDate
@@ -351,9 +354,9 @@ const addMembership = async (req, res, next) => {
         }
         const updateResponse = await Members.updateOne({ _id: memberId }, update)
         if (updateResponse) {
-            res.status(200).json({ message: "updated membership" })
+            res.status(200).json({ message: "Updated membership" })
         } else {
-            res.status(404).json({ error: "failed to udpate the membership" })
+            res.status(404).json({ error: "Failed to udpate the membership" })
         }
     } catch (err) {
         console.log(err);
