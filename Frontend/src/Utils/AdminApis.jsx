@@ -69,6 +69,10 @@ const changeBannerStatus = (data) => {
     return adminAxiosInstance.post('/change-banner-status' , data)
 }
 
+const updateBannerImage = (data) => {
+    return adminAxiosInstance.post('/update-banner-image' , data)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -86,5 +90,6 @@ export {
     changeCheckoutStatus,
     addBanner,
     getBanners,
-    changeBannerStatus
+    changeBannerStatus,
+    updateBannerImage
 }

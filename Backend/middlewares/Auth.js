@@ -7,10 +7,11 @@ module.exports.verifyAdminToken = async (req , res , next) => {
         if(!token) {
             res.status(401).json({message : "No token in the headers"})
         } else {
-            jwt.verify(token , process.env.JWT_SECRET , (err , decoded) => {
+            jwt.verify(token , process.env.JWT_ADMIN_SECRET , (err , decoded) => {
                 if(err) {
                     res.status(401).json({message : "Error in verification of jwt"})
                 } else {
+                    //decode.role = admin then next
                     req.adminId = decoded.adminId
                     next()
                 }
@@ -30,7 +31,7 @@ module.exports.verifyMemberToken = async (req , res , next) => {
         if(!token) {
             res.status(401).json({message : "No token in the headers"})
         } else {
-            jwt.verify(token , process.env.JWT_SECRET , (err , decoded) => {
+            jwt.verify(token , process.env.JWT_USER_SECRET , (err , decoded) => {
                 if(err) {
                     console.log("Error in jwt verification" , err);
                 } else {

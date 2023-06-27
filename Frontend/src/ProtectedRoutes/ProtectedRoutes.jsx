@@ -18,6 +18,7 @@ const ProtectedRoutes = ({ role, route }) => {
             isAdminAuth()
                 .then((response) => {
                     if (response.data.isAdmin) {
+                        console.log("admin is authasdjfkasodfasdjfdjfj");
                         setAuth('isAdmin')
                     } else {
                         setAuth(null)

@@ -9,7 +9,7 @@ require('dotenv').config()
 const bcrypt = require('bcrypt')
 
 //generate token
-const { tokenGenerator } = require('../utils/jwt-generator')
+const { uesrTokenGenerator } = require('../utils/jwt-generator')
 
 //uuid
 const { v4: uuidv4 } = require('uuid');
@@ -65,8 +65,8 @@ const register = async (req, res, next) => {
                             email: response.email,
                             date: response.dateOfJoin
                         }
-                        const token = tokenGenerator(payLoad)
-                        res.status(200).json({ message: "created user", token: token })
+                        const token = uesrTokenGenerator(payLoad)
+                        res.status(200).json({ message: "created user", token: token, member: name })
                     }
                 })
 
@@ -88,9 +88,9 @@ const login = async (req, res, next) => {
                 const payLoad = {
                     memberId: memberExists._id,
                     email: memberExists.email,
-                    data: memberExists.dateOfJoin
+                    date: memberExists.dateOfJoin
                 }
-                const token = tokenGenerator(payLoad)
+                const token = uesrTokenGenerator(payLoad)
                 // const userData = {
                 //     memberId: memberExists._id,
                 //     name: memberExists.name,
@@ -123,8 +123,8 @@ const googleLogin = async (req, res, next) => {
                 name: isExists.name,
                 date: isExists.dateOfJoin
             }
-            const token = tokenGenerator(payLoad)
-            const userData = await Members.findOne({ _id: memberExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
+            const token = uesrTokenGenerator(payLoad)
+            const userData = await Members.findOne({ _id: isExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
             res.status(200).json({ message: `Signed in as ${isExists.name}`, member: userData, token: token })
         } else {
             const password = await bcrypt.hash(id, 10)
@@ -482,33 +482,33 @@ const checkoutBooks = async (req, res, next) => {
     }
 }
 
-const getBanners = async (req , res , next) => {
-    try{
-        const bannerData = await Banners.find({active : true})
-        if(bannerData) {
-            res.status(200).json({message : "Sending banner data" , bannerData : bannerData})
+const getBanners = async (req, res, next) => {
+    try {
+        const bannerData = await Banners.find({ active: true })
+        if (bannerData) {
+            res.status(200).json({ message: "Sending banner data", bannerData: bannerData })
         } else {
-            res.status(404).json({error : "Couldn't fetch banner data"})
+            res.status(404).json({ error: "Couldn't fetch banner data" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err.message);
-        res.status(500).json({error : "Internal sever error"})
+        res.status(500).json({ error: "Internal sever error" })
     }
 }
 
-const recentBooks = async (req , res , next) => {
-    try{
+const recentBooks = async (req, res, next) => {
+    try {
         const bookData = await Books.find()
-        .populate('category')
-        .sort({dateAdded : -1})
-        .limit(5)
-        if(bookData) {
-            res.status(200).json({message : "Last added 5 books" , recentBooks : bookData} )
+            .populate('category')
+            .sort({ dateAdded: -1 })
+            .limit(6)
+        if (bookData) {
+            res.status(200).json({ message: "Last added 5 books", recentBooks: bookData })
         } else {
-            res.status(404).json({error : "Couldn't find books"})
+            res.status(404).json({ error: "Couldn't find books" })
         }
-    }catch(err) {
-        res.status(500).json({error : "Internal server error"})
+    } catch (err) {
+        res.status(500).json({ error: "Internal server error" })
     }
 }
 

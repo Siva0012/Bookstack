@@ -2,10 +2,17 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import HashLoader from "react-spinners/HashLoader";
 import Modal from "../Modal/Modal";
+import EditModal from "../Modal/EditModal";
 import moment from "moment/moment";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 //admin APIs
-import { getBanners, addBanner , changeBannerStatus } from "../../Utils/AdminApis";
+import {
+  getBanners,
+  addBanner,
+  changeBannerStatus,
+  updateBannerImage
+} from "../../Utils/AdminApis";
 import { toast } from "react-toastify";
 
 function Banners() {
@@ -15,28 +22,78 @@ function Banners() {
     margin: "0 auto",
     borderColor: "red",
   };
+  //for setting data for edit modal form values
+  const [editBanner, setEditBanner] = useState({
+    title: "",
+    description: "",
+    bannerPhoto: "",
+  });
+  //edit modal
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  //for editing image
+  const [editBannerImage, setEditBannerImage] = useState("");
+  const [showEditImage, setShowEditImage] = useState(false);
+  const [editBannerImageURL, setEditBannerImageURL] = useState("");
+
+  //for bannerdata
   const [banners, setBanners] = useState([]);
+
+  //add modal
   const [showModal, setshowModal] = useState(false);
   const [imageLoader, setimageLoader] = useState(false);
   const [formValues, setformValues] = useState({
     title: "",
     description: "",
     bannerPhoto: "",
+    bannerId : ""
   });
 
-  //update banner status
-  const handleBanner = (bannerId , status) => {
-    //call api
-    const data = {bannerId : bannerId , status : status}
-    changeBannerStatus(data)
+  //edit banner
+  const handleEditBanner = (bannerId, title, description, bannerPhoto) => {
+    setShowEditModal(true);
+    setEditBanner({
+      ...editBanner,
+      title: title,
+      description: description,
+      bannerPhoto: bannerPhoto,
+      bannerId : bannerId
+    });
+    setEditBannerImage({ ...editBannerImage, bannerPhoto: bannerPhoto });
+  };
+
+  const handleEditChange = () => {
+    // setEdit
+  };
+
+  //Update banner image
+  const handleEditImage = (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData()
+    formData.append('bannerId' , editBanner.bannerId)
+    formData.append('bannerPhoto' , file)
+    console.log("calling function");
+    updateBannerImage(formData)
     .then((response) => {
       if(response.data) {
-        toast.success(response.data.message)
+        console.log(response.data);
       }
     })
-    .catch(err => toast.error(err.response.data.error))
-    
-  }
+
+  };
+
+  //update banner status
+  const handleBanner = (bannerId, status) => {
+    //call api
+    const data = { bannerId: bannerId, status: status };
+    changeBannerStatus(data)
+      .then((response) => {
+        if (response.data) {
+          toast.success(response.data.message);
+        }
+      })
+      .catch((err) => toast.error(err.response.data.error));
+  };
 
   const handleChange = (e) => {
     console.log(formValues);
@@ -52,22 +109,30 @@ function Banners() {
 
   const handleAddForm = (e) => {
     e.preventDefault();
-    setimageLoader(true);
-    const formData = new FormData();
-    formData.append("title", formValues.title);
-    formData.append("description", formValues.description);
-    formData.append("bannerPhoto", formValues.bannerPhoto);
+    if (
+      formValues.title === "" ||
+      formValues.description === "" ||
+      formValues.bannerPhoto === ""
+    ) {
+      toast.warning("All fields are requried !!");
+    } else {
+      setimageLoader(true);
+      const formData = new FormData();
+      formData.append("title", formValues.title);
+      formData.append("description", formValues.description);
+      formData.append("bannerPhoto", formValues.bannerPhoto);
 
-    //call api
-    addBanner(formData)
-      .then((response) => {
-        if (response.data.message) {
-          setimageLoader(false);
-          setshowModal(false);
-          toast.success(response.data.message);
-        }
-      })
-      .catch((err) => toast.error(err.response.data.error));
+      //call api
+      addBanner(formData)
+        .then((response) => {
+          if (response.data.message) {
+            setimageLoader(false);
+            setshowModal(false);
+            toast.success(response.data.message);
+          }
+        })
+        .catch((err) => toast.error(err.response.data.error));
+    }
   };
 
   useEffect(() => {
@@ -149,29 +214,45 @@ function Banners() {
                               </p>
                             </td>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                              <span 
-                              onClick={() => handleBanner(banner._id , banner.active)}
-                               className="relative inline-block px-3 py-1 font-semibold min-w-[90px]  text-green-900 leading-tight hover:cursor-pointer">
+                              <span
+                                onClick={() =>
+                                  handleBanner(banner._id, banner.active)
+                                }
+                                className="relative inline-block px-3 py-1 font-semibold min-w-[90px]  text-green-900 leading-tight hover:cursor-pointer"
+                              >
                                 <span
                                   aria-hidden
                                   className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
                                 />
                                 {banner.active ? (
-                                  <span className="relative min-w-[90px]  mx-auto text-center">Enabled</span>
+                                  <span className="relative min-w-[90px]  mx-auto text-center">
+                                    Enabled
+                                  </span>
                                 ) : (
-                                  <span className="relative min-w-[90px]  mx-auto text-center">Disabled</span>
+                                  <span className="relative min-w-[90px]  mx-auto text-center">
+                                    Disabled
+                                  </span>
                                 )}
                               </span>
                             </td>
                             {/*Edit */}
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                              <span 
-                               className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
+                              <span
+                                onClick={() =>
+                                  handleEditBanner(
+                                    banner._id,
+                                    banner.title,
+                                    banner.description,
+                                    banner.image
+                                  )
+                                }
+                                className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight hover:cursor-pointer"
+                              >
                                 <span
                                   aria-hidden
                                   className="absolute inset-0 bg-blue-600 opacity-50 rounded-full"
                                 />
-                                  <span className="relative">Edit</span>
+                                <span className="relative">Edit</span>
                               </span>
                             </td>
                             {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
@@ -197,8 +278,9 @@ function Banners() {
           </div>
         </div>
       </div>
-      {/*Edit modal*/}
-      <Modal isVisible={showModal} onClose={() => setshowModal(false)}>
+
+      {/*Edit banner*/}
+      <Modal isVisible={showEditModal} onClose={() => setShowEditModal(false)}>
         <div className="p-6">
           <HashLoader
             color={"#73482C"}
@@ -209,17 +291,49 @@ function Banners() {
             data-testid="loader"
           />
           <h3 className="text-xl font-semibold text-gray-900 mb-5">
-            Add a new Banner
+            Edit Banner
           </h3>
           <form
-            onSubmit={handleAddForm}
             action=""
-            className="shadow-[0px_0px_20px_rgba(0,0,0,0.3)]"
+            className="shadow-[0px_0px_20px_rgba(0,0,0,0.3)] mx-auto"
             encType="multipart/formdata"
           >
             <div className="flex flex-col items-center justify-center py-3">
-              <div className="w-[350px] p-2 ">
-                <div className="w-full">
+              <div className="w-[350px] p-2  ">
+                <div className="w-full relative">
+                  <h6
+                    onClick={() => setShowEditImage((prev) => !prev)}
+                    className="text-center text-gray-500"
+                  >
+                    click here to edit image
+                  </h6>
+                  <div className="w-[150px] h-[180px] mx-auto flex flex-col justify-center items-center">
+                    <img
+                      className="shadow-md"
+                      src={
+                        editBannerImage
+                          ? editBannerImage.bannerPhoto
+                          : "../../../public/public-images/image.jpg"
+                      }
+                      alt=""
+                    />
+                  </div>
+                  {showEditImage && (
+                    <div className="absolute top-[50%] left-[45%]">
+                      <label htmlFor="bannerPhoto" className="">
+                        <MdOutlineAddPhotoAlternate color="white" size={30} />
+                      </label>
+                      <input
+                        className="rounded-md hidden"
+                        id="bannerPhoto"
+                        name="bannerPhoto"
+                        type="file"
+                        onChange={handleEditImage}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="w-full mt-3">
                   <label htmlFor="title" className="border rounded-md">
                     Title
                     <input
@@ -227,7 +341,8 @@ function Banners() {
                       id="title"
                       name="title"
                       type="text"
-                      onChange={handleChange}
+                      value={editBanner && editBanner.title}
+                      onChange={handleEditChange}
                     />
                   </label>
                 </div>
@@ -239,22 +354,10 @@ function Banners() {
                       id="description"
                       name="description"
                       type="text"
-                      onChange={handleChange}
+                      value={editBanner && editBanner.description}
+                      onChange={handleEditChange}
                     />
                   </label>
-                </div>
-                <div className="w-full mt-3">
-                  <label
-                    htmlFor="bannerPhoto"
-                    className="border rounded-md"
-                  ></label>
-                  <input
-                    className="w-full rounded-md"
-                    id="bannerPhoto"
-                    name="bannerPhoto"
-                    type="file"
-                    onChange={handleImage}
-                  />
                 </div>
               </div>
 
@@ -268,6 +371,8 @@ function Banners() {
           </form>
         </div>
       </Modal>
+
+      {/*Add new banner */}
       <Modal isVisible={showModal} onClose={() => setshowModal(false)}>
         <div className="p-6">
           <HashLoader

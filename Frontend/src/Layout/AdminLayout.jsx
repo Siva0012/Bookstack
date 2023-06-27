@@ -7,7 +7,7 @@ const AdminLayout = () => {
   return (
     <>
       <Navbar />
-      <div className="flex bg-bg-admin-sidebar w-screen">
+      <div className="flex bg-bg-admin-sidebar py-16 w-screen">
         <div className=" bg-bg-admin-sidebar basis-[18%]">
           <Sidebar />
         </div>

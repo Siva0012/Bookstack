@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Router, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Router, Routes, useNavigate } from "react-router-dom";
 
 //elements
 import Home from "../Pages/Members/Home";
@@ -15,6 +15,19 @@ import PaymentPage from "../Pages/Members/PaymentPage";
 import BookBagPage from "../Pages/Members/BookBagPage";
 
 function UserRoutes() {
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('userJwt')
+      if(!token) {
+        navigate('/login')
+      }
+    }
+    checkToken()
+  } , [navigate])
+
   return (
     
     <Routes>

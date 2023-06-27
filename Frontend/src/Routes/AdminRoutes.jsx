@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Router, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Router, Routes , useNavigate } from "react-router-dom";
 
 //elements
 import AdminLogin from "../Pages/Admin/Login";
@@ -18,8 +18,20 @@ import LenderHistory from "../Pages/Admin/LenderHistory";
 import BannersPage from "../Pages/Admin/BannersPage";
 
 function AdminRoutes() {
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem('adminJwt')
+      if(!token) {
+        navigate('/admin/login')
+      }
+    }
+    checkToken()
+  } , [navigate])
+
   return (
-    <div className="admin-side">
       <Routes>
         <Route path="/login" element={<AdminLogin />} />
         <Route
@@ -39,7 +51,6 @@ function AdminRoutes() {
           </Route>
         </Route>
       </Routes>
-    </div>
   );
 }
 

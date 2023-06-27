@@ -2,7 +2,7 @@ import React from 'react'
 
 
 //components
-import Register from '../../Components/Members/register'
+import Register from '../../Components/Members/Register'
 
 function RegisterPage() {
   return (

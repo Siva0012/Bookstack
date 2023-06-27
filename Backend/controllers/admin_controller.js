@@ -9,6 +9,7 @@ const LenderHistory = require('../models/lender_history')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
+const {adminTokenGenerator} = require('../utils/jwt-generator')
 
 const verifyAdmin = async (req, res, next) => {
     try {
@@ -17,7 +18,7 @@ const verifyAdmin = async (req, res, next) => {
         if (admin) {
             res.status(200).json({ message: "Admin verified", isAdmin: true })
         } else {
-            res.status(401).json({ message: "Failed admin authentication at database" })
+            res.status(401).json({ message: "Failed admin authentication at server" })
         }
     } catch (err) {
         console.log(err);
@@ -30,7 +31,7 @@ const login = async (req, res, next) => {
         const isExist = await Admin.findOne({ email: email })
         if (isExist) {
             if (password === isExist.password) {
-                const token = jwt.sign({ adminId: isExist._id }, process.env.JWT_SECRET)
+                const token = adminTokenGenerator({adminId : isExist._id})
                 res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: isExist })
             } else {
                 res.status(401).json({ message: "Password is not matching", error: "Invalid Password" })
@@ -38,15 +39,6 @@ const login = async (req, res, next) => {
         } else {
             res.status(400).json({ message: "No such admin exists", error: "Invalid Email" })
         }
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-const googleLogin = async (req, res, next) => {
-    try {
-        console.log(req.body);
-        res.status(200).json({ message: "received request here" })
     } catch (err) {
         console.log(err);
     }
@@ -325,17 +317,17 @@ const addBanner = async (req, res, next) => {
     }
 }
 
-const getBanners = async (req , res , next) => {
-    try{
+const getBanners = async (req, res, next) => {
+    try {
         const bannerData = await Banners.find({})
-        if(bannerData) {
-            res.status(200).json({message : "banner data" , bannerData : bannerData})
+        if (bannerData) {
+            res.status(200).json({ message: "banner data", bannerData: bannerData })
         } else {
-            res.status(404).json({error : "Couldn't find banner data"})
+            res.status(404).json({ error: "Couldn't find banner data" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server error"})
+        res.status(500).json({ error: "Internal server error" })
     }
 }
 
@@ -364,43 +356,58 @@ const editBanner = async (req, res, next) => {
     }
 }
 
-const changeBannerStatus = async (req , res , next) => {
-    try{
-        const {bannerId , status} = req.body
+const changeBannerStatus = async (req, res, next) => {
+    try {
+        const { bannerId, status } = req.body
         const udpate = !status
-        const updateResponse = await Banners.findOneAndUpdate({_id : bannerId} , {$set : {active : udpate}})
-        if(updateResponse) {
+        const updateResponse = await Banners.findOneAndUpdate({ _id: bannerId }, { $set: { active: udpate } })
+        if (updateResponse) {
             let message = ''
             status ? message = "Banner disabled" : message = "Banner enabled"
-            res.status(200).json({message : message})
+            res.status(200).json({ message: message })
         } else {
-            res.status(404).json({error : "Couldn't update the status"})
+            res.status(404).json({ error: "Couldn't update the status" })
         }
 
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const bannerImageUpdate = async (req, res, next) => {
+const updateBannerImage = async (req, res, next) => {
     try {
-        console.log("Called image update function");
-        const bannerId = req.params.bannerId
+        const { bannerId} = req.body
+        const bannerPhoto = req.file.path
+        const bannerData = await Banners.findOne({ _id: bannerId })
+        if(bannerData) {
+            const existingPublicId = bannerData.public_id
 
+            //removing image from cloudinary
+            const removeImage = await removeFromCloudinary(existingPublicId)
 
-        //finding the public id
-        const isExists = await Banners.findOne({ _id: bannerId })
-        if (isExists) {
-            const publicId = isExists.publicId
-            const { bannerPhoto } = req.file.path
-            const update = {}
-            if (bannerPhoto) {
-                update.image = bannerPhoto
+            //uploading new image
+            const data = await uploadToCloudinary(bannerPhoto , 'banner-images')
+            if(data) {
+                //update database
+                const bannerImageUpdate = await Banners.findOneAndUpdate(
+                    {
+                        _id : bannerId
+                    },
+                    {
+                        $set : {image : data.url , public_id : data.public_id}
+                    }
+                )
+                if(bannerImageUpdate) {
+                    res.status(200).json({message : "Updated banner image"})
+                } else {
+                    res.status(404).json({error : "Error occured"})
+                }
             }
-        } else {
-
         }
+
+
+        
 
     } catch (err) {
         console.log(err);
@@ -456,5 +463,6 @@ module.exports = {
     getBanners,
     getLenderHistory,
     changeCheckoutStatus,
-    changeBannerStatus
+    changeBannerStatus,
+    updateBannerImage
 }
