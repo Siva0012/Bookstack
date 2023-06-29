@@ -28,7 +28,7 @@ const lenderHistorySchema = new mongoose.Schema({
      },
      status : {
           type : String,
-          enum : ['Pending' , 'Approved' , 'Borrowed' , 'Returned' , 'Expired' , 'Requested Return'],
+          enum : ['Pending' , 'Approved' , 'Borrowed' , 'Returned' , 'Expired'],
           default : 'Pending'
      },
      expiresIn : {
@@ -38,5 +38,19 @@ const lenderHistorySchema = new mongoose.Schema({
           type : String
      }
 })
+
+lenderHistorySchema.methods.calculateFine = function() {
+
+     if(this.status !== 'Expired') {
+          const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+          const dueDate = this.dueDate;
+          const returnDate = this.returnDate || new Date() // Use current date if returnDate is not set
+          const differenceInDays = Math.ceil((returnDate - dueDate) / oneDay);
+          return (differenceInDays * 10 - 10);
+          
+     }
+     return 0
+   };
+
 
 module.exports = mongoose.model('LenderHistory' , lenderHistorySchema )

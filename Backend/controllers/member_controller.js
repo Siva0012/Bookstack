@@ -331,7 +331,6 @@ const createPaymentIntent = async (req, res, next) => {
 
 }
 
-
 const addMembership = async (req, res, next) => {
     try {
         let { memberShipType } = req.body
@@ -466,7 +465,7 @@ const checkoutBooks = async (req, res, next) => {
             const checkoutDate = new Date()
             const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
             const currentTime = new Date();
-            const tenMinutesLater = new Date(currentTime.getTime() + 60 * 1000);
+            const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
             const lenderHistory = new LenderHistory({
                 member: memberId,
                 book: data.book._id,
@@ -526,28 +525,33 @@ const recentBooks = async (req, res, next) => {
     }
 }
 
-const getCheckouts = async (req , res , next) => {
-    try{
+const getCheckouts = async (req, res, next) => {
+    try {
         const memberId = req.memberId
         const checkoutData = await LenderHistory.find(
-            {member : memberId}
+            { member: memberId }
         ).populate('book')
-        if(checkoutData) {
-            res.status(200).json({message : "Checkout history" , checkoutData : checkoutData})
+        // Calculate fine amounts for each lender history
+        checkoutData.forEach(history => {
+            const fineAmount = history.calculateFine();
+            history.fineAmount = fineAmount;
+        });
+        if (checkoutData) {
+            res.status(200).json({ message: "Checkout history", checkoutData: checkoutData })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server error"})
+        res.status(500).json({ error: "Internal server error" })
     }
 }
 
-const checkoutReturn = async (req , res , next) => {
-    try{
+const checkoutReturn = async (req, res, next) => {
+    try {
         const checkoutId = req.body.checkoutId
-        
-    }catch(err) {
+
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 

@@ -419,7 +419,7 @@ const getLenderHistory = async (req, res, next) => {
 
         const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
-            res.status(404).json({ error: "no lender data"})
+            res.status(404).json({ error: "no lender data" })
 
     } catch (err) {
         console.log(err);
@@ -431,6 +431,38 @@ const changeCheckoutStatus = async (req, res, next) => {
     try {
         const lenderId = req.params.lenderId
         const status = req.params.status
+        const lenderData = await LenderHistory.findById(lenderId).populate('book')
+        const bookId = lenderData.book
+
+        if (status === 'Approved') {
+            //After approval, change the duedate for the checkout
+            const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            const udpateDue = await LenderHistory.findOneAndUpdate(
+                { _id: lenderId },
+                {
+                    $set: { dueDate: dueDate }
+                }
+            )
+        }
+        if (status === 'Returned') {
+            //update the available stock of the book
+            const updateStock = await Books.findOneAndUpdate(
+                { _id: bookId },
+                {
+                    $inc: { availableStock: +1 },
+                }
+            )
+            console.log("STOCK UPDATE OF THE BOOK", updateStock);
+            //update the returndate of the checkout 
+            const returnDate = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000)
+            const updateReturnDate = await LenderHistory.findOneAndUpdate(
+                {_id : lenderId},
+                {$set : {returnDate : returnDate}}
+            )
+            console.log("RETURN DATE UPDATE OF CHECKOUT" , updateReturnDate);
+
+        }
+
         const lenderUpdate = await LenderHistory.findOneAndUpdate(
             { _id: lenderId },
             {

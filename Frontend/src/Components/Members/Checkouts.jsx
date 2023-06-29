@@ -9,14 +9,10 @@ function Checkouts() {
     getCheckouts().then((response) => {
       if (response.data) {
         setCheckoutData(response.data.checkoutData);
-        console.log("response", response.data.checkoutData);
+        console.log("responsedata of checkouts", response.data.checkoutData);
       }
     });
   }, []);
-
-  const handleReturn = (checkoutId) => {
-     
-  }
 
   return (
     <div className="container mx-auto px-4 sm:px-8">
@@ -54,10 +50,10 @@ function Checkouts() {
                     <tr key={checkout._id}>
                       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <div className="flex">
-                          <div className="flex-shrink-0 w-10 h-10">
+                          <div className="flex-shrink-0 w-16 h-16">
                             <img
                               className="w-full h-full rounded-full"
-                              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
+                              src={checkout.book.coverPhoto}
                               alt=""
                             />
                           </div>
@@ -90,7 +86,6 @@ function Checkouts() {
                           />
                           <span className="relative">{checkout.status}</span>
                         </span>
-                        {checkout.status === "Borrowed" && <p onClick={() => handleReturn(checkout._id)} className="mt-2 text-center rounded-full border hover:cursor-pointer hover:bg-black hover:text-white">Return</p>}
                       </td>
                       {/* {checkout.status === "Borrowed" ? (
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
