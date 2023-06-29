@@ -337,8 +337,8 @@ const addMembership = async (req, res, next) => {
         let { memberShipType } = req.body
         const memberId = req.memberId
         const membershipId = uuidv4()
-        
-        if(memberShipType === 'upgrade') {
+
+        if (memberShipType === 'upgrade') {
             memberShipType = 'premium'
         }
 
@@ -368,9 +368,9 @@ const addToBookBag = async (req, res, next) => {
     try {
         const memberId = req.memberId
         const bookId = req.params.bookId
-        const memberData = await Members.findOne({ _id: memberId })
-        const bookData = await Books.findOne({ _id: bookId })
-
+        const memberData = await Members.findById(memberId)
+        const bookData = await Books.findById(bookId)
+        //checking member and membership details
         if (!memberData.isMember) {
             return res.status(404).json({ error: "You are not a member" })
         }
@@ -384,21 +384,29 @@ const addToBookBag = async (req, res, next) => {
             }
         }
 
-        //updating book in member schema
-        const updateBookInMember = await Members.findOneAndUpdate(
-            {
-                _id: memberId
-            },
-            {
-                $push: { bookBag: { book: bookId } }
-            },
-        )
-
-        if (updateBookInMember) {
-            res.status(200).json({ message: `Added "${bookData.title}" to book-bag` })
+        //checking whether the book is exist in the bookbag or not
+        const isBookExists = await Members.findOne({ _id: memberId, bookBag: { $elemMatch: { book: bookId } } })
+        if (isBookExists) {
+            res.status(404).json({ error: "Book already in the bag" })
         } else {
-            throw new Error("Failed to update book-bag")
+
+            //updating book in member schema
+            const updateBookInMember = await Members.findOneAndUpdate(
+                {
+                    _id: memberId
+                },
+                {
+                    $push: { bookBag: { book: bookId } }
+                },
+            )
+
+            if (updateBookInMember) {
+                res.status(200).json({ message: `Added "${bookData.title}" to book-bag` })
+            } else {
+                throw new Error("Failed to update book-bag")
+            }
         }
+
 
     } catch (err) {
         console.log(err);
@@ -456,7 +464,9 @@ const checkoutBooks = async (req, res, next) => {
 
             // creating lender history for the book
             const checkoutDate = new Date()
-            const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 1000)
+            const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            const currentTime = new Date();
+            const tenMinutesLater = new Date(currentTime.getTime() + 60 * 1000);
             const lenderHistory = new LenderHistory({
                 member: memberId,
                 book: data.book._id,
@@ -464,7 +474,8 @@ const checkoutBooks = async (req, res, next) => {
                 dueDate: dueDate,
                 returnDate: null,
                 fineAmount: 0,
-                status: 'Borrowed'
+                status: 'Pending',
+                expiresIn: tenMinutesLater
             })
             await lenderHistory.save()
 
@@ -515,6 +526,31 @@ const recentBooks = async (req, res, next) => {
     }
 }
 
+const getCheckouts = async (req , res , next) => {
+    try{
+        const memberId = req.memberId
+        const checkoutData = await LenderHistory.find(
+            {member : memberId}
+        ).populate('book')
+        if(checkoutData) {
+            res.status(200).json({message : "Checkout history" , checkoutData : checkoutData})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server error"})
+    }
+}
+
+const checkoutReturn = async (req , res , next) => {
+    try{
+        const checkoutId = req.body.checkoutId
+        
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -533,5 +569,6 @@ module.exports = {
     removeFromBookBag,
     checkoutBooks,
     getBanners,
-    recentBooks
+    recentBooks,
+    getCheckouts
 }

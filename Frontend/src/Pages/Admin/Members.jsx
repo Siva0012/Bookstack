@@ -9,7 +9,7 @@ import MembersViewTable from "../../Components/Admin/MembersViewTable";
 
 function Members() {
   return (
-    <div className="text-white px-14">
+    <div className="px-14">
       <MembersViewTable />
     </div>
   );

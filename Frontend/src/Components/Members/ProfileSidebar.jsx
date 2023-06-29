@@ -9,7 +9,7 @@ function ProfileSidebar() {
                 <Link to={'/profile'} className='ms-2'>Personal info</Link>
             </div>
             <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
-                <Link className='ms-2'>Checkouts</Link>
+                <Link to={'/checkouts'} className='ms-2'>Checkouts</Link>
             </div>
             <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
                 <Link className='ms-2'>Reserved books</Link>
@@ -18,7 +18,7 @@ function ProfileSidebar() {
                 <Link to={'/membership'} className='ms-2'>Membership</Link>
             </div>
             <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
-                <Link to={'/book-bag'} className='ms-2'>Checkout cart</Link>
+                <Link to={'/book-bag'} className='ms-2'>Book bag</Link>
             </div>
         </div>
     </div>

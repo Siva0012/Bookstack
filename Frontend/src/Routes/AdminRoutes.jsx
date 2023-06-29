@@ -19,18 +19,6 @@ import BannersPage from "../Pages/Admin/BannersPage";
 
 function AdminRoutes() {
 
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('adminJwt')
-      if(!token) {
-        navigate('/admin/login')
-      }
-    }
-    checkToken()
-  } , [navigate])
-
   return (
       <Routes>
         <Route path="/login" element={<AdminLogin />} />

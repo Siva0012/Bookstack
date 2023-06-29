@@ -1,8 +1,20 @@
 import { Outlet } from "react-router-dom";
 import Nav from "../Components/Members/Nav";
 import Footer from "../Components/Members/Footer";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const MemberLayout = () => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const checkToken = () => {
+      const token = localStorage.getItem("userJwt");
+      if (!token) {
+        navigate("/login");
+      }
+    };
+    checkToken();
+  }, [navigate]);
   return (
     <div className="bg-gradient-to-b from-user-from to-user-to min-h-screen">
       <header>

@@ -4,9 +4,7 @@ import { FaBeer } from "react-icons/fa";
 
 function Sidebar() {
   return (
-      <div className='h-screen px-[25px] font-mono'>
-          <div className='px-[20px]'>
-              
+      <div className='font-mono hidden sm:block'>
               <Link to={'/admin'}>
                   <div className=' bg-bg-admin-sidebar-button hover:border-r-8 w-[200px] hover:border px-[15px] py-[10px] flex items-center justify-center  rounded-xl cursor-pointer mb-1'>
                       <p className='text-white text-[16px] leading-[24px] font-mono tracking-wide font-bold cursor-pointer '>Dashboard</p>
@@ -37,8 +35,6 @@ function Sidebar() {
                       <p className='text-white text-[16px] leading-[24px] font-mono tracking-wide font-bold cursor-pointer'><Link to='/admin/banners' >Banners</Link></p>
                   </div>
               </Link>
-              
-          </div>
       </div>
   )
 }

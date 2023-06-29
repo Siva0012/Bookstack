@@ -9,7 +9,7 @@ const LenderHistory = require('../models/lender_history')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
-const {adminTokenGenerator} = require('../utils/jwt-generator')
+const { adminTokenGenerator } = require('../utils/jwt-generator')
 
 const verifyAdmin = async (req, res, next) => {
     try {
@@ -31,7 +31,7 @@ const login = async (req, res, next) => {
         const isExist = await Admin.findOne({ email: email })
         if (isExist) {
             if (password === isExist.password) {
-                const token = adminTokenGenerator({adminId : isExist._id})
+                const token = adminTokenGenerator({ adminId: isExist._id })
                 res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: isExist })
             } else {
                 res.status(401).json({ message: "Password is not matching", error: "Invalid Password" })
@@ -377,37 +377,37 @@ const changeBannerStatus = async (req, res, next) => {
 
 const updateBannerImage = async (req, res, next) => {
     try {
-        const { bannerId} = req.body
+        const { bannerId } = req.body
         const bannerPhoto = req.file.path
         const bannerData = await Banners.findOne({ _id: bannerId })
-        if(bannerData) {
+        if (bannerData) {
             const existingPublicId = bannerData.public_id
 
             //removing image from cloudinary
             const removeImage = await removeFromCloudinary(existingPublicId)
 
             //uploading new image
-            const data = await uploadToCloudinary(bannerPhoto , 'banner-images')
-            if(data) {
+            const data = await uploadToCloudinary(bannerPhoto, 'banner-images')
+            if (data) {
                 //update database
                 const bannerImageUpdate = await Banners.findOneAndUpdate(
                     {
-                        _id : bannerId
+                        _id: bannerId
                     },
                     {
-                        $set : {image : data.url , public_id : data.public_id}
+                        $set: { image: data.url, public_id: data.public_id }
                     }
                 )
-                if(bannerImageUpdate) {
-                    res.status(200).json({message : "Updated banner image"})
+                if (bannerImageUpdate) {
+                    res.status(200).json({ message: "Updated banner image" })
                 } else {
-                    res.status(404).json({error : "Error occured"})
+                    res.status(404).json({ error: "Error occured" })
                 }
             }
         }
 
 
-        
+
 
     } catch (err) {
         console.log(err);
@@ -419,7 +419,7 @@ const getLenderHistory = async (req, res, next) => {
 
         const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
-            res.status(404).json({ error: "no lender data" })
+            res.status(404).json({ error: "no lender data"})
 
     } catch (err) {
         console.log(err);

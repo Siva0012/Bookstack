@@ -16,18 +16,6 @@ import BookBagPage from "../Pages/Members/BookBagPage";
 
 function UserRoutes() {
 
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('userJwt')
-      if(!token) {
-        navigate('/login')
-      }
-    }
-    checkToken()
-  } , [navigate])
-
   return (
     
     <Routes>
@@ -43,11 +31,13 @@ function UserRoutes() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/book-bag" element={<BookBagPage />} />
           <Route path="/upgrade-to-premium" element={<UpgradePage />} />
+          <Route path='/checkouts' element={<CheckoutsPage />} />
         </Route>
       </Route>
     </Routes>
   );
 }
 import UpgradePage from "../Pages/Members/UpgradePage";
+import CheckoutsPage from "../Pages/Members/CheckoutsPage";
 
 export default UserRoutes;

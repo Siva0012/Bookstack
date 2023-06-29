@@ -28,8 +28,11 @@ const lenderHistorySchema = new mongoose.Schema({
      },
      status : {
           type : String,
-          enum : ['Pending' , 'Approved' , 'Borrowed' , 'Returned'],
+          enum : ['Pending' , 'Approved' , 'Borrowed' , 'Returned' , 'Expired' , 'Requested Return'],
           default : 'Pending'
+     },
+     expiresIn : {
+          type : Date,
      },
      remarks : {
           type : String

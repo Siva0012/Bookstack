@@ -17,6 +17,8 @@ const DropdownMenu = ({ status , lenderId , updateStatus }) => {
     filteredStats = stats.slice(3);
   } else if (status === "Returned") {
     filteredStats = ["Returned"];
+  } else if (status === "Expired") {
+    filteredStats = ["Expired"]
   }
 
   const handleStatus = (lenderId , status) => {
