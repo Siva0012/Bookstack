@@ -59,7 +59,15 @@ const memberSchema = new mongoose.Schema({
                 ref: 'Books',
             }
         }
-    ]
+    ],
+    isFinePaid : {
+        type : Boolean,
+        default : true
+    },
+    totalFineAmount : {
+        type : Number,
+        default : 0
+    }
 
 })
 
