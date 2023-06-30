@@ -417,7 +417,10 @@ const updateBannerImage = async (req, res, next) => {
 const getLenderHistory = async (req, res, next) => {
     try {
 
+        // const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
+
         const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
+
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
             res.status(404).json({ error: "no lender data" })
 

@@ -531,11 +531,7 @@ const getCheckouts = async (req, res, next) => {
         const checkoutData = await LenderHistory.find(
             { member: memberId }
         ).populate('book')
-        // Calculate fine amounts for each lender history
-        checkoutData.forEach(history => {
-            const fineAmount = history.calculateFine();
-            history.fineAmount = fineAmount;
-        });
+        
         if (checkoutData) {
             res.status(200).json({ message: "Checkout history", checkoutData: checkoutData })
         }

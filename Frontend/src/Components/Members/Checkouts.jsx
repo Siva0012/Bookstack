@@ -9,7 +9,6 @@ function Checkouts() {
     getCheckouts().then((response) => {
       if (response.data) {
         setCheckoutData(response.data.checkoutData);
-        console.log("responsedata of checkouts", response.data.checkoutData);
       }
     });
   }, []);
@@ -27,19 +26,26 @@ function Checkouts() {
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Book
                   </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Checkout Date
                   </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Due date
                   </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Return date
+                  </th>
+                  <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Status
                   </th>
-                  {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Fine
+                  </th>
+                  
+                  {/* <th className="px-3 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Action
                   </th> */}
                 </tr>
@@ -48,7 +54,7 @@ function Checkouts() {
                 {checkoutData.map((checkout) => {
                   return (
                     <tr key={checkout._id}>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
                         <div className="flex">
                           <div className="flex-shrink-0 w-16 h-16">
                             <img
@@ -67,18 +73,23 @@ function Checkouts() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
                           {moment(checkout.checkoutDate).format("MMM Do YY")}
                         </p>
                       </td>
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
                           {moment(checkout.dueDate).format("MMM Do YY")}
                         </p>
                       </td>
+                      <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {checkout.returnDate ? moment(checkout.returnDate).format("MMM Do YY"): 'Not returned'}
+                        </p>
+                      </td>
 
-                      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
                         <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                           <span
                             aria-hidden
@@ -86,6 +97,11 @@ function Checkouts() {
                           />
                           <span className="relative">{checkout.status}</span>
                         </span>
+                      </td>
+                      <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
+                        <p className={`${checkout.fineAmount ? 'text-red-600 font-bold' : 'text-green-600 font-semibold'} whitespace-no-wrap`}>
+                          {checkout.fineAmount ? checkout.fineAmount : 0}
+                        </p>
                       </td>
                       {/* {checkout.status === "Borrowed" ? (
                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
