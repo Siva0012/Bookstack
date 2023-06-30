@@ -53,7 +53,11 @@ function BookBag() {
               setupdate((prev) => !prev);
             }
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            if (err.response.data.error) {
+              toast.error(err.response.data.error);
+            }
+          });
   };
 
   return (
@@ -66,8 +70,12 @@ function BookBag() {
             OOPS{" "}
             <Typed strings={["....!"]} typeSpeed={120} backSpeed={130} loop />
           </p>
-          <h2 className="text-lg mt-2 font-semibold">There is nothing here :( </h2>
-          <div className="text-2xl tracking-wider font-extrabold text-[#3D550C] mt-4">Start</div>
+          <h2 className="text-lg mt-2 font-semibold">
+            There is nothing here :({" "}
+          </h2>
+          <div className="text-2xl tracking-wider font-extrabold text-[#3D550C] mt-4">
+            Start
+          </div>
         </div>
       )}
       <div>

@@ -25,5 +25,6 @@ member_router.get('/checkout-books' , verifyMemberToken , memberController.check
 member_router.get('/get-banners' , verifyMemberToken , memberController.getBanners)
 member_router.get('/get-recent-books' , verifyMemberToken , memberController.recentBooks)
 member_router.get('/get-checkouts' , verifyMemberToken , memberController.getCheckouts)
+member_router.get('/get-active-checkouts' , verifyMemberToken , memberController.getActiveCheckouts)
 
 module.exports = member_router

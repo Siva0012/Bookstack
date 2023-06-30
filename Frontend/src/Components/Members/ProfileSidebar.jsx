@@ -20,6 +20,9 @@ function ProfileSidebar() {
             <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
                 <Link to={'/book-bag'} className='ms-2'>Book bag</Link>
             </div>
+            <div id='personal-info' className='bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 font-semibold'>
+                <Link to={'/fines'} className='ms-2'>Fine payments</Link>
+            </div>
         </div>
     </div>
   )

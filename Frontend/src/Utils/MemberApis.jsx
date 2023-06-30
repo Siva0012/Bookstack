@@ -76,6 +76,10 @@ const getCheckouts = () => {
     return memberAxiosInstance.get('/get-checkouts')
 }
 
+const getActiveCheckouts = () => {
+    return memberAxiosInstance.get('/get-active-checkouts')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -95,5 +99,6 @@ export {
     checkoutBooks,
     getBanners,
     getRecentBooks,
-    getCheckouts
+    getCheckouts,
+    getActiveCheckouts
 }

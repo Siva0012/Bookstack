@@ -60,7 +60,7 @@ const memberSchema = new mongoose.Schema({
             }
         }
     ],
-    isFinePaid : {
+    hasFinePaid : {
         type : Boolean,
         default : true
     },

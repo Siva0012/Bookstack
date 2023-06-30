@@ -454,41 +454,47 @@ const getBookBag = async (req, res, next) => {
 const checkoutBooks = async (req, res, next) => {
     try {
         const memberId = req.memberId
+        const memberData = await Members.findById(memberId)
+        if (memberData.hasFinePaid) {
 
-        const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
-        bookIds.bookBag.forEach(async (data) => {
+            const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
+            bookIds.bookBag.forEach(async (data) => {
 
-            //updating available stock
-            await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
+                //updating available stock
+                await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
 
-            // creating lender history for the book
-            const checkoutDate = new Date()
-            const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-            const currentTime = new Date();
-            const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
-            const lenderHistory = new LenderHistory({
-                member: memberId,
-                book: data.book._id,
-                checkoutDate: checkoutDate,
-                dueDate: dueDate,
-                returnDate: null,
-                fineAmount: 0,
-                status: 'Pending',
-                expiresIn: tenMinutesLater
+                // creating lender history for the book
+                const checkoutDate = new Date()
+                const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+                const currentTime = new Date();
+                const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
+                const lenderHistory = new LenderHistory({
+                    member: memberId,
+                    book: data.book._id,
+                    checkoutDate: checkoutDate,
+                    dueDate: dueDate,
+                    returnDate: null,
+                    fineAmount: 0,
+                    status: 'Pending',
+                    expiresIn: tenMinutesLater
+                })
+                await lenderHistory.save()
+
+                //removing books from book-bag
+                await Members.findOneAndUpdate(
+                    {
+                        _id: memberId
+                    },
+                    {
+                        $pull: { bookBag: { book: data.book._id } }
+                    }
+                )
             })
-            await lenderHistory.save()
+            res.status(200).json({ message: "Checkout successfull" })
 
-            //removing books from book-bag
-            await Members.findOneAndUpdate(
-                {
-                    _id: memberId
-                },
-                {
-                    $pull: { bookBag: { book: data.book._id } }
-                }
-            )
-        })
-        res.status(200).json({ message: "Checkout successfull" })
+        } else {
+            res.status(404).json({ error: "You have pending fines to pay..!!" })
+        }
 
     } catch (err) {
         res.status(500).json({ error: err.message })
@@ -531,7 +537,7 @@ const getCheckouts = async (req, res, next) => {
         const checkoutData = await LenderHistory.find(
             { member: memberId }
         ).populate('book')
-        
+
         if (checkoutData) {
             res.status(200).json({ message: "Checkout history", checkoutData: checkoutData })
         }
@@ -544,6 +550,28 @@ const getCheckouts = async (req, res, next) => {
 const checkoutReturn = async (req, res, next) => {
     try {
         const checkoutId = req.body.checkoutId
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const getActiveCheckouts = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const activeCheckouts = await LenderHistory.find(
+            {
+                member: memberId,
+                status: 'Borrowed'
+            }
+        ).populate('book')
+        if (activeCheckouts) {
+            console.log("this is active checkouts on server", activeCheckouts);
+            res.status(200).json({ message: "Active checkout data", activeCheckouts: activeCheckouts })
+        } else {
+            res.status(404).json({error : "No active checkouts"})
+        }
 
     } catch (err) {
         console.log(err);
@@ -570,5 +598,6 @@ module.exports = {
     checkoutBooks,
     getBanners,
     recentBooks,
-    getCheckouts
+    getCheckouts,
+    getActiveCheckouts
 }

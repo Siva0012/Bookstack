@@ -27,11 +27,11 @@ const updateFines = async () => {
                //seting fine status for members inside the set
                if (memberWithFine.size) {
                     for (const memberId of memberWithFine) {
-                         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isFinePaid: false } })
+                         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { hasFinePaid: false } })
                     }
                } else {
                     //setting default value true for those who don't have any fine.
-                    const membersUpdate = await Members.updateMany({ isFinePaid: true })
+                    const membersUpdate = await Members.updateMany({ hasFinePaid: true })
                }
 
                //cumulative fine for the member
