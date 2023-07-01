@@ -10,6 +10,10 @@ const bookSchema = new mongoose.Schema(
             type : Boolean,
             default : true
         },
+        listed : {
+            type : Boolean,
+            default : true
+        },
         author : {
             type : String,
             required : true
@@ -49,9 +53,32 @@ const bookSchema = new mongoose.Schema(
         dateAdded : {
             type : Date,
             default : Date.now()
+        },
+        availableStock : {
+            type : Number,
+            required : true,
+            validate : {
+                validator : function (value) {
+                    return value <= this.stock
+                },
+                message : "Available stock cannot be greater than total stock"
+            },
+            default : function () {
+                return this.stock
+            }
         }
 
     }
 )
+
+// bookSchema.pre('findOneAndUpdate' , function(next) {
+//     const availableStock = this.getUpdate().$set.availableStock
+//     if(availableStock <= 0) {
+//         this.updateMany({} , {$set : {isAvailable : false}})
+//     } else {
+//         this.updateMany({} , {$set : {isAvailable : true}})
+//     }
+//     next()
+// })
 
 module.exports = mongoose.model("Books" , bookSchema)

@@ -18,5 +18,15 @@ member_router.post('/update-profile-picture' , verifyMemberToken , upload.single
 member_router.post('/update-profile-fields' , verifyMemberToken , memberController.updateProfileFields)
 member_router.post('/create-payment-intent' ,  verifyMemberToken ,memberController.createPaymentIntent)
 member_router.post('/add-membership' , verifyMemberToken , memberController.addMembership)
+member_router.get('/add-to-book-bag/:bookId' , verifyMemberToken , memberController.addToBookBag)
+member_router.get('/get-book-bag' , verifyMemberToken , memberController.getBookBag)
+member_router.get('/remove-from-book-bag/:bookId' , verifyMemberToken , memberController.removeFromBookBag)
+member_router.get('/checkout-books' , verifyMemberToken , memberController.checkoutBooks)
+member_router.get('/get-banners' , verifyMemberToken , memberController.getBanners)
+member_router.get('/get-recent-books' , verifyMemberToken , memberController.recentBooks)
+member_router.get('/get-checkouts' , verifyMemberToken , memberController.getCheckouts)
+member_router.get('/get-active-checkouts' , verifyMemberToken , memberController.getActiveCheckouts)
+member_router.get('/create-fine-payment-intent' , verifyMemberToken , memberController.createFinePaymentIntent)
+member_router.post('/pay-fine' , verifyMemberToken , memberController.changeFineStatus)
 
 module.exports = member_router

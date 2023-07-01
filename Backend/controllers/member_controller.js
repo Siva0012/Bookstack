@@ -1,13 +1,15 @@
 const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
+const LenderHistory = require('../models/lender_history')
+const Banners = require('../models/banner_model')
 require('dotenv').config()
 
 //bcrypt
 const bcrypt = require('bcrypt')
 
 //generate token
-const { tokenGenerator } = require('../utils/jwt-generator')
+const { uesrTokenGenerator } = require('../utils/jwt-generator')
 
 //uuid
 const { v4: uuidv4 } = require('uuid');
@@ -15,6 +17,7 @@ const { v4: uuidv4 } = require('uuid');
 //cloudinary
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
+const { default: mongoose } = require('mongoose')
 
 //member apis
 const verifyMember = async (req, res, next) => {
@@ -46,7 +49,7 @@ const register = async (req, res, next) => {
             })
         } else {
             const encryptedPassword = await bcrypt.hash(password, 10)
-            const dateOfJoin = Date.now()
+            const dateOfJoin = new Date()
             const members = new Members({
                 name: name,
                 email: email,
@@ -62,8 +65,8 @@ const register = async (req, res, next) => {
                             email: response.email,
                             date: response.dateOfJoin
                         }
-                        const token = tokenGenerator(payLoad)
-                        res.status(200).json({ message: "created user", token: token })
+                        const token = uesrTokenGenerator(payLoad)
+                        res.status(200).json({ message: "created user", token: token, member: name })
                     }
                 })
 
@@ -85,9 +88,9 @@ const login = async (req, res, next) => {
                 const payLoad = {
                     memberId: memberExists._id,
                     email: memberExists.email,
-                    data: memberExists.dateOfJoin
+                    date: memberExists.dateOfJoin
                 }
-                const token = tokenGenerator(payLoad)
+                const token = uesrTokenGenerator(payLoad)
                 // const userData = {
                 //     memberId: memberExists._id,
                 //     name: memberExists.name,
@@ -95,7 +98,7 @@ const login = async (req, res, next) => {
                 //     date: memberExists.dateOfJoin,
 
                 // }
-                const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
+                const userData = await Members.findOne({ _id: memberExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
                 res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, member: userData })
             } else {
                 res.status(401).json({ message: "Password doesn't match", error: "Invalid password" })
@@ -120,9 +123,9 @@ const googleLogin = async (req, res, next) => {
                 name: isExists.name,
                 date: isExists.dateOfJoin
             }
-            const token = tokenGenerator(payLoad)
-            const userData = await Members.findOne({_id : memberExists._id} , {password : 0 , publicId : 0 , phone : 0 , email : 0 , address : 0})
-            res.status(200).json({ message: `Signed in as ${isExists.name}`, member : userData, token: token })
+            const token = uesrTokenGenerator(payLoad)
+            const userData = await Members.findOne({ _id: isExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
+            res.status(200).json({ message: `Signed in as ${isExists.name}`, member: userData, token: token })
         } else {
             const password = await bcrypt.hash(id, 10)
             const member = new Members(
@@ -169,7 +172,7 @@ const getCategories = async (req, res, next) => {
 
 const getBooks = async (req, res, next) => {
     try {
-        const bookData = await Books.find({ isAvailable: true })
+        const bookData = await Books.find({ isListed: true })
         if (bookData) {
             res.status(200).json({ message: "recieved books", bookData: bookData })
         } else {
@@ -183,7 +186,7 @@ const getBooks = async (req, res, next) => {
 const getBooksByCat = async (req, res, next) => {
     try {
         const catId = req.params.catId
-        const bookData = await Books.find({ $and: [{ category: catId }, { isAvailable: true }] }).populate('category')
+        const bookData = await Books.find({ $and: [{ category: catId }, { listed: true }] }).populate('category')
         if (bookData) {
             res.status(200).json({ message: "recieved books by category", bookData: bookData })
         } else {
@@ -299,27 +302,26 @@ const updateProfileFields = async (req, res, next) => {
 const createPaymentIntent = async (req, res, next) => {
 
     try {
-        const {memberShipType} = req.body
-        console.log("called function" , memberShipType);
-
-        const calculatePrice = (memberShipType) => {
-            if(memberShipType === 'student') {
+        const { membershipType } = req.body
+        const calculatePrice = (membershipType) => {
+            if (membershipType === 'student') {
                 return 999 * 100
-            } else if (memberShipType === 'premium') {
+            } else if (membershipType === 'premium') {
                 return 1399 * 100
+            } else if (membershipType === 'upgrade') {
+                return 400 * 100
             }
         }
 
         const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
         // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: calculatePrice(memberShipType),
+            amount: calculatePrice(membershipType),
             currency: "inr",
             automatic_payment_methods: {
                 enabled: true,
             },
         });
-        console.log(paymentIntent , "payment INtente ttTTTt");
         res.send({
             clientSecret: paymentIntent.client_secret
         })
@@ -327,36 +329,317 @@ const createPaymentIntent = async (req, res, next) => {
         console.log(err);
     }
 
-
 }
 
-const addMembership = async (req , res , next) => {
-    try{
-        const {memberShipType} = req.body
+const addMembership = async (req, res, next) => {
+    try {
+        let { memberShipType } = req.body
         const memberId = req.memberId
         const membershipId = uuidv4()
 
+        if (memberShipType === 'upgrade') {
+            memberShipType = 'premium'
+        }
+
         const currentDate = new Date()
         const memberSince = currentDate
-        const memberUpto = new Date(currentDate.getFullYear() + 1 , currentDate.getMonth() , currentDate.getDate())
+        const memberUpto = new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), currentDate.getDate())
         const update = {
-            isMember : true,
-            membershipType : memberShipType,
-            membershipId : membershipId,
-            memberSince : memberSince,
-            memberUpto : memberUpto
+            isMember: true,
+            membershipType: memberShipType,
+            membershipId: membershipId,
+            memberSince: memberSince,
+            memberUpto: memberUpto
         }
-        const updateResponse = await Members.updateOne({_id : memberId} , update)
-        if(updateResponse) {
-            res.status(200).json({message : "updated membership"})
+        const updateResponse = await Members.updateOne({ _id: memberId }, update)
+        if (updateResponse) {
+            res.status(200).json({ message: "Updated membership" })
         } else {
-            res.status(404).json({error : "failed to udpate the membership"})
+            res.status(404).json({ error: "Failed to udpate the membership" })
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
 
+const createFinePaymentIntent = async (req, res, next) => {
+    try {
+        console.log("called payfines");
+        const memberId = req.memberId
+        const memberData = await Members.findById(memberId)
+        const fineAmount = memberData.totalFineAmount * 100
+        const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: fineAmount,
+            currency: "inr",
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+        // res.send({
+        //     clientSecret: paymentIntent.client_secret
+        // })
+        res.status(200).json({ message: "Payment successfull", clientSecret: paymentIntent.client_secret, fineAmount: fineAmount })
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: "Internal server errro" })
+    }
+}
+
+const changeFineStatus = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+
+        //change the total fine amount of the member to zero
+        const memberData = await Members.findById(memberId)
+        const fineAmount = memberData.totalFineAmount
+        memberData.totalFineAmount = 0
+
+        //changing has fine paid for checkouts having fines
+        const activeCheckouts = await LenderHistory.find(
+            {
+                member: memberId,
+                $and: [{ fineAmount: { $gt: 0 } }, { status: 'Borrowed' }, { hasFinePaid: false }]
+            }
+        )
+        activeCheckouts.forEach(async (checkout) => {
+            const fineAmount = checkout.calculateFine()
+            checkout.fineAmount = fineAmount
+            checkout.hasFinePaid = true
+            await checkout.save()
+        })
+        await memberData.save()
+            .then((response) => {
+                if (response) {
+                    res.status(200).json({ message: `Payed an amount of ${fineAmount}` })
+                } else {
+                    res.status(404).json({ error: "Couldn't update status" })
+                }
+            })
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const addToBookBag = async (req, res, next) => {
+
+    try {
+        const memberId = req.memberId
+        const bookId = req.params.bookId
+        const memberData = await Members.findById(memberId)
+        const bookData = await Books.findById(bookId)
+        //checking member and membership details
+        if (!memberData.isMember) {
+            return res.status(404).json({ error: "You are not a member" })
+        }
+        if (memberData.membershipType === 'student') {
+            if (memberData.bookBag.length >= 3) {
+                return res.status(404).json({ error: "Your book-bag is full" })
+            }
+        } else if (memberData.membershipType === 'premium') {
+            if (memberData.bookBag.length >= 5) {
+                return res.status(404).json({ error: "Your book-bag is full" })
+            }
+        }
+
+        //checking whether the book is exist in the bookbag or not
+        const isBookExists = await Members.findOne({ _id: memberId, bookBag: { $elemMatch: { book: bookId } } })
+        if (isBookExists) {
+            res.status(404).json({ error: "Book already in the bag" })
+        } else {
+
+            //updating book in member schema
+            const updateBookInMember = await Members.findOneAndUpdate(
+                {
+                    _id: memberId
+                },
+                {
+                    $push: { bookBag: { book: bookId } }
+                },
+            )
+
+            if (updateBookInMember) {
+                res.status(200).json({ message: `Added "${bookData.title}" to book-bag` })
+            } else {
+                throw new Error("Failed to update book-bag")
+            }
+        }
+
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err })
+    }
+}
+
+const removeFromBookBag = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const bookId = req.params.bookId
+        const bookData = await Books.findOne({ _id: bookId })
+        const updateBookBag = await Members.findOneAndUpdate(
+            {
+                _id: memberId
+            },
+            {
+                $pull: { bookBag: { book: bookId } }
+            }
+        )
+        if (updateBookBag) {
+            res.status(200).json({ message: `Removed "${bookData.title}" from book bag` })
+        } else {
+            res.status(404).json({ error: "Couldn't update bookbag" })
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const getBookBag = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const memberData = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-password')
+        if (memberData) {
+            res.status(200).json({ message: "Populated book-bag", memberData: memberData })
+        } else {
+            res.status(404).json({ error: "Couldn't find the member" })
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+const checkoutBooks = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const memberData = await Members.findById(memberId)
+        if (memberData.hasFinePaid) {
+            const existingCheckouts = await LenderHistory.find(
+                {
+                    member: memberId,
+                    $or : [{status : 'Pending'} , {status : 'Approved'} , {status : 'Borrowed'}]
+                }
+            )
+            if (existingCheckouts.length >= 3) {
+                return res.status(404).json({ error: "You have already reached you checkout limits !!" })
+            } else {
+
+                const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
+                bookIds.bookBag.forEach(async (data) => {
+
+                    //updating available stock
+                    await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
+
+                    // creating lender history for the book
+                    const checkoutDate = new Date()
+                    const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+                    const currentTime = new Date();
+                    const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
+                    const lenderHistory = new LenderHistory({
+                        member: memberId,
+                        book: data.book._id,
+                        checkoutDate: checkoutDate,
+                        dueDate: dueDate,
+                        returnDate: null,
+                        fineAmount: 0,
+                        status: 'Pending',
+                        expiresIn: tenMinutesLater
+                    })
+                    await lenderHistory.save()
+
+                    //removing books from book-bag
+                    await Members.findOneAndUpdate(
+                        {
+                            _id: memberId
+                        },
+                        {
+                            $pull: { bookBag: { book: data.book._id } }
+                        }
+                    )
+                })
+                res.status(200).json({ message: "Checkout successfull" })
+            }
+
+        } else {
+            res.status(404).json({ error: "You have pending fines to pay..!!" })
+        }
+
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
+
+const getBanners = async (req, res, next) => {
+    try {
+        const bannerData = await Banners.find({ active: true })
+        if (bannerData) {
+            res.status(200).json({ message: "Sending banner data", bannerData: bannerData })
+        } else {
+            res.status(404).json({ error: "Couldn't fetch banner data" })
+        }
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: "Internal sever error" })
+    }
+}
+
+const recentBooks = async (req, res, next) => {
+    try {
+        const bookData = await Books.find()
+            .populate('category')
+            .sort({ dateAdded: -1 })
+            .limit(6)
+        if (bookData) {
+            res.status(200).json({ message: "Last added 5 books", recentBooks: bookData })
+        } else {
+            res.status(404).json({ error: "Couldn't find books" })
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Internal server error" })
+    }
+}
+
+const getCheckouts = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const checkoutData = await LenderHistory.find(
+            { member: memberId }
+        ).populate('book')
+
+        if (checkoutData) {
+            res.status(200).json({ message: "Checkout history", checkoutData: checkoutData })
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server error" })
+    }
+}
+
+const getActiveCheckouts = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const activeCheckouts = await LenderHistory.find(
+            {
+                member: memberId,
+                $and: [{ fineAmount: { $gt: 0 } }, { hasFinePaid: false }]
+
+            }
+        ).populate('book').populate('member').select('-password')
+        if (activeCheckouts) {
+            res.status(200).json({ message: "Active checkout data", activeCheckouts: activeCheckouts })
+        } else {
+            res.status(404).json({ error: "No active checkouts" })
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
 
 module.exports = {
     register,
@@ -370,5 +653,15 @@ module.exports = {
     updateImage,
     updateProfileFields,
     createPaymentIntent,
-    addMembership
+    addMembership,
+    addToBookBag,
+    getBookBag,
+    removeFromBookBag,
+    checkoutBooks,
+    getBanners,
+    recentBooks,
+    getCheckouts,
+    getActiveCheckouts,
+    createFinePaymentIntent,
+    changeFineStatus
 }

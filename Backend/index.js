@@ -2,9 +2,15 @@ const express = require('express')
 const cors = require('cors')
 const {connectToDatabase} = require('./config/mongoose')
 const app = express()
+const {updateExpiredCheckoutStatus} = require('./utils/checkout_status_updator')
+const {udpateFine, updateFines} = require('./utils/fine_updator')
 
 //connect to database
 connectToDatabase()
+
+//update functions
+updateFines()
+updateExpiredCheckoutStatus()
 
 //routes
 const member_router = require('./routes/member_routes.js')

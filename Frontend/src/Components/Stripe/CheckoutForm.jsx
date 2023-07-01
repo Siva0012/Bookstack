@@ -15,8 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../../App.css";
 
 //Member APIs
-import {addMemberShip} from '../../Utils/MemberApis'
-
+import { addMemberShip } from "../../Utils/MemberApis";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
@@ -26,7 +25,7 @@ export default function CheckoutForm() {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const memberShipType = useSelector(state => state.memberShipType.value)
+  const memberShipType = useSelector((state) => state.memberShipType.value);
 
   useEffect(() => {
     if (!stripe) {
@@ -80,7 +79,7 @@ export default function CheckoutForm() {
       setMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       toast.success(`Payment status : ${paymentIntent.status}`);
-      addMemberShip({memberShipType : memberShipType})
+      addMemberShip({ memberShipType: memberShipType });
       navigate("/membership");
     } else {
       setMessage("Unexpected error");

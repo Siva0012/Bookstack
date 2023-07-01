@@ -22,7 +22,6 @@ function BooksTable() {
   const booksData = async () => {
     getBooks().then((response) => {
       if (response.data.books) {
-        console.log("books data in effect", response.data.books);
         setBooks(response.data.books);
       }
     });
@@ -34,7 +33,6 @@ function BooksTable() {
 
   const handleRemove = (id, data) => {
     listOrUnlist(id, data).then((response) => {
-      console.log(response.data);
       toast.warn(response.data.message, { autoClose: 2000, theme: "dark" });
       setUpdateTable(!updateTable);
     });
@@ -77,6 +75,9 @@ function BooksTable() {
                 Stock
               </th>
               <th scope="col" className="px-6 py-3">
+                Available books
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Actions
               </th>
             </tr>
@@ -105,6 +106,7 @@ function BooksTable() {
                       </td>
                       <td className="px-6 py-4">{book.edition}</td>
                       <td className="px-6 py-4">{book.stock}</td>
+                      <td className="px-6 py-4">{book.availableStock}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-between">
                           <button
@@ -113,10 +115,10 @@ function BooksTable() {
                           >
                             View
                           </button>
-                          {book.isAvailable ? (
+                          {book.listed ? (
                             <button
                               onClick={() =>
-                                handleRemove(book._id, book.isAvailable)
+                                handleRemove(book._id, book.listed)
                               }
                               className="bg-yellow-500 w-[75px] ms-8 text-white px-2 py-1 rounded-md hover:text-yellow-500 hover:drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]  hover:bg-white"
                             >
@@ -125,7 +127,7 @@ function BooksTable() {
                           ) : (
                             <button
                               onClick={() =>
-                                handleRemove(book._id, book.isAvailable)
+                                handleRemove(book._id, book.listed)
                               }
                               className="bg-yellow-500 w-[75px] ms-8 text-white px-2 py-1 rounded-md hover:text-yellow-500 hover:drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]  hover:bg-white"
                             >

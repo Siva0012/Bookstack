@@ -7,20 +7,6 @@ const upload = require('../middlewares/multer')
 const { uploadCloudinary, removeFromCloudinary } = require('../config/cloudinary')
 
 
-// const storage = multer.diskStorage(
-//     {
-//         destination : (req , file , cb) => {
-//             cb(null , path.join(__dirname , '../../Backend/public/images/'))
-//         },
-//         filename : (req , file , cb) => {
-//             // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//             const uniqueSuffix = Date.now()
-//             cb(null , uniqueSuffix + '-' + file.originalname)
-//         }
-
-//     }
-// )
-// const upload = multer({storage : storage})
 
 admin_router.get('/is-auth', verifyAdminToken, adminController.verifyAdmin)
 admin_router.post('/login', adminController.login)
@@ -36,8 +22,13 @@ admin_router.get('/categories', verifyAdminToken, adminController.getCategories)
 admin_router.get('/books', verifyAdminToken, adminController.getBooks)
 admin_router.get('/single-book/:bookId', verifyAdminToken, adminController.getSingleBook)
 admin_router.post('/update-book/:bookId', verifyAdminToken, upload.single('coverPhoto'), adminController.updateBook)
-admin_router.get('/remove-book/:bookId/:isAvailable', verifyAdminToken, adminController.removeBook)
+admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminController.removeBook)
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)
+admin_router.get('/lender-history' , verifyAdminToken, adminController.getLenderHistory)
+admin_router.get('/change-checkout-status/:lenderId/:status' , verifyAdminToken , adminController.changeCheckoutStatus)
+admin_router.get('/get-banners' , verifyAdminToken , adminController.getBanners)
+admin_router.post('/change-banner-status' , verifyAdminToken , adminController.changeBannerStatus)
+admin_router.post('/update-banner-image' , verifyAdminToken , upload.single('bannerPhoto') , adminController.updateBannerImage)
 
 
 module.exports = admin_router

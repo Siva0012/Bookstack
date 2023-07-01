@@ -12,10 +12,14 @@ function Membership() {
   const [memberData, setMemberData] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleClick = (memberShipType) => {
-    dispatch(updateMembershipType(memberShipType));
+  const handleClick = (membershipType) => {
+    dispatch(updateMembershipType(membershipType));
     navigate("/payment");
   };
+  const handleUpgrade = (membershipType) => {
+    dispatch(updateMembershipType(membershipType))
+    navigate('/upgrade-to-premium')
+  }
 
   useEffect(() => {
     getMember().then((response) => {
@@ -32,7 +36,7 @@ function Membership() {
     <div className="w-[600px] h-[420px] p-3  ">
       {memberData.isMember ? (
         <div>
-          <h1 className="text-green-700 shadow-[0px_0px_10px_rgba(0,0,0,0.12)] py-4 text-center">
+          <h1 className="text-green-700 tracking-wide rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.12)] py-4 text-center">
             Hi{" "}
             <span className="font-semibold tracking-wide">
               {memberData.name}
@@ -64,9 +68,11 @@ function Membership() {
               </div>
             </div>
             {memberData.membershipType === "student" ? (
-                <div className="flex flex-col w-[250px] mt-3 mb-2 mx-auto shadow-[0px_0px_10px_rgba(0,0,0,0.12)] p-4">
+                <div className="flex flex-col w-[250px] bg-[#EBEAE5] rounded-md mt-3 mb-2 mx-auto shadow-[0px_5px_10px_rgba(0,0,0,0.15)] p-4">
                   <div className="">
-                    <div className="bg-green-600 w-fit px-2 py-1 text-center text-white rounded-md inline">
+                    <div
+                    onClick={() => handleUpgrade('upgrade')}
+                     className="bg-green-600 w-fit px-2 py-1 text-center hover:cursor-pointer text-white rounded-md inline">
                       Upgrade
                     </div>{" "}
                     <span>to our</span>{" "}

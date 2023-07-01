@@ -66,7 +66,7 @@ export default function Login() {
         }
       )
       .then((res) => {
-        console.log('userdata' , res);
+        console.log("google user dat" , res.data);
         setUser(res.data);
       })
       .catch((err) => console.log(err));

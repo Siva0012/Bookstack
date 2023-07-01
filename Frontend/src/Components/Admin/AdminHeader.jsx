@@ -20,7 +20,7 @@ function AdminHeader() {
     } , [])
 
   return (
-    <div className='px-14 py-14 flex justify-between align-middle text-white'>
+    <div className='sm:px-14 flex justify-between sm:justify-between align-middle text-white'>
         <div className=''>
             <div>
                 <h1 className='font-mono text-2xl'>Admin name</h1>

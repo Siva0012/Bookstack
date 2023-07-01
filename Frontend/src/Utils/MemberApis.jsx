@@ -48,6 +48,46 @@ const addMemberShip = (memberShipType) => {
     return memberAxiosInstance.post('/add-membership' , memberShipType)
 }
 
+const addToBookBag = (bookId) => {
+    return memberAxiosInstance.get(`/add-to-book-bag/${bookId}`)
+}
+
+const getBookBag = () => {
+    return memberAxiosInstance.get('/get-book-bag')
+}
+
+const removeFromBookBag = (bookId) => {
+    return memberAxiosInstance.get(`/remove-from-book-bag/${bookId}`)
+}
+
+const checkoutBooks = () => {
+    return memberAxiosInstance.get('/checkout-books')
+}
+
+const getBanners = () => {
+    return memberAxiosInstance.get('/get-banners')
+}
+
+const getRecentBooks = () => {
+    return memberAxiosInstance.get('/get-recent-books')
+}
+
+const getCheckouts = () => {
+    return memberAxiosInstance.get('/get-checkouts')
+}
+
+const getActiveCheckouts = () => {
+    return memberAxiosInstance.get('/get-active-checkouts')
+}
+
+const createFinePaymentIntent = () => {
+    return memberAxiosInstance.get('/create-fine-payment-intent')
+}
+
+const payFine = () => {
+    return memberAxiosInstance.post('/pay-fine')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -60,5 +100,15 @@ export {
     updateImage,
     updateProfileFields,
     createPaymentIntent,
-    addMemberShip
+    addMemberShip,
+    addToBookBag,
+    getBookBag,
+    removeFromBookBag,
+    checkoutBooks,
+    getBanners,
+    getRecentBooks,
+    getCheckouts,
+    getActiveCheckouts,
+    createFinePaymentIntent,
+    payFine
 }

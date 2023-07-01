@@ -5,9 +5,12 @@ import { useState } from 'react'
 
 //user APIs
 import {memberRegister} from '../../Utils/MemberApis'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export default function Register() {
 
+  const navigate = useNavigate()
   const [formData , setFormData] = useState({
     name : '',
     phone : '',
@@ -24,14 +27,14 @@ export default function Register() {
   }
   
   const handleSubmit = async (e) =>{
-    console.log("handle submit");
     e.preventDefault()
     try{
-      console.log("posting form");
       memberRegister(formData)
       .then((res) =>{
-        console.log(res.data)
         localStorage.setItem('userJwt' ,  res.data.token)
+        navigate('/')
+        toast.success(`Signed in as "${res.data.member}"`)
+        
       })
       .catch((err => console.log('error catching' , err)))
     }catch(err) {
@@ -44,13 +47,8 @@ export default function Register() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
+            Register your account
           </h2>
         </div>
 

@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Router, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Router, Routes , useNavigate } from "react-router-dom";
 
 //elements
 import AdminLogin from "../Pages/Admin/Login";
@@ -14,24 +14,31 @@ import SingleBookPage from "../Pages/Admin/SingleBookPage";
 
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import AdminLayout from "../Layout/AdminLayout";
+import LenderHistory from "../Pages/Admin/LenderHistory";
+import BannersPage from "../Pages/Admin/BannersPage";
 
 function AdminRoutes() {
+
   return (
-    <Routes>
-      <Route path="/login" element={<AdminLogin />} />
-      <Route element={<ProtectedRoutes role={"admin"} route={"/admin/login"} />}>
-        <Route element={<AdminLayout />}>
-          <Route path="/" element={<AdminHome />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/view-member/:memberId" element={<ViewMember />} />
-          <Route path="/add-book" element={<AddBook />} />
-          <Route path="/books" element={<AdminBooks />} />
-          <Route path="/categories" element={<AdminCategories />} />
-          <Route path="/add-category" element={<AddCategoryPage />} />
-          <Route path="/view-book/:bookId" element={<SingleBookPage />} />
+      <Routes>
+        <Route path="/login" element={<AdminLogin />} />
+        <Route
+          element={<ProtectedRoutes role={"admin"} route={"/admin/login"} />}
+        >
+          <Route element={<AdminLayout />}>
+            <Route path="/" element={<AdminHome />} />
+            <Route path="/members" element={<MembersPage />} />
+            <Route path="/view-member/:memberId" element={<ViewMember />} />
+            <Route path="/add-book" element={<AddBook />} />
+            <Route path="/books" element={<AdminBooks />} />
+            <Route path="/categories" element={<AdminCategories />} />
+            <Route path="/add-category" element={<AddCategoryPage />} />
+            <Route path="/view-book/:bookId" element={<SingleBookPage />} />
+            <Route path="/lender-history" element={<LenderHistory />} />
+            <Route path="/banners" element={<BannersPage />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
   );
 }
 

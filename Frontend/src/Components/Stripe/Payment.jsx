@@ -17,7 +17,7 @@ export default function Payment() {
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    createPaymentIntent({ memberShipType: memberShipData })
+    createPaymentIntent({ membershipType: memberShipData })
       .then((res) => {
         setClientSecret(res.data.clientSecret);
       })

@@ -49,6 +49,30 @@ const listOrUnlist = (id , data) => {
     return adminAxiosInstance.get(`/remove-book/${id}/${data}`)
 }
 
+const getLenderHistory = () => {
+    return adminAxiosInstance.get('/lender-history')
+}
+
+const changeCheckoutStatus = (lenderId , status) => {
+    return adminAxiosInstance.get(`/change-checkout-status/${lenderId}/${status}`)
+}
+
+const addBanner = (data) => {
+    return adminAxiosInstance.post('/add-banner' , data)
+}
+
+const getBanners = () => {
+    return adminAxiosInstance.get('/get-banners')
+}
+
+const changeBannerStatus = (data) => {
+    return adminAxiosInstance.post('/change-banner-status' , data)
+}
+
+const updateBannerImage = (data) => {
+    return adminAxiosInstance.post('/update-banner-image' , data)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -61,5 +85,11 @@ export {
     getBooks,
     getSingleBook,
     updateBook,
-    listOrUnlist
+    listOrUnlist,
+    getLenderHistory,
+    changeCheckoutStatus,
+    addBanner,
+    getBanners,
+    changeBannerStatus,
+    updateBannerImage
 }

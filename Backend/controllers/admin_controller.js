@@ -5,9 +5,11 @@ const Members = require('../models/member_model')
 const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const Banners = require('../models/banner_model')
+const LenderHistory = require('../models/lender_history')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
+const { adminTokenGenerator } = require('../utils/jwt-generator')
 
 const verifyAdmin = async (req, res, next) => {
     try {
@@ -16,7 +18,7 @@ const verifyAdmin = async (req, res, next) => {
         if (admin) {
             res.status(200).json({ message: "Admin verified", isAdmin: true })
         } else {
-            res.status(401).json({ message: "Failed admin authentication at database" })
+            res.status(401).json({ message: "Failed admin authentication at server" })
         }
     } catch (err) {
         console.log(err);
@@ -29,7 +31,7 @@ const login = async (req, res, next) => {
         const isExist = await Admin.findOne({ email: email })
         if (isExist) {
             if (password === isExist.password) {
-                const token = jwt.sign({ adminId: isExist._id }, process.env.JWT_SECRET)
+                const token = adminTokenGenerator({ adminId: isExist._id })
                 res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: isExist })
             } else {
                 res.status(401).json({ message: "Password is not matching", error: "Invalid Password" })
@@ -37,15 +39,6 @@ const login = async (req, res, next) => {
         } else {
             res.status(400).json({ message: "No such admin exists", error: "Invalid Email" })
         }
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-const googleLogin = async (req, res, next) => {
-    try {
-        console.log(req.body);
-        res.status(200).json({ message: "received request here" })
     } catch (err) {
         console.log(err);
     }
@@ -251,24 +244,33 @@ const updateBook = async (req, res, next) => {
 
 const removeBook = async (req, res, next) => {
     try {
+
+        // Books.find({})
+        // .then((books) => {
+        //     const promises = books.map((book) => {
+        //         book.availableStock = book.stock
+        //         return book.save()
+        //     })
+        //     return Promise.all(promises)
+        // })
+
         const bookId = req.params.bookId
-        let isAvailable = req.params.isAvailable
+        let isListed = req.params.isListed
 
-        isAvailable === 'false' ? isAvailable = false : isAvailable = Boolean(isAvailable)
+        isListed === 'false' ? isListed = false : isListed = Boolean(isListed)
         let response
-
-        isAvailable ?
+        isListed ?
             response = await Books.updateOne(
                 { _id: bookId },
-                { $set: { isAvailable: false } }
+                { $set: { listed: false } }
             ) :
             response = await Books.updateOne(
                 { _id: bookId },
-                { $set: { isAvailable: true } }
+                { $set: { listed: true } }
             )
         if (response) {
             console.log(response);
-            if (isAvailable) {
+            if (isListed) {
                 res.status(200).json({ message: "Book unlisted successfully" })
             } else {
                 res.status(200).json({ message: "Book listed successfully" })
@@ -283,9 +285,8 @@ const removeBook = async (req, res, next) => {
 
 const addBanner = async (req, res, next) => {
     try {
-        const { title, subtitle } = req.body
+        const { title, description } = req.body
         const bannerImage = req.file.path
-
         const isExists = await Banners.findOne({ title: title })
         if (!isExists) {
 
@@ -293,14 +294,12 @@ const addBanner = async (req, res, next) => {
             const imageUploaded = await uploadToCloudinary(bannerImage, "banner-images")
 
             //adding to database
-            const update = {
+            const banner = new Banners({
                 title: title,
-                subtitle: subtitle,
+                description: description,
                 image: imageUploaded.url,
                 publicId: imageUploaded.public_id
-            }
-
-            const banner = new Banners(update)
+            })
             const updateResponse = await banner.save()
             if (updateResponse) {
                 res.status(201).json({ message: `Created new Banner !!` })
@@ -314,6 +313,21 @@ const addBanner = async (req, res, next) => {
 
     } catch (err) {
         console.log(err);
+        res.status(500).json({ error: err.message })
+    }
+}
+
+const getBanners = async (req, res, next) => {
+    try {
+        const bannerData = await Banners.find({})
+        if (bannerData) {
+            res.status(200).json({ message: "banner data", bannerData: bannerData })
+        } else {
+            res.status(404).json({ error: "Couldn't find banner data" })
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server error" })
     }
 }
 
@@ -321,47 +335,146 @@ const editBanner = async (req, res, next) => {
     try {
         console.log("edit banner called");
         const bannerId = req.params.bannerId
-        const { title, subtitle } = req.body
+        const { title, description } = req.body
         const update = {}
         if (title) {
             update.title = title
         }
-        if (subtitle) {
-            update.subtitle = subtitle
+        if (description) {
+            update.description = description
         }
 
         const updateResponse = await Banners.updateOne({ _id: bannerId }, { $set: update })
         updateResponse ?
             res.status(200).json({ message: "Banner updated successfully" })
             :
-            res.status(404).json({ message: "Could'nt update banner" })
+            res.status(404).json({ error: "Could'nt update banner" })
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err.message })
+    }
+}
+
+const changeBannerStatus = async (req, res, next) => {
+    try {
+        const { bannerId, status } = req.body
+        const udpate = !status
+        const updateResponse = await Banners.findOneAndUpdate({ _id: bannerId }, { $set: { active: udpate } })
+        if (updateResponse) {
+            let message = ''
+            status ? message = "Banner disabled" : message = "Banner enabled"
+            res.status(200).json({ message: message })
+        } else {
+            res.status(404).json({ error: "Couldn't update the status" })
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const updateBannerImage = async (req, res, next) => {
+    try {
+        const { bannerId } = req.body
+        const bannerPhoto = req.file.path
+        const bannerData = await Banners.findOne({ _id: bannerId })
+        if (bannerData) {
+            const existingPublicId = bannerData.public_id
+
+            //removing image from cloudinary
+            const removeImage = await removeFromCloudinary(existingPublicId)
+
+            //uploading new image
+            const data = await uploadToCloudinary(bannerPhoto, 'banner-images')
+            if (data) {
+                //update database
+                const bannerImageUpdate = await Banners.findOneAndUpdate(
+                    {
+                        _id: bannerId
+                    },
+                    {
+                        $set: { image: data.url, public_id: data.public_id }
+                    }
+                )
+                if (bannerImageUpdate) {
+                    res.status(200).json({ message: "Updated banner image" })
+                } else {
+                    res.status(404).json({ error: "Error occured" })
+                }
+            }
+        }
+
+
+
 
     } catch (err) {
         console.log(err);
     }
 }
 
-const bannerImageUpdate = async (req, res, next) => {
+const getLenderHistory = async (req, res, next) => {
     try {
-        console.log("Called image update function");
-        const bannerId = req.params.bannerId
 
+        // const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
 
-        //finding the public id
-        const isExists = await Banners.findOne({_id : bannerId})
-        if(isExists) {
-            const publicId = isExists.publicId            
-            const {bannerPhoto} = req.file.path
-            const update = {}
-            if(bannerPhoto) {
-                update.image = bannerPhoto
-            }
-        } else {
+        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
 
-        }
+        lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
+            res.status(404).json({ error: "no lender data" })
 
     } catch (err) {
         console.log(err);
+        res.status(500).jso({ error: err.message })
+    }
+}
+
+const changeCheckoutStatus = async (req, res, next) => {
+    try {
+        const lenderId = req.params.lenderId
+        const status = req.params.status
+        const lenderData = await LenderHistory.findById(lenderId).populate('book')
+        const bookId = lenderData.book
+
+        if (status === 'Approved') {
+            //After approval, change the duedate for the checkout
+            const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            const udpateDue = await LenderHistory.findOneAndUpdate(
+                { _id: lenderId },
+                {
+                    $set: { dueDate: dueDate }
+                }
+            )
+        }
+        if (status === 'Returned') {
+            //update the available stock of the book
+            const updateStock = await Books.findOneAndUpdate(
+                { _id: bookId },
+                {
+                    $inc: { availableStock: +1 },
+                }
+            )
+            //update the returndate of the checkout 
+            const returnDate = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000)
+            const updateReturnDate = await LenderHistory.findOneAndUpdate(
+                {_id : lenderId},
+                {$set : {returnDate : returnDate}}
+            )
+
+        }
+
+        const lenderUpdate = await LenderHistory.findOneAndUpdate(
+            { _id: lenderId },
+            {
+                $set: { status: status }
+            }
+        )
+        if (lenderUpdate) {
+            res.status(200).json({ message: `Changed status to "${status}" ` })
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -379,5 +492,10 @@ module.exports = {
     getSingleBook,
     updateBook,
     removeBook,
-    addBanner
+    addBanner,
+    getBanners,
+    getLenderHistory,
+    changeCheckoutStatus,
+    changeBannerStatus,
+    updateBannerImage
 }
