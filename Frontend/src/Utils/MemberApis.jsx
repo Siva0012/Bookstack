@@ -80,6 +80,14 @@ const getActiveCheckouts = () => {
     return memberAxiosInstance.get('/get-active-checkouts')
 }
 
+const createFinePaymentIntent = () => {
+    return memberAxiosInstance.get('/create-fine-payment-intent')
+}
+
+const payFine = () => {
+    return memberAxiosInstance.post('/pay-fine')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -100,5 +108,7 @@ export {
     getBanners,
     getRecentBooks,
     getCheckouts,
-    getActiveCheckouts
+    getActiveCheckouts,
+    createFinePaymentIntent,
+    payFine
 }

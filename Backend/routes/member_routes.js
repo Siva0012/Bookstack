@@ -26,5 +26,7 @@ member_router.get('/get-banners' , verifyMemberToken , memberController.getBanne
 member_router.get('/get-recent-books' , verifyMemberToken , memberController.recentBooks)
 member_router.get('/get-checkouts' , verifyMemberToken , memberController.getCheckouts)
 member_router.get('/get-active-checkouts' , verifyMemberToken , memberController.getActiveCheckouts)
+member_router.get('/create-fine-payment-intent' , verifyMemberToken , memberController.createFinePaymentIntent)
+member_router.post('/pay-fine' , verifyMemberToken , memberController.changeFineStatus)
 
 module.exports = member_router

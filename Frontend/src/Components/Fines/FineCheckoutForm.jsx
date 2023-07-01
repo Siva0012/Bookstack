@@ -15,9 +15,9 @@ import "react-toastify/dist/ReactToastify.css";
 import "../../App.css";
 
 //Member APIs
-import { addMemberShip } from "../../Utils/MemberApis";
+import { payFine } from "../../Utils/MemberApis";
 
-export default function CheckoutForm() {
+export default function FineCheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -70,7 +70,7 @@ export default function CheckoutForm() {
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/membership`,
+        return_url: `${window.location.origin}/fines`,
       },
       redirect: "if_required",
     });
@@ -79,8 +79,9 @@ export default function CheckoutForm() {
       setMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
       toast.success(`Payment status : ${paymentIntent.status}`);
-      addMemberShip({ memberShipType: memberShipType });
-      navigate("/membership");
+      //api
+      payFine()
+      navigate("/fines");
     } else {
       setMessage("Unexpected error");
     }

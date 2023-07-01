@@ -33,6 +33,7 @@ function UserRoutes() {
           <Route path="/upgrade-to-premium" element={<UpgradePage />} />
           <Route path='/checkouts' element={<CheckoutsPage />} />
           <Route path="/fines" element={<FinePage />} />
+          <Route path="/fine-payment" element={<FinePaymentPage />} />
         </Route>
       </Route>
     </Routes>
@@ -41,5 +42,6 @@ function UserRoutes() {
 import UpgradePage from "../Pages/Members/UpgradePage";
 import CheckoutsPage from "../Pages/Members/CheckoutsPage";
 import FinePage from "../Pages/Members/FinePage";
+import FinePaymentPage from "../Pages/Members/FinePaymentPage";
 
 export default UserRoutes;

@@ -99,7 +99,7 @@ function Checkouts() {
                         </span>
                       </td>
                       <td className="px-3 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p className={`${checkout.fineAmount ? 'text-red-600 font-bold' : 'text-green-600 font-semibold'} whitespace-no-wrap`}>
+                        <p className={`${!checkout.hasFinePaid ? 'text-red-600 font-bold' : 'text-green-600 font-semibold'} whitespace-no-wrap`}>
                           {checkout.fineAmount ? checkout.fineAmount : 0}
                         </p>
                       </td>

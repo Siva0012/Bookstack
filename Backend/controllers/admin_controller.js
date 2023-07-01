@@ -455,14 +455,12 @@ const changeCheckoutStatus = async (req, res, next) => {
                     $inc: { availableStock: +1 },
                 }
             )
-            console.log("STOCK UPDATE OF THE BOOK", updateStock);
             //update the returndate of the checkout 
             const returnDate = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000)
             const updateReturnDate = await LenderHistory.findOneAndUpdate(
                 {_id : lenderId},
                 {$set : {returnDate : returnDate}}
             )
-            console.log("RETURN DATE UPDATE OF CHECKOUT" , updateReturnDate);
 
         }
 

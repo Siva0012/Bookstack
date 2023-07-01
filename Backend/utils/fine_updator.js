@@ -8,21 +8,23 @@ const updateFines = async () => {
 
      try {
           console.log("update fine function //////////////");
-          const allCheckouts = await lenderHistory.find({}).populate('member')
+          const allCheckouts = await lenderHistory.find({}).populate('member').populate('book')
           if (allCheckouts) {
                //creating set for members with fine
                const memberWithFine = new Set()
                for (const checkout of allCheckouts) {
                     //calculating fine amount
                     const fineAmount = checkout.calculateFine()
-
                     //adding members to the set if there is fine
-                    if (fineAmount) {
-                         if (!memberWithFine.has(checkout.member._id))
+                    if (fineAmount > 0) {
+                         if (!memberWithFine.has(checkout.member._id)) {
                               memberWithFine.add(checkout.member._id)
+                         }
+                         //change the fine paid status to false
+                         checkout.hasFinePaid = false
+                         checkout.fineAmount = fineAmount
+                         await checkout.save()
                     }
-                    checkout.fineAmount = fineAmount
-                    await checkout.save()
                }
                //seting fine status for members inside the set
                if (memberWithFine.size) {
@@ -34,11 +36,14 @@ const updateFines = async () => {
                     const membersUpdate = await Members.updateMany({ hasFinePaid: true })
                }
 
+               //finding active checkouts
+               const activeCheckouts = await lenderHistory.find({$or : [{status : "Borrowed"} , {status : "Approved"}]})
+
                //cumulative fine for the member
                const members = await Members.find({})
                for (const member of members) {
                     const memberId = member._id
-                    const totalFineAmount = allCheckouts
+                    const totalFineAmount = activeCheckouts
                          .filter((checkout) => checkout.member._id.toString() === memberId.toString())
                          .reduce((total, checkout) => total + checkout.fineAmount, 0)
                     await Members.findOneAndUpdate(memberId, { totalFineAmount })

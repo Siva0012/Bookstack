@@ -11,7 +11,7 @@ function FinePage() {
      <div id="sidebar" className="w-[210px]">
        <ProfileSidebar />
      </div>
-     <div id="content" className="min-w-[800px] border-2 border-red-500">
+     <div id="content" className="min-w-[800px] ">
        <Fines />
      </div>
    </div>

@@ -362,6 +362,70 @@ const addMembership = async (req, res, next) => {
     }
 }
 
+const createFinePaymentIntent = async (req, res, next) => {
+    try {
+        console.log("called payfines");
+        const memberId = req.memberId
+        const memberData = await Members.findById(memberId)
+        const fineAmount = memberData.totalFineAmount * 100
+        const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: fineAmount,
+            currency: "inr",
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+        // res.send({
+        //     clientSecret: paymentIntent.client_secret
+        // })
+        res.status(200).json({ message: "Payment successfull", clientSecret: paymentIntent.client_secret, fineAmount: fineAmount })
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: "Internal server errro" })
+    }
+}
+
+const changeFineStatus = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+
+        //change the total fine amount of the member to zero
+        const memberData = await Members.findById(memberId)
+        const fineAmount = memberData.totalFineAmount
+        memberData.totalFineAmount = 0
+
+        //changing has fine paid for checkouts having fines
+        const activeCheckouts = await LenderHistory.find(
+            {
+                member: memberId,
+                $and: [{ fineAmount: { $gt: 0 } }, { status: 'Borrowed' }, { hasFinePaid: false }]
+            }
+        )
+        activeCheckouts.forEach(async (checkout) => {
+            const fineAmount = checkout.calculateFine()
+            checkout.fineAmount = fineAmount
+            checkout.hasFinePaid = true
+            await checkout.save()
+        })
+        await memberData.save()
+            .then((response) => {
+                if (response) {
+                    res.status(200).json({ message: `Payed an amount of ${fineAmount}` })
+                } else {
+                    res.status(404).json({ error: "Couldn't update status" })
+                }
+            })
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+
+
 const addToBookBag = async (req, res, next) => {
 
     try {
@@ -456,41 +520,51 @@ const checkoutBooks = async (req, res, next) => {
         const memberId = req.memberId
         const memberData = await Members.findById(memberId)
         if (memberData.hasFinePaid) {
-
-            const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
-            bookIds.bookBag.forEach(async (data) => {
-
-                //updating available stock
-                await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
-
-                // creating lender history for the book
-                const checkoutDate = new Date()
-                const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-                const currentTime = new Date();
-                const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
-                const lenderHistory = new LenderHistory({
+            const existingCheckouts = await LenderHistory.find(
+                {
                     member: memberId,
-                    book: data.book._id,
-                    checkoutDate: checkoutDate,
-                    dueDate: dueDate,
-                    returnDate: null,
-                    fineAmount: 0,
-                    status: 'Pending',
-                    expiresIn: tenMinutesLater
-                })
-                await lenderHistory.save()
+                    $or : [{status : 'Pending'} , {status : 'Approved'} , {status : 'Borrowed'}]
+                }
+            )
+            if (existingCheckouts.length >= 3) {
+                return res.status(404).json({ error: "You have already reached you checkout limits !!" })
+            } else {
 
-                //removing books from book-bag
-                await Members.findOneAndUpdate(
-                    {
-                        _id: memberId
-                    },
-                    {
-                        $pull: { bookBag: { book: data.book._id } }
-                    }
-                )
-            })
-            res.status(200).json({ message: "Checkout successfull" })
+                const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
+                bookIds.bookBag.forEach(async (data) => {
+
+                    //updating available stock
+                    await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
+
+                    // creating lender history for the book
+                    const checkoutDate = new Date()
+                    const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+                    const currentTime = new Date();
+                    const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
+                    const lenderHistory = new LenderHistory({
+                        member: memberId,
+                        book: data.book._id,
+                        checkoutDate: checkoutDate,
+                        dueDate: dueDate,
+                        returnDate: null,
+                        fineAmount: 0,
+                        status: 'Pending',
+                        expiresIn: tenMinutesLater
+                    })
+                    await lenderHistory.save()
+
+                    //removing books from book-bag
+                    await Members.findOneAndUpdate(
+                        {
+                            _id: memberId
+                        },
+                        {
+                            $pull: { bookBag: { book: data.book._id } }
+                        }
+                    )
+                })
+                res.status(200).json({ message: "Checkout successfull" })
+            }
 
         } else {
             res.status(404).json({ error: "You have pending fines to pay..!!" })
@@ -547,30 +621,20 @@ const getCheckouts = async (req, res, next) => {
     }
 }
 
-const checkoutReturn = async (req, res, next) => {
-    try {
-        const checkoutId = req.body.checkoutId
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: "Internal server Error" })
-    }
-}
-
 const getActiveCheckouts = async (req, res, next) => {
     try {
         const memberId = req.memberId
         const activeCheckouts = await LenderHistory.find(
             {
                 member: memberId,
-                status: 'Borrowed'
+                $and: [{ fineAmount: { $gt: 0 } }, { hasFinePaid: false }]
+
             }
-        ).populate('book')
+        ).populate('book').populate('member').select('-password')
         if (activeCheckouts) {
-            console.log("this is active checkouts on server", activeCheckouts);
             res.status(200).json({ message: "Active checkout data", activeCheckouts: activeCheckouts })
         } else {
-            res.status(404).json({error : "No active checkouts"})
+            res.status(404).json({ error: "No active checkouts" })
         }
 
     } catch (err) {
@@ -599,5 +663,7 @@ module.exports = {
     getBanners,
     recentBooks,
     getCheckouts,
-    getActiveCheckouts
+    getActiveCheckouts,
+    createFinePaymentIntent,
+    changeFineStatus
 }

@@ -143,7 +143,7 @@ function LenderTable() {
                               />
                             </td>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                              <p className={`${data.fineAmount ? 'text-red-600 font-bold' : 'text-green-700 font-semibold'} text-gray-900 whitespace-no-wrap`}>
+                              <p className={`${!data.hasFinePaid ? 'text-red-600 font-bold' : 'text-green-700 font-semibold'} text-gray-900 whitespace-no-wrap`}>
                                 {data.fineAmount}
                               </p>
                               <p className="text-gray-600 whitespace-no-wrap"></p>
