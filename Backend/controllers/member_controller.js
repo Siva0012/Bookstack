@@ -697,6 +697,21 @@ const reserveBook = async (req, res, next) => {
     }
 }
 
+const getReservedBooks = async (req , res , next) => {
+    try{
+        const memberId = req.memberId
+        const reservedBooks = await Members.findById(memberId).populate('reservedBooks.book').select('-password')
+        if(reservedBooks) {
+            res.status(200).json({message : "Reserved Books" , reservedBooks : reservedBooks})
+        } else {
+            res.status(404).json({error : "No reserved books exists !!"})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -720,5 +735,6 @@ module.exports = {
     getActiveCheckouts,
     createFinePaymentIntent,
     changeFineStatus,
-    reserveBook
+    reserveBook,
+    getReservedBooks
 }

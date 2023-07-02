@@ -71,7 +71,8 @@ const memberSchema = new mongoose.Schema({
     reservedBooks : [
         {
             book : {
-                type : mongoose.Schema.Types.ObjectId
+                type : mongoose.Schema.Types.ObjectId,
+                ref : 'Books'
             },
             reservedOn : {
                 type : Date,

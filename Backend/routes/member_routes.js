@@ -29,5 +29,6 @@ member_router.get('/get-active-checkouts' , verifyMemberToken , memberController
 member_router.get('/create-fine-payment-intent' , verifyMemberToken , memberController.createFinePaymentIntent)
 member_router.post('/pay-fine' , verifyMemberToken , memberController.changeFineStatus)
 member_router.get('/reserve-book/:bookId', verifyMemberToken , memberController.reserveBook)
+member_router.get('/reserved-books' , verifyMemberToken , memberController.getReservedBooks)
 
 module.exports = member_router
