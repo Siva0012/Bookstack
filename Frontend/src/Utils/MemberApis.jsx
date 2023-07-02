@@ -88,6 +88,10 @@ const payFine = () => {
     return memberAxiosInstance.post('/pay-fine')
 }
 
+const reserveBook = (bookId) => {
+    return memberAxiosInstance.get(`/reserve-book/${bookId}`)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -110,5 +114,6 @@ export {
     getCheckouts,
     getActiveCheckouts,
     createFinePaymentIntent,
-    payFine
+    payFine,
+    reserveBook
 }

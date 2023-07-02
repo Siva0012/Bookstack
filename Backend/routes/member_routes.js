@@ -1,7 +1,7 @@
 const express = require('express')
 const member_router = express.Router()
 const memberController = require('../controllers/member_controller')
-const { verifyMemberToken } = require('../middlewares/Auth')
+const { verifyMemberToken, verifyAdminToken } = require('../middlewares/Auth')
 const upload = require('../middlewares/multer')
 
 member_router.get('/is-member-auth'  , verifyMemberToken , memberController.verifyMember)
@@ -28,5 +28,6 @@ member_router.get('/get-checkouts' , verifyMemberToken , memberController.getChe
 member_router.get('/get-active-checkouts' , verifyMemberToken , memberController.getActiveCheckouts)
 member_router.get('/create-fine-payment-intent' , verifyMemberToken , memberController.createFinePaymentIntent)
 member_router.post('/pay-fine' , verifyMemberToken , memberController.changeFineStatus)
+member_router.get('/reserve-book/:bookId', verifyMemberToken , memberController.reserveBook)
 
 module.exports = member_router
