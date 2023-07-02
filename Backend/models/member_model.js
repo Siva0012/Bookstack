@@ -67,7 +67,19 @@ const memberSchema = new mongoose.Schema({
     totalFineAmount : {
         type : Number,
         default : 0
-    }
+    },
+    reservedBooks : [
+        {
+            book : {
+                type : mongoose.Schema.Types.ObjectId,
+                ref : 'Books'
+            },
+            reservedOn : {
+                type : Date,
+                default : new Date()
+            }
+        }
+    ]
 
 })
 

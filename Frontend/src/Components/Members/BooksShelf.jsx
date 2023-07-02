@@ -8,24 +8,38 @@ import { TiTick } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 
 //member APIs
-import {addToBookBag} from '../../Utils/MemberApis'
+import { addToBookBag , reserveBook } from "../../Utils/MemberApis";
 import { toast } from "react-toastify";
 
 function BooksShelf() {
   const [bookData, setBookdata] = useState([]);
   const [catData, setCatdata] = useState({});
   const { catId } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleAddtoBag = (bookId) => {
     addToBookBag(bookId)
+      .then((response) => {
+        if (response.data.message) {
+          toast.success(response.data.message);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.error);
+      });
+  };
+
+  const handleBookReserve = (bookId) => {
+    reserveBook(bookId)
     .then((response) => {
       if(response.data.message) {
         toast.success(response.data.message)
       }
     })
     .catch((err) => {
-      toast.error(err.response.data.error)
+      if(err.response.data.error) {
+        toast.error(err.response.data.error)
+      }
     })
   }
 
@@ -74,7 +88,9 @@ function BooksShelf() {
                   >
                     <div className="mb-3 drop-shadow-[0_0px_3px_rgba(0,255,0,0.8)]">
                       {bookData.availableStock <= 0 ? (
-                        <h2 className="drop-shadow-[0_0px_3px_rgba(255,0,0,0.8)]">Not available</h2>
+                        <h2 className="drop-shadow-[0_0px_3px_rgba(255,0,0,0.8)]">
+                          Not available
+                        </h2>
                       ) : (
                         <div className=" ms-auto py-1 px-3 rounded-full text-sm bg-white w-fit flex items-center">
                           <span className="text-green-600 tracking-wide font-medium">
@@ -101,13 +117,12 @@ function BooksShelf() {
                       className=" p-3 rounded-lg bg-white drop-shadow-[0_0px_5px_rgba(0,0,0,0.14)]"
                     >
                       <div className="">
-                        <div id="hover-div" className="hover:text-user-to cursor-pointer">
-                          <h1 className="font-bold">
-                            {bookData.author}
-                          </h1>
-                          <h1 className="text-lg">
-                            {bookData.title}
-                          </h1>
+                        <div
+                          id="hover-div"
+                          className="hover:text-user-to cursor-pointer"
+                        >
+                          <h1 className="font-bold">{bookData.author}</h1>
+                          <h1 className="text-lg">{bookData.title}</h1>
                         </div>
                         <div id="rating" className="my-auto">
                           <AiFillStar size={21} color="#FF9529" />
@@ -116,22 +131,25 @@ function BooksShelf() {
                       </div>
                     </div>
                     <div className="mt-4">
-                      
-                      {
-                        bookData.availableStock > 0 ? 
-                        (
-                          <button
+                      {bookData.availableStock > 0 ? ( //checking available or not
+                        <button
                           onClick={() => handleAddtoBag(bookData._id)}
-                           className="bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-orange-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
-                        Add to book-bag
-                      </button>
-                        ) : (
-                          <button className="bg-red-500  text-white font-bold w-full py-2 rounded-md">
-                        Reserve
-                      </button>
-                        )
-                      }
-                      
+                          className="bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-orange-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
+                        >
+                          Add to book-bag
+                        </button>
+                      ) : bookData.reservationOrder.length >= //checking available for reservation
+                        bookData.maxReservations ? (
+                        <button className="bg-red-500  text-white font-bold w-full py-2 rounded-md">
+                          Not available
+                        </button>
+                      ) : (
+                        <button
+                        onClick={() => handleBookReserve(bookData._id)}
+                         className="bg-red-500  text-white font-bold w-full py-2 rounded-md">
+                          Reserve
+                        </button>
+                      )}
                     </div>
                   </div>
                 </>

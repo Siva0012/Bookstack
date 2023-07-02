@@ -521,13 +521,12 @@ const checkoutBooks = async (req, res, next) => {
             const existingCheckouts = await LenderHistory.find(
                 {
                     member: memberId,
-                    $or : [{status : 'Pending'} , {status : 'Approved'} , {status : 'Borrowed'}]
+                    $or: [{ status: 'Pending' }, { status: 'Approved' }, { status: 'Borrowed' }]
                 }
             )
-            if (existingCheckouts.length >= 3) {
+            if ((memberData.membershipType === 'Student' && existingCheckouts.length >= 3) || (memberData.membershipType === 'Premium' && existingCheckouts.length >= 5)) {
                 return res.status(404).json({ error: "You have already reached you checkout limits !!" })
             } else {
-
                 const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
                 bookIds.bookBag.forEach(async (data) => {
 
@@ -641,6 +640,78 @@ const getActiveCheckouts = async (req, res, next) => {
     }
 }
 
+const reserveBook = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const bookId = req.params.bookId
+        const memberData = await Members.findById(memberId)
+        const bookData = await Books.findById(bookId)
+
+        //check the member status
+
+        //check for membership
+        if (!memberData.isMember) {
+            return res.status(404).json({ error: "You are not a member" })
+        }
+        //check for existing fines
+        if (!memberData.hasFinePaid) {
+            return res.status(404).json({ error: "You have existing fines !!" })
+        }
+        //check for reserved books numbers
+        if (memberData.membershipType === 'Student' && memberData.reservedBooks >= 1) {
+            return res.status(404).json({ error: "You have reached your reservation limit !!" })
+        }
+        if (memberData.membershipType === 'Premium' && memberData.reservedBooks >= 3) {
+            return res.status(404).json({ error: "You have reached your reservation limit !!" })
+        }
+        //check whether the book has already reserved or not by the user
+        const isAlreadyExist = memberData.reservedBooks.filter((reservedBook) => {
+            return reservedBook.book == bookId
+        })
+        if (isAlreadyExist.length) {
+            return res.status(404).json({ error: "You have already reserved this book !!" })
+        }
+
+        //approve the reservation
+
+        //adding book to memberSchema
+        memberData.reservedBooks.push(
+            {
+                book : bookId,
+                reservedOn : new Date()
+            }
+        )
+        await memberData.save()
+        //adding member to book schema
+        bookData.reservationOrder.push(
+            {
+                member : memberId,
+                reservedOn : new Date()
+            }
+        )
+        await bookData.save()
+        res.status(200).json({message : `Book reservation for "${bookData.title}" has been processed !!`})
+
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const getReservedBooks = async (req , res , next) => {
+    try{
+        const memberId = req.memberId
+        const reservedBooks = await Members.findById(memberId).populate('reservedBooks.book').select('-password')
+        if(reservedBooks) {
+            res.status(200).json({message : "Reserved Books" , reservedBooks : reservedBooks})
+        } else {
+            res.status(404).json({error : "No reserved books exists !!"})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -663,5 +734,7 @@ module.exports = {
     getCheckouts,
     getActiveCheckouts,
     createFinePaymentIntent,
-    changeFineStatus
+    changeFineStatus,
+    reserveBook,
+    getReservedBooks
 }
