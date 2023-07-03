@@ -79,8 +79,8 @@ function Fines() {
             })}
           </>
         ) : (
-          <h1 className="mb-4 uppercase text-white text-xl font-semibold tracking-wide mt-1">
-            You don't have any Active checkouts !
+          <h1 className="text-white text-xl font-semibold tracking-wide">
+            You don't have any Active checkouts !!
           </h1>
         )}
       </div>

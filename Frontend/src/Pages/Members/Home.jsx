@@ -79,11 +79,11 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
                         <span className="text-black mr-3 uppercase text-sm truncate font-semibold">
                           {book.title}
                         </span>
-                        <p className="text-lg font-bold text-black  block capitalize">
+                        <p className="text-lg  text-black  block capitalize">
                           {book.author}
                         </p>
                         <div className="">
-                          <p className="text-lg font-semibold text-black cursor-auto">
+                          <p className="mt-1 text-sm text-black cursor-auto">
                             {book.category.name}
                           </p>
                         </div>

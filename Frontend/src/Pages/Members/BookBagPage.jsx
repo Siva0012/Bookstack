@@ -5,7 +5,7 @@ function BookBagPage() {
   return (
     <div
       id="outer-container"
-      className=" flex p-2 max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg"
+      className=" flex px-2 py-4 max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg"
     >
       <div id="sidebar">
         <ProfileSidebar />

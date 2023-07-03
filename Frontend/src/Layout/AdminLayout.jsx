@@ -22,14 +22,14 @@ const AdminLayout = () => {
       <div id="body" className=" bg-[#140005] min-w-screen min-h-screen">
         <Navbar />
         <section className="mt-9">
-          <div className="flex justify-between sm:flex-row">
-            <div className=" sm:basis-[20%] ">
+          <div className="flex sm:flex-row">
+            <div className="">
               <Sidebar />
             </div>
             <div className="relative right-8 top-2 sm:hidden">
               <RxHamburgerMenu color="white" />
             </div>
-            <div className=" sm:basis-[80%]">
+            <div className="ms-20 w-full">
               <AdminHeader />
               <Outlet />
             </div>

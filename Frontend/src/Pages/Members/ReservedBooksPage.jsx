@@ -3,7 +3,7 @@ import ReservedBooks from "../../Components/Members/ReservedBooks"
 
 function ReservedBooksPage() {
   return (
-     <div id="outer-container" className=" p-2 flex max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg">
+     <div id="outer-container" className=" px-2 py-4 flex max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg">
      <div id="sidebar" className="">
          <ProfileSidebar />
      </div>
