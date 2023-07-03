@@ -7,7 +7,7 @@ import { BsFillCaretDownFill, BsFillCaretUpFill } from "react-icons/bs";
 //member APIs
 import { getCategories } from "../../Utils/MemberApis";
 
-function NavDropdown() {
+function MobileNavDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [catData, setCatData] = useState([]);
   const navigate = useNavigate();
@@ -38,9 +38,8 @@ function NavDropdown() {
       </p>
       {isOpen && (
         <div
-          onMouseLeave={() => setIsOpen(false)}
           onClick={() => setIsOpen((prev) => !prev)}
-          className="absolute top-10 w-[175px] rounded-lg"
+          className="relative top-6 w-full rounded-lg mb-3"
         >
           {catData &&
             catData.map((catData) => {
@@ -48,7 +47,7 @@ function NavDropdown() {
                 <>
                   <div
                     key={catData._id}
-                    className="w-full border-t-2 border-t-gray-300 py-1 hover:font-bold bg-user-nav text-user-from hover:bg-white"
+                    className="w-full py-1 border-t-[1px] border-t-gray-500 text-sm hover:font-bold text-white hover:bg-white"
                   >
                     <Link
                       to={`/books/${catData._id}`}
@@ -66,4 +65,4 @@ function NavDropdown() {
   );
 }
 
-export default NavDropdown;
+export default MobileNavDropdown;
