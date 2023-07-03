@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 //member APIs
 import { getBanners, getRecentBooks } from "../../Utils/MemberApis";
+import Banner from "../../Components/Banner/Banner";
 
 function Home() {
   const [banner, setBanner] = useState([]);
@@ -22,12 +23,12 @@ function Home() {
 
   return (
     <div>
-      <div className="container mx-auto py-9 md:py-12 px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6">
         {/*Hero
 style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
 */}
         <div
-          className="py-28 bg-cover bg-no-repeat bg-fixed rounded-xl"
+          className="py-28 bg-cover bg-no-repeat bg-fixed rounded-xl border-2"
           style={{
             backgroundImage:
               // "url(https://media.vanityfair.com/photos/5ce426151c0b0773cacd1121/master/pass/star-wars-feature-vf-2019-summer-embed-05.jpg)",
@@ -54,28 +55,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
           </h2>
           {banner &&
             banner.map((banner, i) => {
-              return (
-                <>
-                  <div
-                    key={banner._id}
-                    className="flex items-center flex-wrap mb-10 px-2 py-4 bg-white rounded-md"
-                  >
-                    <div className="w-full md:w-1/2 pr-10">
-                      <h4 className="text-3xl text-gray-800 font-bold mb-3">
-                        {banner.title}
-                      </h4>
-                      <p className="text-gray-600 mb-8">{banner.description}</p>
-                    </div>
-                    <div className="w-full md:w-1/2">
-                      <img
-                        className="rounded-lg"
-                        src={banner.image}
-                        alt="Vortex"
-                      />
-                    </div>
-                  </div>
-                </>
-              );
+              return <Banner bannerData={banner} />;
             })}
         </section>
         {/* Testimonials */}
@@ -85,27 +65,30 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
               Recently added books
             </h2>
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-6">
-             
               {recentBooks &&
                 recentBooks.map((book) => {
                   return (
                     <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 rounded-xl">
-                      <div className="w-full">
-                      <div className="w-[180px] h-[250px] mx-auto">
-                      <img src={book.coverPhoto} className="object-contain w-[100%] h-[100%]" />
+                      <div className="w-[180px] h-[250px] mx-auto mt-4">
+                        <img
+                          src={book.coverPhoto}
+                          className="object-contain w-[100%] h-[100%]"
+                        />
                       </div>
-
-                      </div>
-                    <div className="px-4 py-3 w-72">
-                      <span className="text-black mr-3 uppercase text-sm font-semibold">{book.title}</span>
-                      <p className="text-lg font-bold text-black truncate block capitalize">{book.author}</p>
-                      <div className="flex items-center">
-                        <p className="text-lg font-semibold text-black cursor-auto my-3">{book.category.name}</p>
-                        <div className="ml-auto">
+                      <div className="px-4 py-3 w-72 grid grid-rows-3 gap-y-0">
+                        <span className="text-black mr-3 uppercase text-sm truncate font-semibold">
+                          {book.title}
+                        </span>
+                        <p className="text-lg font-bold text-black  block capitalize">
+                          {book.author}
+                        </p>
+                        <div className="">
+                          <p className="text-lg font-semibold text-black cursor-auto">
+                            {book.category.name}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  </div>
                   );
                 })}
             </div>
