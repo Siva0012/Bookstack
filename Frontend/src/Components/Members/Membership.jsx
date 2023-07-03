@@ -33,7 +33,7 @@ function Membership() {
     "MMMM Do YYYY, h:mm:ss a"
   );
   return (
-    <div className="w-[600px] h-[420px] p-3  ">
+    <div className="">
       {memberData.isMember ? (
         <div>
           <h1 className="text-green-700 tracking-wide rounded-md shadow-[0px_0px_10px_rgba(0,0,0,0.12)] py-4 text-center">

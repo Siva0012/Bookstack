@@ -456,7 +456,8 @@ const changeCheckoutStatus = async (req, res, next) => {
                 }
             )
             //update the returndate of the checkout 
-            const returnDate = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000)
+            // const returnDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+            const returnDate = new Date()
             const updateReturnDate = await LenderHistory.findOneAndUpdate(
                 {_id : lenderId},
                 {$set : {returnDate : returnDate}}

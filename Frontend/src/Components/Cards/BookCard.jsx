@@ -5,7 +5,7 @@ function BookCard() {
   return (
     <div
       id="card"
-      className="p-4 bg-white drop-shadow-[0_0px_8px_rgba(0,0,0,0.2)] lg:w-[300px] md:w-[200px] rounded-xl"
+      className="p-4 bg-white drop-shadow-[0_0px_8px_rgba(0,0,0,0.2)] lg:w-[280px] md:w-[200px] rounded-xl"
     >
       <div className="mb-3 drop-shadow-[0_0px_3px_rgba(0,255,0,0.8)]">
         <div className=" ms-auto py-1 px-3 rounded-full text-sm bg-white w-fit flex items-center">
@@ -17,11 +17,11 @@ function BookCard() {
       </div>
       <div
         id="image"
-        className="mb-3 w-[15rem] drop-shadow-[0px_0px_3px_rgba(0,0,0,0.25)] cursor-pointer hover:-translate-y-2 hover:drop-shadow-[-5px_10px_5px_rgba(0,0,0,0.5)] duration-500"
+        className="mb-3 w-[10rem] mx-auto drop-shadow-[0px_0px_3px_rgba(0,0,0,0.25)] cursor-pointer hover:-translate-y-2 hover:drop-shadow-[-5px_10px_5px_rgba(0,0,0,0.5)] duration-500"
       >
         <img
         src="../../../public/public-images/image.jpg"
-          className="mx-auto w-[100%]"
+          className="w-[100%]"
           alt=""
         />
       </div>
