@@ -79,7 +79,7 @@ function Profile() {
       })
       .catch((err) => {
         setimageLoader(false);
-        console.log("catch errorrrrrr" , err);
+        console.log("catch errorrrrrr", err);
         toast.error(err.response.data.error);
       });
   };
@@ -94,34 +94,7 @@ function Profile() {
 
   return (
     <>
-      <div className="grid md:grid-cols-2 md:gap-x-3 p-3">
-        <div className=" relative min-w-[50%] ">
-          <div
-            onClick={() => setshowModal(true)}
-            className=" flex items-center ms-auto absolute right-2 top-1 z-[1] hover:text-red-600 hover:cursor-pointer "
-          >
-            <p className="">Edit</p>
-            <BiEditAlt size={20} className="ms-3" />
-          </div>
-          <Tooltip
-            anchorId="profile"
-            variant="info"
-            content="Click on the top right corner to edit"
-            place="top"
-          />
-          <div className="w-[300px] h-[350px] mx-auto">
-            <img
-              id="profile"
-              className="w-[100%] h-[100%] object-scale-down"
-              src={
-                memberData.profilePicture
-                  ? memberData.profilePicture
-                  : "../../../public/public-images/image.jpg"
-              }
-              alt=""
-            />
-          </div>
-        </div>
+      <div className="grid md:grid-cols-2 md:gap-x-3">
         <div className="min-w-[50%]">
           <div
             id="name"
@@ -179,6 +152,33 @@ function Profile() {
               anchorId="edit-address"
               variant="info"
               content="Click here to edit the address"
+            />
+          </div>
+        </div>
+        <div className=" relative min-w-[50%] ">
+          <div
+            onClick={() => setshowModal(true)}
+            className=" flex items-center ms-auto absolute right-2 top-1 z-[1] hover:text-red-600 hover:cursor-pointer "
+          >
+            <p className="text-white">Edit</p>
+            <BiEditAlt size={20} className="ms-3 text-white" />
+          </div>
+          <Tooltip
+            anchorId="profile"
+            variant="info"
+            content="Click on the top right corner to edit"
+            place="top"
+          />
+          <div className="w-[250px] h-[300px] mx-auto mt-5">
+            <img
+              id="profile"
+              className="w-[100%] h-[100%] object-contain"
+              src={
+                memberData.profilePicture
+                  ? memberData.profilePicture
+                  : "../../../public/public-images/image.jpg"
+              }
+              alt=""
             />
           </div>
         </div>

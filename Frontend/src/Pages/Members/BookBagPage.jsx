@@ -1,18 +1,20 @@
-import BookBag from "../../Components/Members/BookBag"
-import ProfileSidebar from "../../Components/Members/ProfileSidebar"
+import BookBag from "../../Components/Members/BookBag";
+import ProfileSidebar from "../../Components/Members/ProfileSidebar";
 
 function BookBagPage() {
-
   return (
-     <div id="outer-container" className=" flex justify-between max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg">
-     <div id="sidebar min-w-1/3">
-         <ProfileSidebar />
-     </div>
-     <div id='content' className='min-w-2/3'>
-          <BookBag />
-     </div>
- </div>
-  )
+    <div
+      id="outer-container"
+      className=" flex p-2 max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg"
+    >
+      <div id="sidebar">
+        <ProfileSidebar />
+      </div>
+      <div id="content" className="ms-10 w-full">
+        <BookBag />
+      </div>
+    </div>
+  );
 }
 
-export default BookBagPage
+export default BookBagPage;

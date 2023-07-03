@@ -28,11 +28,11 @@ function Fines() {
   }, []);
 
   return (
-    <div className="flex py-2">
+    <div className="flex">
       <div className="min-w-[70%] p-2">
         {activeCheckouts && activeCheckouts.length ? (
           <>
-            <h1 className="mb-4 text-center text-xl font-semibold tracking-wide mt-1">
+            <h1 className="mb-4 text-xl uppercase text-white font-semibold tracking-wide mt-1">
               Your Active checkouts
             </h1>
             {activeCheckouts.map((checkout) => {
@@ -79,7 +79,7 @@ function Fines() {
             })}
           </>
         ) : (
-          <h1 className="mb-4 text-center text-xl font-semibold tracking-wide mt-1">
+          <h1 className="mb-4 uppercase text-white text-xl font-semibold tracking-wide mt-1">
             You don't have any Active checkouts !
           </h1>
         )}
@@ -87,7 +87,7 @@ function Fines() {
       <div className="w-[30%] flex flex-col p-2">
         {activeCheckouts && activeCheckouts.length > 0 && (
           <>
-            <h1 className="text-center text-xl font-semibold tracking-wide mt-1">
+            <h1 className=" text-white text-lg text-center font-semibold tracking-wide mt-1">
               Total amount to pay
             </h1>
             <div className="mt-10">

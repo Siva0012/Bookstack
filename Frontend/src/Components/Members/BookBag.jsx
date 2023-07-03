@@ -61,7 +61,7 @@ function BookBag() {
   };
 
   return (
-    <div className="w-[800px] p-2">
+    <div className="p-2">
       {member && member.bookBag && member.bookBag.length > 0 ? (
         <h1 className="font-lg">Books</h1>
       ) : (

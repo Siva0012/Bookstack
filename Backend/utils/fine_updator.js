@@ -15,6 +15,7 @@ const updateFines = async () => {
                for (const checkout of allCheckouts) {
                     //calculating fine amount
                     const fineAmount = checkout.calculateFine()
+                    console.log(fineAmount, "for" , checkout.book.title);
                     //adding members to the set if there is fine
                     if (fineAmount > 0) {
                          if (!memberWithFine.has(checkout.member._id)) {

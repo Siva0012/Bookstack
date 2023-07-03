@@ -45,7 +45,7 @@ const lenderHistorySchema = new mongoose.Schema({
 
 lenderHistorySchema.methods.calculateFine = function() {
 
-     if(this.hasFinePaid === false && this.status !== 'Expired') {
+     if(this.status !== 'Expired' && !this.hasFinePaid) {
           const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
           const dueDate = this.dueDate;
           const returnDate = this.returnDate || new Date() // Use current date if returnDate is not set

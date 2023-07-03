@@ -3,11 +3,11 @@ import ProfileSidebar from '../../Components/Members/ProfileSidebar'
 
 function ProfilePage() {
   return (
-    <div id="outer-container" className=" flex justify-between max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg">
-        <div id="sidebar min-w-1/3">
+    <div id="outer-container" className=" flex p-2 max-w-[1240px] bg-gradient-to-r from-user-profile-from to-user-profile-to rounded-lg">
+        <div id="sidebar">
             <ProfileSidebar />
         </div>
-        <div id='content' className='min-w-2/3'>
+        <div id='content' className='ms-10 w-full'>
             <Profile />
         </div>
     </div>
