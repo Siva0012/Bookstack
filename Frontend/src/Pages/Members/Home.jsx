@@ -59,7 +59,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
             })}
         </section>
         {/* Testimonials */}
-        <section className="bg-gray-100 rounded-md">
+        {/* <section className="bg-gray-100 rounded-md">
           <div className="container mx-auto px-6 py-10">
             <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
               Recently added books
@@ -93,7 +93,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
                 })}
             </div>
           </div>
-        </section>
+        </section> */}
         <section style={{ backgroundColor: "#667eea" }}>
           <div className="container mx-auto px-6 text-center py-20">
             <h2 className="mb-6 text-4xl font-bold text-center text-white">

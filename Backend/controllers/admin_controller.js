@@ -46,7 +46,7 @@ const login = async (req, res, next) => {
 
 const getMembers = async (req, res, next) => {
     try {
-        const members = await Members.find({})
+        const members = await Members.find({}).sort()
         if (members) {
             res.status(200).json({ members: members })
         } else {
@@ -129,6 +129,7 @@ const addCategory = async (req, res, next) => {
     try {
         const { name, description } = req.body
         const isExists = await Categories.findOne({ name: name })
+        const allCategories = await Categories.find()
         if (!isExists) {
             const category = new Categories(
                 {
@@ -156,7 +157,7 @@ const addCategory = async (req, res, next) => {
 
 const getCategories = async (req, res, next) => {
     try {
-        const catData = await Categories.find({})
+        const catData = await Categories.find({}).sort({dateAdded : -1})
         if (catData) {
             res.status(200).json({ message: "Categories sent", catData: catData })
         }
@@ -167,7 +168,7 @@ const getCategories = async (req, res, next) => {
 
 const getBooks = async (req, res, next) => {
     try {
-        const books = await Books.find({}).populate("category")
+        const books = await Books.find({}).populate("category").sort({dateAdded : -1})
         if (books) {
             res.status(200).json({ message: "Books sent", books: books })
         } else {
@@ -197,6 +198,7 @@ const updateBook = async (req, res, next) => {
         const bookId = req.params.bookId
         const bookData = req.body
 
+        //destructure inpuit sanitization
         const title = req.body.title
         const author = req.body.author
         const edition = req.body.edition
@@ -229,6 +231,7 @@ const updateBook = async (req, res, next) => {
             coverPhoto: data.url,
             publicId: data.public_id
         }
+        //micro modules for making code simpel
         const updateResponse = await Books.findOneAndUpdate({ _id: bookId }, update, { new: true })
         console.log("update response at server", updateResponse)
         if (updateResponse) {
@@ -319,7 +322,7 @@ const addBanner = async (req, res, next) => {
 
 const getBanners = async (req, res, next) => {
     try {
-        const bannerData = await Banners.find({})
+        const bannerData = await Banners.find({}).sort({createdAt : -1})
         if (bannerData) {
             res.status(200).json({ message: "banner data", bannerData: bannerData })
         } else {
@@ -417,10 +420,7 @@ const updateBannerImage = async (req, res, next) => {
 const getLenderHistory = async (req, res, next) => {
     try {
 
-        // const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
-
-        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password')
-
+        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({checkoutDate : -1})
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
             res.status(404).json({ error: "no lender data" })
 

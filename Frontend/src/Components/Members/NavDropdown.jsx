@@ -52,7 +52,7 @@ function NavDropdown() {
                   >
                     <Link
                       to={`/books/${catData._id}`}
-                      className="p-2 items-start hover:text-black "
+                      className="p-2 items-start hover:text-black capitalize "
                     >
                       {catData.name}
                     </Link>
