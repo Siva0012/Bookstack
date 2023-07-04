@@ -146,7 +146,7 @@ function Banners() {
   return (
     <>
       <div className="text-white">
-        <div className="container mx-auto px-4 sm:px-8">
+        <div className="container mx-auto ">
           <div className="py-8">
             <div className="flex justify-between">
               <h2 className="text-2xl font-semibold leading-tight">Banners</h2>
@@ -157,7 +157,7 @@ function Banners() {
                 Add new
               </button>
             </div>
-            <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+            <div className="mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
               <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                 <table className="min-w-full leading-normal">
                   <thead>

@@ -1,9 +1,11 @@
-import Banners from "../../Components/Admin/Banners"
+import Banners from "../../Components/Admin/Banners";
 
 function BannersPage() {
   return (
-          <Banners />
-  )
+    <div className="px-14">
+      <Banners />
+    </div>
+  );
 }
 
-export default BannersPage
+export default BannersPage;

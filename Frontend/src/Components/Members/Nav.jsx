@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
-import NavDropdown from "../../Pages/Members/NavDropdown";
+import NavDropdown from "./NavDropdown";
 import { GiPaperBagOpen } from "react-icons/gi";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import MobileNavDropdown from "../../Pages/Members/MobileNavDropDown";
+import MobileNavDropdown from './MobileNavDropdown'
 
 function Nav() {
   const navigate = useNavigate();

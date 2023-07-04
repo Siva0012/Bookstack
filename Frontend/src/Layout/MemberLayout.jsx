@@ -17,14 +17,14 @@ const MemberLayout = () => {
   }, [navigate]);
   return (
     <div className="bg-gradient-to-b from-user-from to-user-to min-w-screen min-h-screen pb-10 pt-24">
-      <header className="fixed top-0 w-full z-[5]">
+      <header className="fixed top-0 w-screen z-[5]">
         <Nav />
       </header>
       <section className="mt-10">
             <div className=" lg:w-[1150px] md:w-[600px] sm:w-[100px] bg-user-from rounded-xl drop-shadow-[0_0px_10px_rgba(0,0,0,0.09)] mx-auto px-16 mb-10 py-12">
               <Outlet />
             </div>
-            <div className=" lg:w-[1150px] md:w-[600px] sm:w-[50px] mx-auto rounded-xl">
+            <div className="lg:w-[1150px] md:w-[600px] sm:w-[100px] mx-auto rounded-xl">
               <Footer />
             </div>
       </section>

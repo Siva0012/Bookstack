@@ -3,7 +3,7 @@ import LenderTable from "../../Components/Admin/LenderTable"
 
 function LenderHistory() {
   return (
-    <div>
+    <div className="px-14">
      <LenderTable />
     </div>
   )

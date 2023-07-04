@@ -13,18 +13,14 @@ function LoginPage() {
 
   return (
     <div>
-      <div className="h-screen font-sans">
         <div
           id="body-background"
-          className=" flex flex-col justify-center bg-gradient-to-b from-user-from to-user-to min-h-full"
+          className="font-sans bg-gradient-to-b from-user-from to-user-to h-screen flex felx-col items-center"
         >
-          <div className="w-3/4 bg-gradient-to-b from-user-sign-from to-user-sign-to rounded-2xl box-shadow-[0_0px_1px_rgba(0,0,0,0.5)] mx-auto py-10 px-16">
-            <div className="rounded-md mx-auto">
+          <div className=" sm:px-10 md:px-16 lg:px-24 mx-auto max-w-[800px] max-h-[1000px] bg-gradient-to-b from-user-sign-from to-user-sign-to rounded-2xl box-shadow-[0_0px_1px_rgba(0,0,0,0.5)]">
               <Login />
-            </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }
