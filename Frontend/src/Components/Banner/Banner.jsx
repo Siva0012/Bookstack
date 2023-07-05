@@ -14,8 +14,8 @@ function Banner({ bannerData }) {
           </p>
         </div>
       </div>
-      <div className="">
-        <img className="rounded-lg" src={bannerData.image} alt="Vortex" />
+      <div className="lg:w-[600px] lg:mx-auto">
+        <img className="rounded-lg w-[100%] h-[100%] " src={bannerData.image} alt="Vortex" />
       </div>
     </div>
   );

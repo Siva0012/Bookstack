@@ -50,8 +50,8 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
         </div>
       </div>
       {/* Banners */}
-      <section className="container mx-auto py-4 mt-12">
-        <h2 className="text-2xl md:text-3xl font-extrabold mx-auto text-white text-center mb-7">
+      <section className="container mx-auto py-4 mt-12 lg:mt-14">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mx-auto text-white text-center mb-7 lg:mb-8">
           Your Gateway to Knowledge and Imagination!!
         </h2>
         {banner &&
@@ -60,12 +60,12 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
           })}
       </section>
       {/* Recently added books */}
-      <section className="bg-gray-100 rounded-md ">
+      <section className="bg-gray-100 rounded-md md:px-6 ">
         <div className="container mx-auto py-10">
-          <h2 className="text-xl sm:text-2xl md:text-2xl font-bold text-center text-gray-800 mb-8">
+          <h2 className="text-xl sm:text-2xl md:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-8">
             Recently added books
           </h2>
-          <div className=" mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 md:gap-x-0 gap-y-6">
+          <div className="mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 md:gap-x-0 gap-y-6">
             {recentBooks &&
               recentBooks.map((book) => {
                 return <RecentBooksCard bookData={book} />;
