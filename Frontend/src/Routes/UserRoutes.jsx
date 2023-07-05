@@ -13,6 +13,12 @@ import MemberLayout from "../Layout/MemberLayout";
 import { Modal } from "flowbite";
 import PaymentPage from "../Pages/Members/PaymentPage";
 import BookBagPage from "../Pages/Members/BookBagPage";
+import UpgradePage from "../Pages/Members/UpgradePage";
+import CheckoutsPage from "../Pages/Members/CheckoutsPage";
+import FinePage from "../Pages/Members/FinePage";
+import FinePaymentPage from "../Pages/Members/FinePaymentPage";
+import ReservedBooksPage from "../Pages/Members/ReservedBooksPage";
+import EmailVerification from "../Pages/Members/EmailVerification";
 
 function UserRoutes() {
 
@@ -21,6 +27,7 @@ function UserRoutes() {
     <Routes>
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/:memberId/verify/:token" element={<EmailVerification />} />
       <Route element={<ProtectedRoutes role={"user"} route={"/login"} />}>
         <Route element={<MemberLayout />}>
           <Route path="/test" element={<Modal />} />
@@ -40,10 +47,6 @@ function UserRoutes() {
     </Routes>
   );
 }
-import UpgradePage from "../Pages/Members/UpgradePage";
-import CheckoutsPage from "../Pages/Members/CheckoutsPage";
-import FinePage from "../Pages/Members/FinePage";
-import FinePaymentPage from "../Pages/Members/FinePaymentPage";
-import ReservedBooksPage from "../Pages/Members/ReservedBooksPage";
+
 
 export default UserRoutes;

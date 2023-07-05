@@ -7,7 +7,7 @@ const { findById } = require('../models/admin_model');
 const updateFines = async () => {
 
      try {
-          console.log("update fine function //////////////");
+          // console.log("update fine function //////////////");
           const allCheckouts = await lenderHistory.find({}).populate('member').populate('book')
           if (allCheckouts) {
                //creating set for members with fine
@@ -15,7 +15,7 @@ const updateFines = async () => {
                for (const checkout of allCheckouts) {
                     //calculating fine amount
                     const fineAmount = checkout.calculateFine()
-                    console.log(fineAmount, "for" , checkout.book.title);
+                    // console.log(fineAmount, "for" , checkout.book.title);
                     //adding members to the set if there is fine
                     if (fineAmount > 0) {
                          if (!memberWithFine.has(checkout.member._id)) {

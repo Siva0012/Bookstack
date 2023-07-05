@@ -61,9 +61,9 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
             className="hover:text-user-to cursor-pointer space-y-1"
           >
             <h1 className="font-bold text-sm capitalize">{bookData.author}</h1>
-            <h1 className="text-sm capitalize break-words md:m-w-[10px] ">
+            <p className="text-sm truncate capitalize ">
               {bookData.title}
-            </h1>
+            </p>
           </div>
           <div id="rating" className="">
             <AiFillStar className="text-md" color="#FF9529" />

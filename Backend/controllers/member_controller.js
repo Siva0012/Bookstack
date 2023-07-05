@@ -3,6 +3,10 @@ const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const LenderHistory = require('../models/lender_history')
 const Banners = require('../models/banner_model')
+const Tokens = require('../models/token')
+const sendEmail = require('../utils/send_email')
+const crypto = require('crypto')
+
 require('dotenv').config()
 
 //bcrypt
@@ -40,13 +44,10 @@ const register = async (req, res, next) => {
         const { name, email, password, phone } = req.body
         const memberResponse = await Members.findOne({ email: email })
         if (memberResponse) {
-            bcrypt.compare(password, memberResponse.password).then((status) => {
-                if (status) {
-                    res.send("user is already registered")
-                } else {
-                    res.send("Not registered")
-                }
-            })
+            const isExists = await bcrypt.compare(password, memberResponse.password)
+            if (isExists) {
+                return res.status(404).json({ error: "The user has already registered" })
+            }
         } else {
             const encryptedPassword = await bcrypt.hash(password, 10)
             const dateOfJoin = new Date()
@@ -57,23 +58,64 @@ const register = async (req, res, next) => {
                 password: encryptedPassword,
                 dateOfJoin: dateOfJoin
             })
-            await members.save()
-                .then((response) => {
-                    if (response) {
-                        const payLoad = {
-                            memberId: response._id,
-                            email: response.email,
-                            date: response.dateOfJoin
-                        }
-                        const token = uesrTokenGenerator(payLoad)
-                        res.status(200).json({ message: "created user", token: token, member: name })
+            const member = await members.save()
+            // .then((response) => {
+            //     if (response) {
+            //         const payLoad = {
+            //             memberId: response._id,
+            //             email: response.email,
+            //             date: response.dateOfJoin
+            //         }
+            //         const token = uesrTokenGenerator(payLoad)
+            //         res.status(200).json({ message: "created user", token: token, member: name })
+            //     }
+            // })
+            if (member) {
+                const verificationToken = await new Tokens(
+                    {
+                        memberId: member._id,
+                        token: crypto.randomBytes(32).toString('hex')
                     }
-                })
+                ).save()
+                const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
+                const sentMail = await sendEmail(member.email, "Verify Email", url)
+                // const payLoad = {
+                //     memberId: member._id,
+                //     email: member.email,
+                //     date: member.dateOfJoin
+                // }
+                // const token = uesrTokenGenerator(payLoad)
+                // res.status(200).json({ message: "Created user", token: token, member: name })
+                res.status(200).json({ message: "Created member successfully", memberCreated: true })
+            }
 
         }
 
     } catch (err) {
         console.log(err, 'on member registration');
+    }
+}
+
+const verifyEmail = async (req, res, next) => {
+    try {
+        const memberId = req.params.memberId
+        const token = req.params.token
+        const member = await Members.findOne({ _id: memberId })
+        if (!member) return res.status(400).send({ message: "Invalid link" })
+        const verificationToken = await Tokens.findOne(
+            {
+                memberId: member._id,
+                token: token
+            }
+        )
+        if (!verificationToken) return res.status(400).send({ message: 'Invalid link' })
+
+        await Members.findOneAndUpdate({ _id: member._id }, { verified: true })
+        await verificationToken.deleteOne()
+        res.status(200).json({ message: "Successfully verified Member", verified: true })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -677,38 +719,38 @@ const reserveBook = async (req, res, next) => {
         //adding book to memberSchema
         memberData.reservedBooks.push(
             {
-                book : bookId,
-                reservedOn : new Date()
+                book: bookId,
+                reservedOn: new Date()
             }
         )
         await memberData.save()
         //adding member to book schema
         bookData.reservationOrder.push(
             {
-                member : memberId,
-                reservedOn : new Date()
+                member: memberId,
+                reservedOn: new Date()
             }
         )
         await bookData.save()
-        res.status(200).json({message : `Book reservation for "${bookData.title}" has been processed !!`})
+        res.status(200).json({ message: `Book reservation for "${bookData.title}" has been processed !!` })
 
     } catch (err) {
         res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const getReservedBooks = async (req , res , next) => {
-    try{
+const getReservedBooks = async (req, res, next) => {
+    try {
         const memberId = req.memberId
         const reservedBooks = await Members.findById(memberId).populate('reservedBooks.book').select('-password')
-        if(reservedBooks) {
-            res.status(200).json({message : "Reserved Books" , reservedBooks : reservedBooks})
+        if (reservedBooks) {
+            res.status(200).json({ message: "Reserved Books", reservedBooks: reservedBooks })
         } else {
-            res.status(404).json({error : "No reserved books exists !!"})
+            res.status(404).json({ error: "No reserved books exists !!" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -736,5 +778,6 @@ module.exports = {
     createFinePaymentIntent,
     changeFineStatus,
     reserveBook,
-    getReservedBooks
+    getReservedBooks,
+    verifyEmail
 }

@@ -30,11 +30,19 @@ export default function Register() {
     try {
       memberRegister(formData)
         .then((res) => {
-          localStorage.setItem("userJwt", res.data.token);
-          navigate("/");
-          toast.success(`Signed in as "${res.data.member}"`);
+          if(res.data.memberCreated) {
+            toast.success("Please check the Email and verify your Email address")
+            //add modal here!!!
+          }
+          // localStorage.setItem("userJwt", res.data.token);
+          // navigate("/");
+          // toast.success(`Signed in as "${res.data.member}"`);
         })
-        .catch((err) => console.log("error catching", err));
+        .catch((err) => {
+          if(err.response.data.error) {
+            toast.error(err.response.data.error)
+          }
+        })
     } catch (err) {
       console.log(err);
     }
