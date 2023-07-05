@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { updateMembershipType } from "../../Redux/Member/MembershipPlanSlice";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import Typed from "react-typed";
 
 //member APIs
 import { getMember } from "../../Utils/MemberApis";
@@ -59,11 +58,7 @@ function Membership() {
               <div className="flex justify-between bg-transparent py-3 ">
                 <h2>Renew on</h2>
                 <h2 className="font-bold justify-center text-green-700 drop-shadow-[10px_10px_5px_rgba(0,0,0,0.4)]">
-                  <Typed
-                    strings={[renewDate]}
-                    typeSpeed={120}
-                    backSpeed={130}
-                  />
+                  {renewDate}
                 </h2>
               </div>
             </div>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import Typed from "react-typed";
 
 //member APIs
 import {
@@ -19,7 +18,6 @@ function BookBag() {
       try {
         const response = await getBookBag();
         if (response) {
-          console.log(response.data.memberData);
           setMember(response.data.memberData);
         }
       } catch (err) {
@@ -68,7 +66,6 @@ function BookBag() {
         <div className="text-center mt-6">
           <p className=" text-[#EAEFF2] text-2xl font-bold">
             OOPS{" "}
-            <Typed strings={["....!"]} typeSpeed={120} backSpeed={130} loop />
           </p>
           <h2 className="text-lg mt-2 font-semibold">
             There is nothing here :({" "}
