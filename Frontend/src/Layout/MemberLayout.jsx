@@ -21,7 +21,7 @@ const MemberLayout = () => {
         <Nav />
       </header>
       <section className="mt-10">
-            <div className=" lg:w-[1150px] md:w-[600px] sm:w-[100px] bg-user-from rounded-xl drop-shadow-[0_0px_10px_rgba(0,0,0,0.09)] mx-auto px-16 mb-10 py-12">
+            <div className="font-ubuntu w-full lg:w-[1150px] md:w-[680px] bg-user-from rounded-xl drop-shadow-[0_0px_10px_rgba(0,0,0,0.09)] mx-auto px-4 md:px-4 lg:px-10 mb-10 py-12 lg:py-14 ">
               <Outlet />
             </div>
             <div className="lg:w-[1150px] md:w-[600px] sm:w-[100px] mx-auto rounded-xl">

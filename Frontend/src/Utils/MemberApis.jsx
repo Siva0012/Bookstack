@@ -16,6 +16,10 @@ const googleLogin = (data) => {
     return memberAxiosInstance.post('/google-login' , data)
 }
 
+const verifyEmail = (memberId , token) => {
+    return memberAxiosInstance.get(`/${memberId}/verify/${token}`)
+}
+
 const getBooks = () => {
     return memberAxiosInstance.get('/books')
 }
@@ -120,5 +124,6 @@ export {
     createFinePaymentIntent,
     payFine,
     reserveBook,
-    getReservedBooks
+    getReservedBooks,
+    verifyEmail
 }

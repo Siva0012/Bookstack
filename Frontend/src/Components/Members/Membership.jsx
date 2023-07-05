@@ -138,17 +138,17 @@ function Membership() {
                 <div className="border">
                   <h1 className="text-center">
                     Premium plan{" "}
-                    <span className="text-green-700 font-semibold">Rs.999</span>
+                    <span className="text-green-700 font-semibold">Rs.1399</span>
                   </h1>
                   <ul className="ms-2">
                     <li className="mb-2">Access to all Books</li>
-                    <li className="mb-2">1 Book reservation at a time</li>
+                    <li className="mb-2">3 Book reservation at a time</li>
                     <li className="mb-2">
-                      Checkout maximum of 3 books at a time
+                      Checkout maximum of 5 books at a time
                     </li>
                     <li className="mb-2">
                       Get a reading period of up to{" "}
-                      <span className="font-bold">7 days</span>
+                      <span className="font-bold">10 days</span>
                     </li>
                   </ul>
                 </div>

@@ -9,6 +9,7 @@ member_router.get('/is-member-auth'  , verifyMemberToken , memberController.veri
 member_router.post('/login' , memberController.login)
 member_router.post('/register' , memberController.register)
 member_router.post('/google-login' , memberController.googleLogin)
+member_router.get('/:memberId/verify/:token' , memberController.verifyEmail)
 
 member_router.get('/categories' , verifyMemberToken , memberController.getCategories)
 member_router.get('/books' , verifyMemberToken , memberController.getBooks)
