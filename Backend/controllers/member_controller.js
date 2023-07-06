@@ -59,18 +59,8 @@ const register = async (req, res, next) => {
                 dateOfJoin: dateOfJoin
             })
             const member = await members.save()
-            // .then((response) => {
-            //     if (response) {
-            //         const payLoad = {
-            //             memberId: response._id,
-            //             email: response.email,
-            //             date: response.dateOfJoin
-            //         }
-            //         const token = uesrTokenGenerator(payLoad)
-            //         res.status(200).json({ message: "created user", token: token, member: name })
-            //     }
-            // })
             if (member) {
+                console.log("member data" , member);
                 const verificationToken = await new Tokens(
                     {
                         memberId: member._id,
@@ -79,9 +69,11 @@ const register = async (req, res, next) => {
                 ).save()
                 if (verificationToken) {
                     const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
-                    const sentMail = await sendEmail(member.email, "Verify Email", url)
+                    const sendMail = await sendEmail(member.email, "Verify Email", url)
                     res.status(200).json({ message: "Created member successfully", memberCreated: true })
                 }
+            } else {
+                console.log("member not saved");
             }
 
         }
@@ -123,8 +115,8 @@ const login = async (req, res, next) => {
         if (memberExists) {
             if (!memberExists.verified) {
                 const verificationToken = await Tokens.findOne({ memberId: memberExists._id })
-                console.log("verification tokennnnnnnnn" , verificationToken);
-                if (!verificationToken.token) {
+                // console.log("verification tokennnnnnnnn" , verificationToken);
+                if (!verificationToken) {
                     const verificationToken = await new Tokens(
                         {
                             memberId: memberExists._id,
@@ -180,7 +172,6 @@ const googleLogin = async (req, res, next) => {
                     name: name,
                     email: email,
                     password: password,
-
                 }
             )
             await member.save()
@@ -474,6 +465,7 @@ const changeFineStatus = async (req, res, next) => {
 const addToBookBag = async (req, res, next) => {
 
     try {
+        console.log("fsldfjsodi");
         const memberId = req.memberId
         const bookId = req.params.bookId
         const memberData = await Members.findById(memberId)
@@ -759,6 +751,21 @@ const getReservedBooks = async (req, res, next) => {
     }
 }
 
+const getSingleBook = async (req , res , next) => {
+    try{
+        const bookId = req.params.bookId
+        const bookData = await Books.findById(bookId).populate('category')
+        if(bookData) {
+            res.status(200).json({message : "Book data sent" , bookData : bookData})
+        } else {
+            res.status(404).json({error : "No data found"})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -784,5 +791,6 @@ module.exports = {
     changeFineStatus,
     reserveBook,
     getReservedBooks,
-    verifyEmail
+    verifyEmail,
+    getSingleBook
 }

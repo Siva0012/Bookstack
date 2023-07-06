@@ -1,7 +1,12 @@
 import { AiFillStar } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
+
 
 function RecentBooksCard({ bookData }) {
+  
+  const navigate = useNavigate()
+
   return (
     <div
       id="card"
@@ -22,6 +27,7 @@ function RecentBooksCard({ bookData }) {
         className="mb-3 w-[6rem] h-[8rem] md:w-[7rem] md:h-[9rem] mx-auto drop-shadow-[0px_0px_3px_rgba(0,0,0,0.25)] cursor-pointer hover:-translate-y-2 hover:drop-shadow-[5px_10px_5px_rgba(0,0,0,0.5)] duration-500"
       >
         <img
+          onClick={() => navigate(`/book/${bookData._id}`)}
           src={
             bookData
               ? bookData.coverPhoto
@@ -38,7 +44,9 @@ function RecentBooksCard({ bookData }) {
         <div className="flex flex-col space-y-2">
           <div id="hover-div" className="hover:text-user-to cursor-pointer">
             <h1 className="font-bold text-sm capitalize">{bookData.author}</h1>
-            <h1 className="text-sm capitalize break-words md:m-w-[10px] ">{bookData.title}</h1>
+            <h1 className="text-sm capitalize break-words md:m-w-[10px] ">
+              {bookData.title}
+            </h1>
           </div>
           <div id="rating" className="">
             <AiFillStar className="text-md" color="#FF9529" />

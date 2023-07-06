@@ -19,6 +19,7 @@ import FinePage from "../Pages/Members/FinePage";
 import FinePaymentPage from "../Pages/Members/FinePaymentPage";
 import ReservedBooksPage from "../Pages/Members/ReservedBooksPage";
 import EmailVerification from "../Pages/Members/EmailVerification";
+import SingleBookPage from "../Pages/Members/SingleBookPage";
 
 function UserRoutes() {
 
@@ -42,6 +43,7 @@ function UserRoutes() {
           <Route path="/fines" element={<FinePage />} />
           <Route path="/fine-payment" element={<FinePaymentPage />} />
           <Route path="/reserved-books" element={<ReservedBooksPage />} />
+          <Route path="/book/:bookId" element={< SingleBookPage />} />
         </Route>
       </Route>
     </Routes>
