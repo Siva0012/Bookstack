@@ -4,7 +4,7 @@ import { FaRegUser } from "react-icons/fa";
 import NavDropdown from "./NavDropdown";
 import { GiPaperBagOpen } from "react-icons/gi";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import MobileNavDropdown from './MobileNavDropdown'
+import MobileNavDropdown from "./MobileNavDropdown";
 
 function Nav() {
   const navigate = useNavigate();
@@ -27,15 +27,19 @@ function Nav() {
       <div className="md:mx-auto">
         <ul className="hidden md:flex">
           <li className="p-4">
-            <Link to="/" >Home</Link>
+            <Link to="/">Home</Link>
           </li>
           <li className="p-4">
             <Link>
               <NavDropdown />
             </Link>
           </li>
-          <li className="p-4"><Link to='/profile'>Profile</Link></li>
-          <li className="p-4">About</li>
+          <li className="p-4">
+            <Link to="/profile">Profile</Link>
+          </li>
+          <li className="p-4">
+            <Link to='/book-bag' >Bookbag</Link>
+          </li>
         </ul>
       </div>
       <div className="hidden md:block hover:cursor-pointer hover:text-red-600">

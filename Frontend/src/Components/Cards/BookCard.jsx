@@ -1,13 +1,17 @@
 import { AiFillStar } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
+import { useNavigate } from "react-router-dom";
 
 function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
+
+  const navigate = useNavigate()  
+
   return (
     <div
       id="card"
       className="p-4 mx-auto bg-white drop-shadow-[0_0px_8px_rgba(0,0,0,0.2)] w-[220px] md:w-[240px] lg:w-[280px] rounded-xl"
     >
-      {bookData.isAvailable <= 0 ? (
+      {bookData.availableStock <= 0 && bookData.reservationOrder.length >= bookData.maxReservations ? (
         <div className="mb-3 drop-shadow-[0_0px_3px_rgba(255,0,0,0.8)]">
           <div className=" ms-auto py-[2px] md:py-1 px-1 md:px-2 rounded-full bg-white w-fit flex items-center">
             <span className=" text-[12px] md:text-sm lg:text-sm text-red-600 tracking-wide font-medium">
@@ -38,6 +42,7 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
         </div>
       </div> */}
       <div
+      onClick={() => navigate(`/book/${bookData._id}`)}
         id="image"
         className="mb-3 w-[6rem] h-[8rem] md:w-[7rem] md:h-[9rem] mx-auto drop-shadow-[0px_0px_3px_rgba(0,0,0,0.25)] cursor-pointer hover:-translate-y-2 hover:drop-shadow-[5px_10px_5px_rgba(0,0,0,0.5)] duration-500"
       >

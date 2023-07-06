@@ -100,6 +100,10 @@ const getReservedBooks = () => {
     return memberAxiosInstance.get('/reserved-books')
 }
 
+const getSingleBook = (bookId) => {
+    return memberAxiosInstance.get(`/book/${bookId}`)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -125,5 +129,6 @@ export {
     payFine,
     reserveBook,
     getReservedBooks,
-    verifyEmail
+    verifyEmail,
+    getSingleBook
 }
