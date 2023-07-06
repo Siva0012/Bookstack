@@ -8,10 +8,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //Admin APIs
-import { adminLogin, googleLogin } from "../../Utils/AdminApis";
+import { adminLogin } from "../../Utils/AdminApis";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 
 const notify = (message) => {
   return toast.success(message);
@@ -45,7 +46,6 @@ export default function Login() {
     e.preventDefault();
     adminLogin(formData)
       .then((response) => {
-        console.log(response.data);
         if (response.status === 200) {
           localStorage.setItem("adminJwt", response.data.token);
           navigate("/admin");

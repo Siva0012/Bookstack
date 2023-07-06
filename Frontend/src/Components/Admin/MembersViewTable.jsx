@@ -9,7 +9,6 @@ import moment from 'moment'
 import { useSelector , useDispatch} from 'react-redux'
 import {updateMembers} from '../../Redux/Admin/MemberSlice'
 import { updateSingleMember } from '../../Redux/Admin/SingleMemberSlice'
-import { BasicTable } from '../Table/Table'
 
 
 function MembersViewTable() {

@@ -14,14 +14,14 @@ function ReservedBooks() {
   }, []);
   return (
     <div className="">
+      <h1 className="text-2xl tracking-wide mb-3 uppercase font-semibold text-white">
+        Your book reservations
+      </h1>
       {reservedBooks.length > 0 ? (
         reservedBooks &&
         reservedBooks.map((book) => {
           return (
             <>
-              <h1 className="text-2xl tracking-wide mb-3 uppercase font-semibold text-white">
-                Your book reservations
-              </h1>
               <BookCardHorizontal
                 bookData={book.book}
                 reservedOn={book.reservedOn}
