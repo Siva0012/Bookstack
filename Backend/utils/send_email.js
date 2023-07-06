@@ -19,7 +19,7 @@ module.exports = async (email, subject, text) => {
                {
                     from: process.env.USER,
                     to: email,
-                    subject : subject,
+                    subject: subject,
                     text: text
                }
           )
