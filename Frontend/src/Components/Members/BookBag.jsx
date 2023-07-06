@@ -8,12 +8,15 @@ import {
   removeFromBookBag,
 } from "../../Utils/MemberApis";
 import { toast } from "react-toastify";
+import {FiTrash2} from 'react-icons/fi'
+import ConfirmationModal from "../Modal/ConfirmationModal";
 
 function BookBag() {
 
   const navigate = useNavigate();
   const [member, setMember] = useState({});
   const [update, setupdate] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   useEffect(() => {
     async function getData() {
       try {
@@ -29,14 +32,16 @@ function BookBag() {
   }, [update]);
 
   const handleRemove = (bookId) => {
-    removeFromBookBag(bookId)
-      .then((response) => {
-        if (response.data.message) {
-          setupdate((prev) => !prev);
-          toast.success(response.data.message);
-        }
-      })
-      .catch((err) => toast.error(err.response.data.error));
+
+    setShowConfirmationModal(true)
+    // removeFromBookBag(bookId)
+    //   .then((response) => {
+    //     if (response.data.message) {
+    //       setupdate((prev) => !prev);
+    //       toast.success(response.data.message);
+    //     }
+    //   })
+    //   .catch((err) => toast.error(err.response.data.error));
   };
 
   const handleCheckout = () => {
@@ -94,22 +99,18 @@ function BookBag() {
                       </div>
                     </div>
                     <div className="w-7/10 h-full ms-5">
-                      <h1 className="text-lg">{data.book.title}</h1>
-                      <h1 className="text-md mt-2">{data.book.author}</h1>
+                      <h1 className="text-xl">{data.book.title}</h1>
+                      <h1 className="text-base text-black mt-2">{data.book.author}</h1>
                       {data.book.availableStock <= 0 ? (
-                        <h1 className="text-md mt-2">Not Available</h1>
+                        <h1 className="text-base mt-2">Not Available</h1>
                       ) : (
-                        <h1 className="text-md mt-2">Available</h1>
+                        <h1 className="text-base mt-2">Available</h1>
                       )}
                       <h1
                         onClick={() => handleRemove(data.book._id)}
-                        className={`${
-                          data.book.availableStock <= 0
-                            ? "text-red-600"
-                            : "text-white"
-                        } text-sm mt-2 hover:text-md hover:p-1 hover:text-white hover:shadow-md hover:cursor-pointer`}
+                        className={`text-red-800 w-fit text-lg mt-2 hover:text-md hover:text-white hover:shadow-md hover:cursor-pointer`}
                       >
-                        Click here to remove the book
+                        <FiTrash2 />
                       </h1>
                     </div>
                   </div>
@@ -133,6 +134,9 @@ function BookBag() {
           </button>
         )}
       </div>
+      <ConfirmationModal open={showConfirmationModal} onClose={() => setShowConfirmationModal(false)} >
+        <FiTrash2 size={56} />
+      </ConfirmationModal>
     </div>
   );
 }
