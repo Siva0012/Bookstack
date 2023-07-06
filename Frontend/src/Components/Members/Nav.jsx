@@ -20,7 +20,7 @@ function Nav() {
   };
 
   return (
-    <div className="text-black bg-user-nav flex justify-between items-center px-3 h-20">
+    <div className="text-black bg-user-nav flex justify-between items-center px-3 lg:px-5 md:px-5 h-20">
       <h1 className="text-3xl font-bold text-black font-nunito uppercase">
         bookstack
       </h1>

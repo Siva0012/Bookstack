@@ -17,7 +17,7 @@ const MemberLayout = () => {
   }, [navigate]);
   return (
     <div className="bg-gradient-to-b from-user-from to-user-to min-w-screen min-h-screen pb-10 pt-24">
-      <header className="fixed top-0 w-screen z-[5]">
+      <header className="fixed top-0 w-full z-[5]">
         <Nav />
       </header>
       <section className="mt-10">

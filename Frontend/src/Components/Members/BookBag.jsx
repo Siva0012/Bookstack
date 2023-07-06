@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 //member APIs
 import {
@@ -10,9 +10,10 @@ import {
 import { toast } from "react-toastify";
 
 function BookBag() {
+
+  const navigate = useNavigate();
   const [member, setMember] = useState({});
   const [update, setupdate] = useState(false);
-  const navigate = useNavigate();
   useEffect(() => {
     async function getData() {
       try {
@@ -64,9 +65,7 @@ function BookBag() {
         <h1 className="font-lg">Books</h1>
       ) : (
         <div className="text-center mt-6">
-          <p className=" text-[#EAEFF2] text-2xl font-bold">
-            OOPS{" "}
-          </p>
+          <p className=" text-[#EAEFF2] text-2xl font-bold">OOPS </p>
           <h2 className="text-lg mt-2 font-semibold">
             There is nothing here :({" "}
           </h2>

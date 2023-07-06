@@ -77,16 +77,11 @@ const register = async (req, res, next) => {
                         token: crypto.randomBytes(32).toString('hex')
                     }
                 ).save()
-                const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
-                const sentMail = await sendEmail(member.email, "Verify Email", url)
-                // const payLoad = {
-                //     memberId: member._id,
-                //     email: member.email,
-                //     date: member.dateOfJoin
-                // }
-                // const token = uesrTokenGenerator(payLoad)
-                // res.status(200).json({ message: "Created user", token: token, member: name })
-                res.status(200).json({ message: "Created member successfully", memberCreated: true })
+                if (verificationToken) {
+                    const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
+                    const sentMail = await sendEmail(member.email, "Verify Email", url)
+                    res.status(200).json({ message: "Created member successfully", memberCreated: true })
+                }
             }
 
         }
@@ -123,8 +118,25 @@ const login = async (req, res, next) => {
     try {
 
         const { email, password } = req.body
-        const memberExists = await Members.findOne({ email: req.body.email })
+        const memberExists = await Members.findOne({ email: email })
+
         if (memberExists) {
+            if (!memberExists.verified) {
+                const verificationToken = await Tokens.findOne({ memberId: memberExists._id })
+                console.log("verification tokennnnnnnnn" , verificationToken);
+                if (!verificationToken.token) {
+                    const verificationToken = await new Tokens(
+                        {
+                            memberId: memberExists._id,
+                            token: crypto.randomBytes(32).toString('hex')
+                        }
+                    ).save()
+                    const url = `${process.env.FRONT_END_URL}/${memberExists._id}/verify/${verificationToken.token}`
+                    const sentMail = await sendEmail(memberExists.email, "Verify Email", url)
+                    return res.status(404).json({ error: "Please verify your email using the link that has been sent !!" })
+                }
+                return res.status(404).json({ error: "Please verify your email using the link that has been sent !!" })
+            }
             const isAuser = await bcrypt.compare(password, memberExists.password)
             if (isAuser) {
                 const payLoad = {
@@ -133,13 +145,6 @@ const login = async (req, res, next) => {
                     date: memberExists.dateOfJoin
                 }
                 const token = uesrTokenGenerator(payLoad)
-                // const userData = {
-                //     memberId: memberExists._id,
-                //     name: memberExists.name,
-                //     email: memberExists.email,
-                //     date: memberExists.dateOfJoin,
-
-                // }
                 const userData = await Members.findOne({ _id: memberExists._id }, { password: 0, publicId: 0, phone: 0, email: 0, address: 0 })
                 res.status(200).json({ message: `Signed in as ${memberExists.name}`, token: token, member: userData })
             } else {

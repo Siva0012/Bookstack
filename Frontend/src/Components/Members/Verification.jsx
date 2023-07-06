@@ -4,7 +4,7 @@ import success from "../../../public/public-images/success.png";
 import { verifyEmail } from "../../Utils/MemberApis";
 
 function Verification() {
-  const [validUrl, setValidUrl] = useState(true);
+  const [validUrl, setValidUrl] = useState(null);
   const params = useParams();
 
   useEffect(() => {
@@ -17,7 +17,6 @@ function Verification() {
     .catch((err) => {
          setValidUrl(false)
     })
-//     setValidUrl(true);
   }, [params]);
 
   return (
