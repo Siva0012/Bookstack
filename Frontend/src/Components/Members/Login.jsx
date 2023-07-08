@@ -105,7 +105,9 @@ export default function Login() {
   return (
     <>
       <div className="flex flex-col items-center py-4">
-        <h2 className=" tracking-wide uppercase font-nunito text-lg md:text-xl font-semibold lg:text-2xl">bookstack</h2>
+        <h2 className=" tracking-wide uppercase font-nunito text-lg md:text-xl font-semibold lg:text-2xl">
+          bookstack
+        </h2>
         <h2 className="text-center text-sm md:text-md lg:text-lg font-semibold text-gray-700 leading-9 tracking-tight">
           Sign in to your account
         </h2>
@@ -190,7 +192,7 @@ export default function Login() {
               here!
             </Link>
           </p>
-            <h1 className="text-white text-center mt-2 font-semibold ">or</h1>
+          <h1 className="text-white text-center mt-2 font-semibold ">or</h1>
           <div className="mx-auto mt-1 text-center text-sm text-gray-500 w-[230px] sm:w-[300px] ">
             <div
               onClick={login}

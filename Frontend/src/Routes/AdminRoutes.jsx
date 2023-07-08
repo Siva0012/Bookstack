@@ -16,6 +16,7 @@ import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import AdminLayout from "../Layout/AdminLayout";
 import LenderHistory from "../Pages/Admin/LenderHistory";
 import BannersPage from "../Pages/Admin/BannersPage";
+import EditBookPage from "../Pages/Admin/EditBookPage";
 
 function AdminRoutes() {
 
@@ -36,6 +37,7 @@ function AdminRoutes() {
             <Route path="/view-book/:bookId" element={<SingleBookPage />} />
             <Route path="/lender-history" element={<LenderHistory />} />
             <Route path="/banners" element={<BannersPage />} />
+            <Route path="/edit-book/:bookId" element={<EditBookPage />} />
           </Route>
         </Route>
       </Routes>

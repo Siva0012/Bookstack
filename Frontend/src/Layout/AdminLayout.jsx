@@ -29,7 +29,7 @@ const AdminLayout = () => {
             <div className="relative right-8 top-2 sm:hidden">
               <RxHamburgerMenu color="white" />
             </div>
-            <div className="ms-20 w-full">
+            <div className="w-full">
               <AdminHeader />
               <Outlet />
             </div>

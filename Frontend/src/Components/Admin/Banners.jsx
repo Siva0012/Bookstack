@@ -22,6 +22,7 @@ function Banners() {
     margin: "0 auto",
     borderColor: "red",
   };
+  
   //for setting data for edit modal form values
   const [editBanner, setEditBanner] = useState({
     title: "",
@@ -141,13 +142,13 @@ function Banners() {
         setBanners(response.data.bannerData);
       }
     });
-  });
+  } , [handleBanner]);
 
   return (
     <>
       <div className="text-white">
         <div className="container mx-auto ">
-          <div className="py-8">
+          <div className="mt-10">
             <div className="flex justify-between">
               <h2 className="text-2xl font-semibold leading-tight">Banners</h2>
               <button
@@ -157,7 +158,7 @@ function Banners() {
                 Add new
               </button>
             </div>
-            <div className="mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+            <div className="mx-4 sm:-mx-8 px-4 sm:px-8 py-8 overflow-x-auto">
               <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                 <table className="min-w-full leading-normal">
                   <thead>
@@ -218,7 +219,7 @@ function Banners() {
                                 onClick={() =>
                                   handleBanner(banner._id, banner.active)
                                 }
-                                className="relative inline-block px-3 py-1 font-semibold min-w-[90px]  text-green-900 leading-tight hover:cursor-pointer"
+                                className="relative inline-block px-3 py-1 font-semibold min-w-[90px] text-green-900 leading-tight hover:cursor-pointer"
                               >
                                 <span
                                   aria-hidden
