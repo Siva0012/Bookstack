@@ -81,6 +81,10 @@ const updateBook = (bookId , data) => {
     return adminAxiosInstance.patch(`/update-book/${bookId}` , data)
 }
 
+const updateBookImage = (bookId , data) => {
+    return adminAxiosInstance.patch(`/update-book-image/${bookId}` , data)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -100,5 +104,6 @@ export {
     getBanners,
     changeBannerStatus,
     updateBannerImage,
-    blockMember
+    blockMember,
+    updateBookImage
 }

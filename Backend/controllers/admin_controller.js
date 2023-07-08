@@ -288,6 +288,31 @@ const updateBook = async (req , res , next) => {
     }
 }
 
+const updateBookImage = async (req , res , next) => {
+    try{
+        const bookId = req.params.bookId
+        const coverPhoto = req.file.path
+        const bookData = await Books.findById(bookId)
+        const existingPublicId = bookData.publicId
+        //remove image from cloudinary
+        await removeFromCloudinary(existingPublicId)
+        //upload new image to cloudinary
+        const data = await uploadToCloudinary(coverPhoto , 'book-cover-images')
+        if(data){
+            console.log(data);
+            const bookUpdate = await Books.findByIdAndUpdate(bookId , {$set : {coverPhoto : data.url , publicId : data.public_id}})
+            if(bookUpdate) {
+                res.status(200).json({message : "Book updated successfully" , updated : true})
+            } else {
+                res.status(404).json({error : "Couldn't update book" , updated : false})
+            }
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 const removeBook = async (req, res, next) => {
     try {
 
@@ -542,5 +567,6 @@ module.exports = {
     changeCheckoutStatus,
     changeBannerStatus,
     updateBannerImage,
-    blockOrUnblockMember
+    blockOrUnblockMember,
+    updateBookImage
 }
