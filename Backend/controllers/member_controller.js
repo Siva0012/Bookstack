@@ -182,7 +182,7 @@ const googleLogin = async (req, res, next) => {
                             name: response.name,
                             date: response.dateOfJoin //changed from data to date
                         }
-                        const token = tokenGenerator(payload)
+                        const token = uesrTokenGenerator(payload)
                         res.status(201).json({ message: `Signed in as ${response.name}`, memberData: response, token: token })
                     } else {
                         res.status(404).json({ message: "failed to register" })

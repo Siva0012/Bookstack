@@ -58,6 +58,21 @@ const getMembers = async (req, res, next) => {
     }
 }
 
+const blockOrUnblockMember = async (req, res, next) => {
+    try {
+
+        const { memberId, isBlocked } = req.body
+        const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isBlocked: !isBlocked } })
+        if (memberUpdate) {
+            res.status(200).json({isBlocked : memberUpdate.isBlocked , memberName : memberUpdate.name})
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
 const addBook = async (req, res, next) => {
     try {
         const bookTitle = req.body.title
@@ -157,7 +172,7 @@ const addCategory = async (req, res, next) => {
 
 const getCategories = async (req, res, next) => {
     try {
-        const catData = await Categories.find({}).sort({dateAdded : -1})
+        const catData = await Categories.find({}).sort({ dateAdded: -1 })
         if (catData) {
             res.status(200).json({ message: "Categories sent", catData: catData })
         }
@@ -168,7 +183,7 @@ const getCategories = async (req, res, next) => {
 
 const getBooks = async (req, res, next) => {
     try {
-        const books = await Books.find({}).populate("category").sort({dateAdded : -1})
+        const books = await Books.find({}).populate("category").sort({ dateAdded: -1 })
         if (books) {
             res.status(200).json({ message: "Books sent", books: books })
         } else {
@@ -193,55 +208,83 @@ const getSingleBook = async (req, res, next) => {
     }
 }
 
-const updateBook = async (req, res, next) => {
-    try {
+// const updateBook = async (req, res, next) => {
+//     try {
+//         const bookId = req.params.bookId
+//         const bookData = req.body
+
+//         //destructure inpuit sanitization
+//         const title = req.body.title
+//         const author = req.body.author
+//         const edition = req.body.edition
+//         const category = req.body.category._id || req.body.category
+//         const isbn = req.body.isbn
+//         const stock = req.body.stock
+//         const publisher = req.body.publisher
+//         const description = req.body.description
+//         const coverPhoto = req.file.path
+
+//         // deleting image from cloudinary
+//         const existingBookData = await Books.findOne({ _id: bookId })
+//         console.log("existing book", existingBookData);
+//         const existingPublicId = existingBookData.publicId
+//         const response = await removeFromCloudinary(existingPublicId)
+
+//         // uploading new image to cloudinary
+//         const data = await uploadToCloudinary(coverPhoto, "book-cover-images")
+
+//         // upating database
+//         const update = {
+//             title: title,
+//             author: author,
+//             edition: edition,
+//             category: category,
+//             isbn: isbn,
+//             stock: stock,
+//             publisher: publisher,
+//             description: description,
+//             coverPhoto: data.url,
+//             publicId: data.public_id
+//         }
+//         //micro modules for making code simpel
+//         const updateResponse = await Books.findOneAndUpdate({ _id: bookId }, update, { new: true })
+//         console.log("update response at server", updateResponse)
+//         if (updateResponse) {
+//             res.status(200).json({ message: "Updated book", updateBook: updateResponse })
+//         } else {
+//             res.status(404).json({ message: "Update failed" })
+//         }
+//     } catch (err) {
+//         console.log(err);
+//         next()
+//     }
+// }
+
+const updateBook = async (req , res , next) => {
+    try{
+        const {title , author , edition , category , isbn , stock , publisher , maximumReservation , description} = req.body
         const bookId = req.params.bookId
-        const bookData = req.body
-
-        //destructure inpuit sanitization
-        const title = req.body.title
-        const author = req.body.author
-        const edition = req.body.edition
-        const category = req.body.category._id || req.body.category
-        const isbn = req.body.isbn
-        const stock = req.body.stock
-        const publisher = req.body.publisher
-        const description = req.body.description
-        const coverPhoto = req.file.path
-
-        // deleting image from cloudinary
-        const existingBookData = await Books.findOne({ _id: bookId })
-        console.log("existing book", existingBookData);
-        const existingPublicId = existingBookData.publicId
-        const response = await removeFromCloudinary(existingPublicId)
-
-        // uploading new image to cloudinary
-        const data = await uploadToCloudinary(coverPhoto, "book-cover-images")
-
-        // upating database
         const update = {
-            title: title,
-            author: author,
-            edition: edition,
-            category: category,
-            isbn: isbn,
-            stock: stock,
-            publisher: publisher,
-            description: description,
-            coverPhoto: data.url,
-            publicId: data.public_id
+            title : title,
+            author : author,
+            edition : edition,
+            category : category,
+            isbn : isbn,
+            stock : stock,
+            publisher : publisher,
+            maxReservations : maximumReservation,
+            description : description,
         }
-        //micro modules for making code simpel
-        const updateResponse = await Books.findOneAndUpdate({ _id: bookId }, update, { new: true })
-        console.log("update response at server", updateResponse)
-        if (updateResponse) {
-            res.status(200).json({ message: "Updated book", updateBook: updateResponse })
+        const bookUpdate = await Books.findByIdAndUpdate(bookId , update)
+        if(bookUpdate) {
+            res.status(200).json({message : "book received" , updated : true})
         } else {
-            res.status(404).json({ message: "Update failed" })
+            res.status(404).json({error : "Failed to update" , updated : false})
         }
-    } catch (err) {
+
+    }catch(err) {
         console.log(err);
-        next()
+        res.status(500).json({error : "Internal server error"})
     }
 }
 
@@ -322,7 +365,7 @@ const addBanner = async (req, res, next) => {
 
 const getBanners = async (req, res, next) => {
     try {
-        const bannerData = await Banners.find({}).sort({createdAt : -1})
+        const bannerData = await Banners.find({}).sort({ createdAt: -1 })
         if (bannerData) {
             res.status(200).json({ message: "banner data", bannerData: bannerData })
         } else {
@@ -420,7 +463,7 @@ const updateBannerImage = async (req, res, next) => {
 const getLenderHistory = async (req, res, next) => {
     try {
 
-        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({checkoutDate : -1})
+        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({ checkoutDate: -1 })
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
             res.status(404).json({ error: "no lender data" })
 
@@ -459,8 +502,8 @@ const changeCheckoutStatus = async (req, res, next) => {
             // const returnDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
             const returnDate = new Date()
             const updateReturnDate = await LenderHistory.findOneAndUpdate(
-                {_id : lenderId},
-                {$set : {returnDate : returnDate}}
+                { _id: lenderId },
+                { $set: { returnDate: returnDate } }
             )
 
         }
@@ -498,5 +541,6 @@ module.exports = {
     getLenderHistory,
     changeCheckoutStatus,
     changeBannerStatus,
-    updateBannerImage
+    updateBannerImage,
+    blockOrUnblockMember
 }

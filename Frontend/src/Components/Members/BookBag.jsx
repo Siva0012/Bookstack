@@ -8,15 +8,15 @@ import {
   removeFromBookBag,
 } from "../../Utils/MemberApis";
 import { toast } from "react-toastify";
-import {FiTrash2} from 'react-icons/fi'
+import { FiTrash2 } from "react-icons/fi";
 import ConfirmationModal from "../Modal/ConfirmationModal";
 
 function BookBag() {
-
   const navigate = useNavigate();
   const [member, setMember] = useState({});
   const [update, setupdate] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [bookId, setBookId] = useState("");
   useEffect(() => {
     async function getData() {
       try {
@@ -32,8 +32,8 @@ function BookBag() {
   }, [update]);
 
   const handleRemove = (bookId) => {
-
-    setShowConfirmationModal(true)
+    setBookId(bookId);
+    setShowConfirmationModal(true);
     // removeFromBookBag(bookId)
     //   .then((response) => {
     //     if (response.data.message) {
@@ -42,6 +42,18 @@ function BookBag() {
     //     }
     //   })
     //   .catch((err) => toast.error(err.response.data.error));
+  };
+
+  const removeBook = (bookId) => {
+    setShowConfirmationModal(false);
+    removeFromBookBag(bookId)
+      .then((response) => {
+        if (response.data.message) {
+          setupdate((prev) => !prev);
+          toast.success(response.data.message);
+        }
+      })
+      .catch((err) => toast.error(err.response.data.error));
   };
 
   const handleCheckout = () => {
@@ -100,7 +112,9 @@ function BookBag() {
                     </div>
                     <div className="w-7/10 h-full ms-5">
                       <h1 className="text-xl">{data.book.title}</h1>
-                      <h1 className="text-base text-black mt-2">{data.book.author}</h1>
+                      <h1 className="text-base text-black mt-2">
+                        {data.book.author}
+                      </h1>
                       {data.book.availableStock <= 0 ? (
                         <h1 className="text-base mt-2">Not Available</h1>
                       ) : (
@@ -134,8 +148,32 @@ function BookBag() {
           </button>
         )}
       </div>
-      <ConfirmationModal open={showConfirmationModal} onClose={() => setShowConfirmationModal(false)} >
-        <FiTrash2 size={56} />
+      <ConfirmationModal
+        removeBook={() => removeBook(bookId)}
+        open={showConfirmationModal}
+        onClose={() => setShowConfirmationModal(false)}
+      >
+        <FiTrash2 size={56} className="mx-auto text-red-600" />
+        <div className="mx-auto text-center my-4 w-48">
+          <h3 className="text-lg font-black text-gray-800">Confirm Delete</h3>
+          <p className="text-sm text-gray">
+            Are you sure you want to remove this book from your book bag?
+          </p>
+        </div>
+        <div className="flex gap-4 text-center">
+          <button
+            onClick={() => removeBook(bookId)}
+            className=" bg-red-600 py-1 px-2 text-white rounded-md w-full"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => setShowConfirmationModal(false)}
+            className=" bg-gray-200 py-1 px-2 rounded-md w-full"
+          >
+            Cancel
+          </button>
+        </div>
       </ConfirmationModal>
     </div>
   );

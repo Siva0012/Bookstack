@@ -56,7 +56,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
         </h2>
         {banner &&
           banner.map((banner, i) => {
-            return <Banner bannerData={banner} />;
+            return <Banner key={i} bannerData={banner} />;
           })}
       </section>
       {/* Recently added books */}
@@ -67,8 +67,8 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
           </h2>
           <div className="mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 md:gap-x-0 gap-y-6">
             {recentBooks &&
-              recentBooks.map((book) => {
-                return <RecentBooksCard bookData={book} />;
+              recentBooks.map((book , i) => {
+                return <RecentBooksCard key={i} bookData={book} />;
               })}
           </div>
         </div>

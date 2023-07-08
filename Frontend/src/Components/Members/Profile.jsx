@@ -73,7 +73,6 @@ function Profile() {
           profilePicture: response.data.image,
         });
         setimageLoader(false);
-        console.log("sjfoaisyriuweviotuwenovtunoieuroweurwjmoeuwmiojero");
         setshowModal(false);
         toast.success(response.data.message);
       })

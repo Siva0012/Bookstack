@@ -42,11 +42,11 @@ function MobileNavDropdown() {
           className="relative top-6 w-full rounded-lg mb-3"
         >
           {catData &&
-            catData.map((catData) => {
+            catData.map((catData , i) => {
               return (
                 <>
                   <div
-                    key={catData._id}
+                    key={i}
                     className="w-full py-1 border-t-[1px] border-t-gray-500 text-sm hover:font-bold text-white hover:bg-white"
                   >
                     <Link

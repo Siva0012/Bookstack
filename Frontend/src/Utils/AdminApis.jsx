@@ -21,6 +21,10 @@ const getMembers = () => {
     return adminAxiosInstance.get('/members')
 }
 
+const blockMember = (data) => {
+    return adminAxiosInstance.patch(`/block-member` , data)
+}
+
 const getSingleMember = (memberId) => {
     return adminAxiosInstance.get(`/view-member/${memberId}`)
 }
@@ -41,9 +45,9 @@ const getSingleBook = (id) => {
     return adminAxiosInstance.get(`/single-book/${id}`)
 }
 
-const updateBook = (id , data) => {
-    return adminAxiosInstance.post(`/update-book/${id}` , data)
-}
+// const updateBook = (id , data) => {
+//     return adminAxiosInstance.post(`/update-book/${id}` , data)
+// }
 
 const listOrUnlist = (id , data) => {
     return adminAxiosInstance.get(`/remove-book/${id}/${data}`)
@@ -73,6 +77,10 @@ const updateBannerImage = (data) => {
     return adminAxiosInstance.post('/update-banner-image' , data)
 }
 
+const updateBook = (bookId , data) => {
+    return adminAxiosInstance.patch(`/update-book/${bookId}` , data)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -91,5 +99,6 @@ export {
     addBanner,
     getBanners,
     changeBannerStatus,
-    updateBannerImage
+    updateBannerImage,
+    blockMember
 }
