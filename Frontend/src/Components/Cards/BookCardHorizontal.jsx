@@ -2,7 +2,6 @@ import moment from "moment/moment";
 import React from "react";
 
 function BookCardHorizontal({ bookData, reservedOn }) {
-  console.log(reservedOn, "reserfsdfladsfsd");
   return (
     <div className="lg:w-[600px] flex bg-white rounded-md p-2 mb-2">
       <div className="md:w-[120px] md:h-[140px] ">

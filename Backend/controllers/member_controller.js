@@ -5,6 +5,8 @@ const LenderHistory = require('../models/lender_history')
 const Banners = require('../models/banner_model')
 const Tokens = require('../models/token')
 const sendEmail = require('../utils/send_email')
+const escapeRegExp = require('lodash.escaperegexp')
+
 const crypto = require('crypto')
 
 require('dotenv').config()
@@ -60,7 +62,7 @@ const register = async (req, res, next) => {
             })
             const member = await members.save()
             if (member) {
-                console.log("member data" , member);
+                console.log("member data", member);
                 const verificationToken = await new Tokens(
                     {
                         memberId: member._id,
@@ -751,18 +753,36 @@ const getReservedBooks = async (req, res, next) => {
     }
 }
 
-const getSingleBook = async (req , res , next) => {
-    try{
+const getSingleBook = async (req, res, next) => {
+    try {
         const bookId = req.params.bookId
         const bookData = await Books.findById(bookId).populate('category')
-        if(bookData) {
-            res.status(200).json({message : "Book data sent" , bookData : bookData})
+        if (bookData) {
+            res.status(200).json({ message: "Book data sent", bookData: bookData })
         } else {
-            res.status(404).json({error : "No data found"})
+            res.status(404).json({ error: "No data found" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const searchBooks = async (req, res, next) => {
+    try {
+        const searchKey = escapeRegExp(req.params.searchKey)
+        const regex = new RegExp(searchKey, 'i')
+        const bookData = await Books.find(
+            { $or: [{ title: { $regex: regex } }, { author: { $regex: regex } }] }
+        ).sort({ 'title': -1 })
+        if (bookData) {
+            res.status(200).json({ message: "Search results", bookData: bookData })
+        } else {
+            res.status(404).json({ error: "No books found" })
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -792,5 +812,6 @@ module.exports = {
     reserveBook,
     getReservedBooks,
     verifyEmail,
-    getSingleBook
+    getSingleBook,
+    searchBooks
 }

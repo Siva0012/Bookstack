@@ -104,6 +104,10 @@ const getSingleBook = (bookId) => {
     return memberAxiosInstance.get(`/book/${bookId}`)
 }
 
+const searchBooks = (searchKey) => {
+    return memberAxiosInstance.get(`/search-books/${searchKey}`)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -130,5 +134,6 @@ export {
     reserveBook,
     getReservedBooks,
     verifyEmail,
-    getSingleBook
+    getSingleBook,
+    searchBooks
 }
