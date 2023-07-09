@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
+import HashLoader from "react-spinners/HashLoader";
 import * as Yup from "yup";
 
 //Admin APIs
@@ -8,16 +9,25 @@ import {
   getSingleBook,
   getCategories,
   updateBook,
+  updateBookImage
 } from "../../Utils/AdminApis";
 import { toast } from "react-toastify";
+import EditModal from "../Modal/EditModal";
 
 function EditBook() {
   const navigate = useNavigate();
   const params = useParams();
   const bookId = params.bookId;
   const [categories, setcategories] = useState([]);
-  const [showModal, setShowModal] = useState();
+  const [image, setImage] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [imageLoader, setimageLoader] = useState(false);
 
+  const override = {
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+  };
   const [bookData, setbookData] = useState(null);
   const initialValues = {
     title: "",
@@ -42,12 +52,30 @@ function EditBook() {
     (values, onSubmitProps) => {
       updateBook(bookId, values).then((response) => {
         if (response.data.updated) {
-          navigate('/admin/books')
+          navigate("/admin/books");
         }
       });
     },
     [bookId]
   );
+
+  const handleImageChange = (e) => {
+      setImage(e.target.files[0])
+  }
+
+  const handleImageSubmit = () => {
+      setimageLoader(true)
+      const formData = new FormData
+      formData.append('coverPhoto' , image)
+      updateBookImage(bookId , formData)
+      .then((response) => {
+            if(response.data.updated) {
+                  setimageLoader(false)
+                  setShowModal(false)
+                  toast.success("Book updated successfully")
+            }
+      })
+  }
 
   useEffect(() => {
     getCategories().then((response) => {
@@ -75,7 +103,7 @@ function EditBook() {
         }
       })
       .catch((err) => console.log(err));
-  }, [onSubmit]);
+  }, [onSubmit , handleImageSubmit]);
 
   return (
     <div className="text-white mt-4">
@@ -84,8 +112,11 @@ function EditBook() {
         <div className="max-w-[900px] flex items-center mx-auto mt-3">
           <div className="flex flex-col">
             <p
-            onClick={() => setShowModal(true)}
-             className="ms-auto hover:cursor-pointer ">Edit</p>
+              onClick={() => setShowModal(true)}
+              className="ms-auto hover:cursor-pointer "
+            >
+              Edit
+            </p>
             <div className="w-[300px] h-[320px]">
               <img
                 className="w-full h-full object-contain"
@@ -222,6 +253,31 @@ function EditBook() {
           </Formik>
         </div>
       )}
+      <EditModal isVisible={showModal} onClose={() => setShowModal(false)}>
+        <div className="p-6">
+          <HashLoader
+            color={"#73482C"}
+            loading={imageLoader}
+            cssOverride={override}
+            size={120}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+          <h3 className="text-xl font-semibold text-gray-900 mb-5">
+            Upload your profile picture
+          </h3>
+          <div className="flex flex-col items-center justify-center">
+            <label htmlFor="image" className="border rounded-md">
+              <input type="file" id="image" onChange={handleImageChange} />
+            </label>
+            <button
+            onClick={handleImageSubmit}
+             className="bg-blue-600 rounded-md text-white px-3 py-1 mt-4">
+              Submit
+            </button>
+          </div>
+        </div>
+      </EditModal>
     </div>
   );
 }

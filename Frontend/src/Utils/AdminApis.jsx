@@ -73,12 +73,20 @@ const changeBannerStatus = (data) => {
     return adminAxiosInstance.post('/change-banner-status' , data)
 }
 
-const updateBannerImage = (data) => {
-    return adminAxiosInstance.post('/update-banner-image' , data)
+const updateBannerImage = (bannerId , data) => {
+    return adminAxiosInstance.patch(`update-banner-image/${bannerId}` , data)
+}
+
+const updateBannerContent = (bannerId , data) => {
+    return adminAxiosInstance.patch(`update-banner-content/${bannerId}` , data)
 }
 
 const updateBook = (bookId , data) => {
     return adminAxiosInstance.patch(`/update-book/${bookId}` , data)
+}
+
+const updateBookImage = (bookId , data) => {
+    return adminAxiosInstance.patch(`/update-book-image/${bookId}` , data)
 }
 
 export {
@@ -100,5 +108,7 @@ export {
     getBanners,
     changeBannerStatus,
     updateBannerImage,
-    blockMember
+    blockMember,
+    updateBookImage,
+    updateBannerContent
 }
