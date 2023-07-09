@@ -448,40 +448,44 @@ const changeBannerStatus = async (req, res, next) => {
 
 const updateBannerImage = async (req, res, next) => {
     try {
-        const { bannerId } = req.body
+
+        const bannerId = req.params.bannerId
         const bannerPhoto = req.file.path
-        const bannerData = await Banners.findOne({ _id: bannerId })
-        if (bannerData) {
-            const existingPublicId = bannerData.public_id
-
-            //removing image from cloudinary
-            const removeImage = await removeFromCloudinary(existingPublicId)
-
-            //uploading new image
-            const data = await uploadToCloudinary(bannerPhoto, 'banner-images')
-            if (data) {
-                //update database
-                const bannerImageUpdate = await Banners.findOneAndUpdate(
-                    {
-                        _id: bannerId
-                    },
-                    {
-                        $set: { image: data.url, public_id: data.public_id }
-                    }
-                )
-                if (bannerImageUpdate) {
-                    res.status(200).json({ message: "Updated banner image" })
-                } else {
-                    res.status(404).json({ error: "Error occured" })
-                }
-            }
+        console.log(bannerId , bannerPhoto);
+        const bannerData  = await Banners.findById(bannerId)
+        const existingPublicId = bannerData.publicId
+        //remove from cloudinary
+        await removeFromCloudinary(existingPublicId)
+        //upload to cloudinary
+        const data = await uploadToCloudinary(bannerPhoto , 'banner-images')
+        if(data) {
+            bannerData.publicId = data.public_id
+            bannerData.image = data.url
+            await bannerData.save()
+            res.status(200).json({message : "Updated banner Image" , updated : true , image : data.url})
+        } else {
+            res.status(404).json({error : "Couldn't update banner image" , updated : false})
         }
-
-
-
 
     } catch (err) {
         console.log(err);
+    }
+}
+
+const updateBannerContent = async (req , res , next) => {
+    try{
+        const bannerId = req.params.bannerId
+        const {title , description} = req.body
+        const update = {title : title , description : description}
+        const bannerUpdate = await Banners.findByIdAndUpdate(bannerId , {$set : update})
+        if(bannerUpdate) {
+            res.status(200).json({message : "Updated banner" , updated : true})
+        } else {
+            res.status(404).json({error : "Couldn't update the banner" , updated : false})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).jsone({error : "Internal servre error"})
     }
 }
 
@@ -568,5 +572,6 @@ module.exports = {
     changeBannerStatus,
     updateBannerImage,
     blockOrUnblockMember,
-    updateBookImage
+    updateBookImage,
+    updateBannerContent
 }

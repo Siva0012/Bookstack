@@ -27,11 +27,13 @@ admin_router.patch('/update-book/:bookId' , verifyAdminToken , adminController.u
 admin_router.patch('/update-book-image/:bookId' , verifyAdminToken , upload.single('coverPhoto') , adminController.updateBookImage)
 admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminController.removeBook)
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)
+admin_router.patch('/update-banner-image/:bannerId', verifyAdminToken , upload.single('bannerPhoto') , adminController.updateBannerImage)
 admin_router.get('/lender-history' , verifyAdminToken, adminController.getLenderHistory)
 admin_router.get('/change-checkout-status/:lenderId/:status' , verifyAdminToken , adminController.changeCheckoutStatus)
 admin_router.get('/get-banners' , verifyAdminToken , adminController.getBanners)
 admin_router.post('/change-banner-status' , verifyAdminToken , adminController.changeBannerStatus)
 admin_router.post('/update-banner-image' , verifyAdminToken , upload.single('bannerPhoto') , adminController.updateBannerImage)
+admin_router.patch('/update-banner-content/:bannerId' , verifyAdminToken , adminController.updateBannerContent)
 
 
 module.exports = admin_router

@@ -11,7 +11,8 @@ import {
   getBanners,
   addBanner,
   changeBannerStatus,
-  updateBannerImage
+  updateBannerImage,
+  updateBannerContent
 } from "../../Utils/AdminApis";
 import { toast } from "react-toastify";
 
@@ -22,23 +23,72 @@ function Banners() {
     margin: "0 auto",
     borderColor: "red",
   };
-  
-  //for setting data for edit modal form values
-  const [editBanner, setEditBanner] = useState({
-    title: "",
-    description: "",
-    bannerPhoto: "",
-  });
+
   //edit modal
   const [showEditModal, setShowEditModal] = useState(false);
 
   //for editing image
-  const [editBannerImage, setEditBannerImage] = useState("");
+  const [editImageLoader, seteditImageLoader] = useState(false);
   const [showEditImage, setShowEditImage] = useState(false);
-  const [editBannerImageURL, setEditBannerImageURL] = useState("");
+  const [editBannerImage, setEditBannerImage] = useState("");
+  const [editValues, seteditValues] = useState({
+    title: "",
+    description: "",
+    bannerId: "",
+  });
 
   //for bannerdata
   const [banners, setBanners] = useState([]);
+
+  //edit banner
+  const handleEditBanner = (bannerId, title, description, image) => {
+    setShowEditModal(true);
+    seteditValues({
+      title: title,
+      description: description,
+      bannerId: bannerId,
+    });
+    setEditBannerImage(image);
+  };
+
+  const handleEditChange = (e) => {
+    seteditValues({
+      ...editValues,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleEditValues = () => {
+    console.log("editvalues" , editValues);
+    const formData = new FormData()
+    formData.append('title' , editValues.title)
+    formData.append('description' , editValues.description)
+    updateBannerContent(editValues.bannerId , {title : editValues.title , description : editValues.description})
+    .then((response) => {
+      if(response.data.updated) {
+        toast.success("updated banner data")
+        setShowEditModal(false)
+      }
+    })
+
+  }
+
+  const handleEditImageChange = (e) => {
+    seteditImageLoader(true);
+    const file = e.target.files[0];
+    setEditBannerImage(file);
+    const formData = new FormData();
+    formData.append("bannerPhoto", file);
+    updateBannerImage(editValues.bannerId, formData).then((response) => {
+      if (response.data.updated) {
+        seteditImageLoader(false);
+        toast.success("updated banner image");
+        setEditBannerImage(response.data.image);
+      }
+    });
+  };
+
+  // Add new banner //
 
   //add modal
   const [showModal, setshowModal] = useState(false);
@@ -47,41 +97,8 @@ function Banners() {
     title: "",
     description: "",
     bannerPhoto: "",
-    bannerId : ""
+    bannerId: "",
   });
-
-  //edit banner
-  const handleEditBanner = (bannerId, title, description, bannerPhoto) => {
-    setShowEditModal(true);
-    setEditBanner({
-      ...editBanner,
-      title: title,
-      description: description,
-      bannerPhoto: bannerPhoto,
-      bannerId : bannerId
-    });
-    setEditBannerImage({ ...editBannerImage, bannerPhoto: bannerPhoto });
-  };
-
-  const handleEditChange = () => {
-    // setEdit
-  };
-
-  //Update banner image
-  const handleEditImage = (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData()
-    formData.append('bannerId' , editBanner.bannerId)
-    formData.append('bannerPhoto' , file)
-    console.log("calling function");
-    updateBannerImage(formData)
-    .then((response) => {
-      if(response.data) {
-        console.log(response.data);
-      }
-    })
-
-  };
 
   //update banner status
   const handleBanner = (bannerId, status) => {
@@ -97,7 +114,6 @@ function Banners() {
   };
 
   const handleChange = (e) => {
-    console.log(formValues);
     setformValues({ ...formValues, [e.target.name]: e.target.value });
   };
 
@@ -142,7 +158,7 @@ function Banners() {
         setBanners(response.data.bannerData);
       }
     });
-  } , [handleBanner]);
+  }, [showEditModal , showModal , handleBanner]);
 
   return (
     <>
@@ -256,19 +272,6 @@ function Banners() {
                                 <span className="relative">Edit</span>
                               </span>
                             </td>
-                            {/* <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
-                              <button
-                                type="button"
-                                className="inline-block text-gray-500 hover:text-gray-700"
-                              >
-                                <svg
-                                  className="inline-block h-6 w-6 fill-current"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path d="M12 6a2 2 0 110-4 2 2 0 010 4zm0 8a2 2 0 110-4 2 2 0 010 4zm-2 6a2 2 0 104 0 2 2 0 00-4 0z" />
-                                </svg>
-                              </button>
-                            </td> */}
                           </tr>
                         );
                       })}
@@ -283,14 +286,6 @@ function Banners() {
       {/*Edit banner*/}
       <Modal isVisible={showEditModal} onClose={() => setShowEditModal(false)}>
         <div className="p-6">
-          <HashLoader
-            color={"#73482C"}
-            loading={imageLoader}
-            cssOverride={override}
-            size={120}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
           <h3 className="text-xl font-semibold text-gray-900 mb-5">
             Edit Banner
           </h3>
@@ -302,48 +297,64 @@ function Banners() {
             <div className="flex flex-col items-center justify-center py-3">
               <div className="w-[350px] p-2  ">
                 <div className="w-full relative">
-                  <h6
-                    onClick={() => setShowEditImage((prev) => !prev)}
-                    className="text-center text-gray-500"
-                  >
-                    click here to edit image
-                  </h6>
-                  <div className="w-[150px] h-[180px] mx-auto flex flex-col justify-center items-center">
-                    <img
-                      className="shadow-md"
-                      src={
-                        editBannerImage
-                          ? editBannerImage.bannerPhoto
-                          : "../../../public/public-images/image.jpg"
-                      }
-                      alt=""
+                  {editImageLoader ? (
+                    <HashLoader
+                      color={"#73482C"}
+                      loading={editImageLoader}
+                      cssOverride={override}
+                      size={120}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
                     />
-                  </div>
-                  {showEditImage && (
-                    <div className="absolute top-[50%] left-[45%]">
-                      <label htmlFor="bannerPhoto" className="">
-                        <MdOutlineAddPhotoAlternate color="white" size={30} />
-                      </label>
-                      <input
-                        className="rounded-md hidden"
-                        id="bannerPhoto"
-                        name="bannerPhoto"
-                        type="file"
-                        onChange={handleEditImage}
-                      />
-                    </div>
+                  ) : (
+                    <>
+                      <h6
+                        onClick={() => setShowEditImage((prev) => !prev)}
+                        className="text-center text-gray-500"
+                      >
+                        click here to edit image
+                      </h6>
+                      <div className="w-[150px] h-[180px] mx-auto flex flex-col justify-center items-center">
+                        <img
+                          className="shadow-md"
+                          src={
+                            editBannerImage
+                              ? editBannerImage
+                              : "../../../public/public-images/image.jpg"
+                          }
+                          alt=""
+                        />
+                      </div>
+                      {showEditImage && (
+                        <div className="absolute top-[50%] left-[45%]">
+                          <label htmlFor="image" className="">
+                            <MdOutlineAddPhotoAlternate
+                              color="black"
+                              size={30}
+                            />
+                            <input
+                              onChange={handleEditImageChange}
+                              className="rounded-md hidden"
+                              id="image"
+                              name="image"
+                              type="file"
+                            />
+                          </label>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
                 <div className="w-full mt-3">
                   <label htmlFor="title" className="border rounded-md">
                     Title
                     <input
+                      onChange={handleEditChange}
                       className="w-full rounded-md"
                       id="title"
                       name="title"
                       type="text"
-                      value={editBanner && editBanner.title}
-                      onChange={handleEditChange}
+                      value={editValues.title}
                     />
                   </label>
                 </div>
@@ -351,19 +362,20 @@ function Banners() {
                   <label htmlFor="description" className="border rounded-md">
                     description
                     <input
+                      onChange={handleEditChange}
                       className="w-full rounded-md"
                       id="description"
                       name="description"
                       type="text"
-                      value={editBanner && editBanner.description}
-                      onChange={handleEditChange}
+                      value={editValues.description}
                     />
                   </label>
                 </div>
               </div>
 
               <button
-                type="submit"
+                onClick={handleEditValues}
+                type="button"
                 className="bg-blue-600 rounded-md text-white px-3 py-1 mt-4"
               >
                 Submit
