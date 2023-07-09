@@ -66,7 +66,7 @@ function Nav() {
         />
       </div>
       {searchKey && searchBookData.length ? (
-        <div className=" w-[600px] rounded-md bg-white/50 px-4 py-5 absolute right-[110px] top-[90px] ">
+        <div className=" w-fit rounded-md bg-white/50 px-4 py-5 absolute right-[110px] top-[90px] ">
           <div className="overflow-auto max-h-[500px]">
             {searchBookData &&
               searchBookData.map((bookData) => {
