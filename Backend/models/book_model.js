@@ -77,17 +77,13 @@ const bookSchema = new mongoose.Schema(
         },
         reservationOrder: [
             {
-                member: {
-                    type: mongoose.Schema.Types.ObjectId
-                },
-                reservedOn: {
-                    type: Date
+                reservation : {
+                    type : mongoose.Schema.Types.ObjectId
                 }
             }
         ],
 
     }
 )
-
 
 module.exports = mongoose.model("Books", bookSchema)

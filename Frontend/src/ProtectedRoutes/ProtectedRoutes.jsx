@@ -18,26 +18,22 @@ const ProtectedRoutes = ({ role, route }) => {
             isAdminAuth()
                 .then((response) => {
                     if (response.data.isAdmin) {
-                        console.log("admin is authasdjfkasodfasdjfdjfj");
                         setAuth('isAdmin')
-                    } else {
-                        setAuth(null)
-                        localStorage.removeItem('adminJwt')
                     }
-                    console.log("auth", auth);
                 })
                 .catch((err) => {
+                    setAuth(null)
+                    localStorage.removeItem("adminJwt")
                     navigate('/admin/login')
                 })
         } else if (role === 'user') {
             isMemberAuth()
                 .then((response) => {
                     if (response.data.isMember) {
-                        setAuth(response.data.isMember) ///////////////////////////////
+                        setAuth(response.data.isMember)
                     }
                 })
                 .catch((err) => {
-                    console.log(err);
                     setAuth(null)
                     localStorage.removeItem("userJwt")
                     navigate('/login')
