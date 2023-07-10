@@ -22,6 +22,7 @@ export default function Example() {
     description: "",
     category: "",
     coverPhoto: "",
+    shelfNumber: "",
   });
   const handleChange = (e) => {
     setInputValues({
@@ -53,6 +54,7 @@ export default function Example() {
     formData.append("stock", inputValues.stock);
     formData.append("description", inputValues.description);
     formData.append("category", inputValues.category);
+    formData.append("shelfNumber", inputValues.shelfNumber);
 
     try {
       const response = await addBook(formData);
@@ -255,63 +257,63 @@ export default function Example() {
                 </div>
               </div>
               <div className="border-gray-900/10 pb-1 col-span-full">
-                  <div className="">
-                    <label
-                      htmlFor="description"
-                      className="block text-sm font-medium leading-6 text-gray-400"
-                    >
-                      Description
-                    </label>
-                    <div className="mt-1">
-                      <textarea
-                        onChange={handleChange}
-                        id="description"
-                        name="description"
-                        rows={3}
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        defaultValue={""}
-                      />
-                    </div>
-                    <p className="mt-3 text-sm leading-6 text-gray-600">
-                      Write a few sentences about the book.
-                    </p>
+                <div className="">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium leading-6 text-gray-400"
+                  >
+                    Description
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      onChange={handleChange}
+                      id="description"
+                      name="description"
+                      rows={3}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-400 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      defaultValue={""}
+                    />
                   </div>
+                  <p className="mt-3 text-sm leading-6 text-gray-600">
+                    Write a few sentences about the book.
+                  </p>
+                </div>
 
-                  <div className="col-span-full">
-                    <label
-                      htmlFor="cover-photo"
-                      className="block text-sm font-medium leading-6 text-gray-400"
-                    >
-                      Cover photo
-                    </label>
-                    <div className="mt-1 bg-white flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                      <div className="text-center">
-                        <PhotoIcon
-                          className="mx-auto h-12 w-12 text-gray-400"
-                          aria-hidden="true"
-                        />
-                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                          <label
-                            htmlFor="file"
-                            className="relative cursor-pointer py-2 px-3 rounded-md bg-indigo-600 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                          >
-                            <span>Upload a file</span>
-                            <input
-                              onChange={imageUpload}
-                              id="file"
-                              name="file"
-                              type="file"
-                              className="sr-only"
-                            />
-                          </label>
-                          <p className="pl-1">or drag and drop</p>
-                        </div>
-                        <p className="text-xs leading-5 text-white">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
+                <div className="col-span-full">
+                  <label
+                    htmlFor="cover-photo"
+                    className="block text-sm font-medium leading-6 text-gray-400"
+                  >
+                    Cover photo
+                  </label>
+                  <div className="mt-1 bg-white flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                    <div className="text-center">
+                      <PhotoIcon
+                        className="mx-auto h-12 w-12 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                        <label
+                          htmlFor="file"
+                          className="relative cursor-pointer py-2 px-3 rounded-md bg-indigo-600 font-semibold text-white focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        >
+                          <span>Upload a file</span>
+                          <input
+                            onChange={imageUpload}
+                            id="file"
+                            name="file"
+                            type="file"
+                            className="sr-only"
+                          />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
                       </div>
+                      <p className="text-xs leading-5 text-white">
+                        PNG, JPG, GIF up to 10MB
+                      </p>
                     </div>
                   </div>
+                </div>
               </div>
             </div>
             {/* <div className="border-gray-900/10 pb-1">

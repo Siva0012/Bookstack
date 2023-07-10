@@ -64,7 +64,7 @@ const blockOrUnblockMember = async (req, res, next) => {
         const { memberId, isBlocked } = req.body
         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isBlocked: !isBlocked } })
         if (memberUpdate) {
-            res.status(200).json({isBlocked : memberUpdate.isBlocked , memberName : memberUpdate.name})
+            res.status(200).json({ isBlocked: memberUpdate.isBlocked, memberName: memberUpdate.name })
         }
 
     } catch (err) {
@@ -81,7 +81,7 @@ const addBook = async (req, res, next) => {
             const coverPhoto = req.file.path ?? null
             const data = await uploadToCloudinary(coverPhoto, "book-cover-images")
             const { title, author, edition, category,
-                isbn, stock, publisher, description } = req.body
+                isbn, stock, publisher, description, shelfNumber } = req.body
             const bookData = {
                 title: title,
                 author: author,
@@ -92,7 +92,8 @@ const addBook = async (req, res, next) => {
                 stock: stock,
                 coverPhoto: data.url,
                 publicId: data.public_id,
-                description: description
+                description: description,
+                shelfNumber: shelfNumber
             }
 
             const book = new Books(bookData)
@@ -260,36 +261,36 @@ const getSingleBook = async (req, res, next) => {
 //     }
 // }
 
-const updateBook = async (req , res , next) => {
-    try{
-        const {title , author , edition , category , isbn , stock , publisher , maximumReservation , description} = req.body
+const updateBook = async (req, res, next) => {
+    try {
+        const { title, author, edition, category, isbn, stock, publisher, maximumReservation, description } = req.body
         const bookId = req.params.bookId
         const update = {
-            title : title,
-            author : author,
-            edition : edition,
-            category : category,
-            isbn : isbn,
-            stock : stock,
-            publisher : publisher,
-            maxReservations : maximumReservation,
-            description : description,
+            title: title,
+            author: author,
+            edition: edition,
+            category: category,
+            isbn: isbn,
+            stock: stock,
+            publisher: publisher,
+            maxReservations: maximumReservation,
+            description: description,
         }
-        const bookUpdate = await Books.findByIdAndUpdate(bookId , update)
-        if(bookUpdate) {
-            res.status(200).json({message : "book received" , updated : true})
+        const bookUpdate = await Books.findByIdAndUpdate(bookId, update)
+        if (bookUpdate) {
+            res.status(200).json({ message: "book received", updated: true })
         } else {
-            res.status(404).json({error : "Failed to update" , updated : false})
+            res.status(404).json({ error: "Failed to update", updated: false })
         }
 
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server error"})
+        res.status(500).json({ error: "Internal server error" })
     }
 }
 
-const updateBookImage = async (req , res , next) => {
-    try{
+const updateBookImage = async (req, res, next) => {
+    try {
         const bookId = req.params.bookId
         const coverPhoto = req.file.path
         const bookData = await Books.findById(bookId)
@@ -297,19 +298,19 @@ const updateBookImage = async (req , res , next) => {
         //remove image from cloudinary
         await removeFromCloudinary(existingPublicId)
         //upload new image to cloudinary
-        const data = await uploadToCloudinary(coverPhoto , 'book-cover-images')
-        if(data){
+        const data = await uploadToCloudinary(coverPhoto, 'book-cover-images')
+        if (data) {
             console.log(data);
-            const bookUpdate = await Books.findByIdAndUpdate(bookId , {$set : {coverPhoto : data.url , publicId : data.public_id}})
-            if(bookUpdate) {
-                res.status(200).json({message : "Book updated successfully" , updated : true})
+            const bookUpdate = await Books.findByIdAndUpdate(bookId, { $set: { coverPhoto: data.url, publicId: data.public_id } })
+            if (bookUpdate) {
+                res.status(200).json({ message: "Book updated successfully", updated: true })
             } else {
-                res.status(404).json({error : "Couldn't update book" , updated : false})
+                res.status(404).json({ error: "Couldn't update book", updated: false })
             }
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -451,20 +452,20 @@ const updateBannerImage = async (req, res, next) => {
 
         const bannerId = req.params.bannerId
         const bannerPhoto = req.file.path
-        console.log(bannerId , bannerPhoto);
-        const bannerData  = await Banners.findById(bannerId)
+        console.log(bannerId, bannerPhoto);
+        const bannerData = await Banners.findById(bannerId)
         const existingPublicId = bannerData.publicId
         //remove from cloudinary
         await removeFromCloudinary(existingPublicId)
         //upload to cloudinary
-        const data = await uploadToCloudinary(bannerPhoto , 'banner-images')
-        if(data) {
+        const data = await uploadToCloudinary(bannerPhoto, 'banner-images')
+        if (data) {
             bannerData.publicId = data.public_id
             bannerData.image = data.url
             await bannerData.save()
-            res.status(200).json({message : "Updated banner Image" , updated : true , image : data.url})
+            res.status(200).json({ message: "Updated banner Image", updated: true, image: data.url })
         } else {
-            res.status(404).json({error : "Couldn't update banner image" , updated : false})
+            res.status(404).json({ error: "Couldn't update banner image", updated: false })
         }
 
     } catch (err) {
@@ -472,20 +473,20 @@ const updateBannerImage = async (req, res, next) => {
     }
 }
 
-const updateBannerContent = async (req , res , next) => {
-    try{
+const updateBannerContent = async (req, res, next) => {
+    try {
         const bannerId = req.params.bannerId
-        const {title , description} = req.body
-        const update = {title : title , description : description}
-        const bannerUpdate = await Banners.findByIdAndUpdate(bannerId , {$set : update})
-        if(bannerUpdate) {
-            res.status(200).json({message : "Updated banner" , updated : true})
+        const { title, description } = req.body
+        const update = { title: title, description: description }
+        const bannerUpdate = await Banners.findByIdAndUpdate(bannerId, { $set: update })
+        if (bannerUpdate) {
+            res.status(200).json({ message: "Updated banner", updated: true })
         } else {
-            res.status(404).json({error : "Couldn't update the banner" , updated : false})
+            res.status(404).json({ error: "Couldn't update the banner", updated: false })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).jsone({error : "Internal servre error"})
+        res.status(500).jsone({ error: "Internal servre error" })
     }
 }
 

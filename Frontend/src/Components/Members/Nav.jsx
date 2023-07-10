@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState , useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import NavDropdown from "./NavDropdown";
@@ -33,6 +33,8 @@ function Nav() {
     });
   };
 
+  
+  
   return (
     <div className="text-black bg-user-nav flex justify-between items-center px-3 lg:px-5 md:px-5 h-20">
       <h1 className="text-3xl font-bold text-black font-nunito uppercase">
@@ -66,7 +68,7 @@ function Nav() {
         />
       </div>
       {searchKey && searchBookData.length ? (
-        <div className=" w-fit rounded-md bg-white/50 px-4 py-5 absolute right-[110px] top-[90px] ">
+        <div className=" w-[500px] rounded-md bg-white/50 px-4 py-5 absolute right-[110px] top-[90px] ">
           <div className="overflow-auto max-h-[500px]">
             {searchBookData &&
               searchBookData.map((bookData) => {
