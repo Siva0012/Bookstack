@@ -3,8 +3,11 @@ const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const LenderHistory = require('../models/lender_history')
 const Banners = require('../models/banner_model')
+const Reservations = require('../models/reservation_model')
 const Tokens = require('../models/token')
 const sendEmail = require('../utils/send_email')
+const escapeRegExp = require('lodash.escaperegexp')
+
 const crypto = require('crypto')
 
 require('dotenv').config()
@@ -60,7 +63,7 @@ const register = async (req, res, next) => {
             })
             const member = await members.save()
             if (member) {
-                console.log("member data" , member);
+                console.log("member data", member);
                 const verificationToken = await new Tokens(
                     {
                         memberId: member._id,
@@ -69,7 +72,13 @@ const register = async (req, res, next) => {
                 ).save()
                 if (verificationToken) {
                     const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
-                    const sendMail = await sendEmail(member.email, "Verify Email", url)
+                    const message = `  <p>Dear ${member.name},</p>
+                    <p>Thank you for registering with our website. To verify your email address, please click on the following link:</p>
+                    <p><a href="${url}</a></p>
+                    <p>If you did not register with our website, please disregard this email.</p>
+                    <p>Best regards,</p>
+                    <p>Bookstack</p>`
+                    const sendMail = await sendEmail(member.email, "Verify Email", message)
                     res.status(200).json({ message: "Created member successfully", memberCreated: true })
                 }
             } else {
@@ -683,8 +692,10 @@ const reserveBook = async (req, res, next) => {
     try {
         const memberId = req.memberId
         const bookId = req.params.bookId
+
         const memberData = await Members.findById(memberId)
         const bookData = await Books.findById(bookId)
+
 
         //check the member status
 
@@ -697,41 +708,66 @@ const reserveBook = async (req, res, next) => {
             return res.status(404).json({ error: "You have existing fines !!" })
         }
         //check for reserved books numbers
-        if (memberData.membershipType === 'Student' && memberData.reservedBooks >= 1) {
+        if (memberData.membershipType === 'Student' && memberData.reservations >= 1) {
             return res.status(404).json({ error: "You have reached your reservation limit !!" })
         }
-        if (memberData.membershipType === 'Premium' && memberData.reservedBooks >= 3) {
+        if (memberData.membershipType === 'Premium' && memberData.reservations >= 3) {
             return res.status(404).json({ error: "You have reached your reservation limit !!" })
         }
-        //check whether the book has already reserved or not by the user
-        const isAlreadyExist = memberData.reservedBooks.filter((reservedBook) => {
-            return reservedBook.book == bookId
+
+        //check whether the book has already reserved by the user
+        const memberDetails = await Members.findById(memberId) //populating all data from the reservation field
+            .populate(
+                {
+                    path: 'reservations.reservation',
+                    populate: [
+                        { path: 'memberId', model: 'Members' },
+                        { path: 'bookId', model: 'Books' }
+                    ]
+                }
+            )
+
+        const isAlreadyExist = memberDetails.reservations.filter((reservation) => {
+            return reservation.reservation.bookId._id.toString() === bookId && reservation.reservation.status === 'Reserved'
         })
         if (isAlreadyExist.length) {
-            return res.status(404).json({ error: "You have already reserved this book !!" })
+            return res.status(404).json({ error: 'You have already reserved this book !!' })
         }
-
-        //approve the reservation
-
-        //adding book to memberSchema
-        memberData.reservedBooks.push(
+        //if there is no reservation
+        // create new book reservation
+        const reservation = new Reservations(
             {
-                book: bookId,
+                memberId: memberId,
+                bookId: bookId,
                 reservedOn: new Date()
             }
         )
-        await memberData.save()
-        //adding member to book schema
+
+        await reservation.save()
+        //adding reservation to member
+        memberDetails.reservations.push(
+            {
+                reservation: reservation._id
+            }
+        )
+        memberDetails.save()
+        //adding reservation to book
+
+        //add the memberId nextCheckoutBy field if the book has no previous reservations
+        if(bookData.reservationOrder.length === 0) {
+            bookData.nextCheckoutBy = memberId
+        }
         bookData.reservationOrder.push(
             {
-                member: memberId,
-                reservedOn: new Date()
+                reservation: reservation._id
             }
         )
-        await bookData.save()
+        bookData.save()
+
         res.status(200).json({ message: `Book reservation for "${bookData.title}" has been processed !!` })
 
     } catch (err) {
+        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -739,11 +775,36 @@ const reserveBook = async (req, res, next) => {
 const getReservedBooks = async (req, res, next) => {
     try {
         const memberId = req.memberId
-        const reservedBooks = await Members.findById(memberId).populate('reservedBooks.book').select('-password')
+        const reservedBooks = await Members.findById(memberId)
+            .select('-password')
+            .populate(
+                {
+                    path: 'reservations.reservation',
+                    populate: [
+                        { path: 'bookId', model: 'Books' }
+                    ]
+                }
+            )
         if (reservedBooks) {
-            res.status(200).json({ message: "Reserved Books", reservedBooks: reservedBooks })
+            res.status(200).json({ message: "Reserved books", reservedBooks: reservedBooks.reservations })
         } else {
-            res.status(404).json({ error: "No reserved books exists !!" })
+            res.status(500).json({ error: "No reserved books exists !!" })
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const getSingleBook = async (req, res, next) => {
+    try {
+        const bookId = req.params.bookId
+        const bookData = await Books.findById(bookId).populate('category')
+        if (bookData) {
+            res.status(200).json({ message: "Book data sent", bookData: bookData })
+        } else {
+            res.status(404).json({ error: "No data found" })
         }
     } catch (err) {
         console.log(err);
@@ -751,18 +812,60 @@ const getReservedBooks = async (req, res, next) => {
     }
 }
 
-const getSingleBook = async (req , res , next) => {
-    try{
-        const bookId = req.params.bookId
-        const bookData = await Books.findById(bookId).populate('category')
-        if(bookData) {
-            res.status(200).json({message : "Book data sent" , bookData : bookData})
+const searchBooks = async (req, res, next) => {
+    try {
+        const searchKey = escapeRegExp(req.params.searchKey)
+        const regex = new RegExp(searchKey, 'i')
+        const bookData = await Books.find(
+            { $or: [{ title: { $regex: regex } }, { author: { $regex: regex } }] }
+        ).sort({ 'title': -1 })
+        if (bookData) {
+            res.status(200).json({ message: "Search results", bookData: bookData })
         } else {
-            res.status(404).json({error : "No data found"})
+            res.status(404).json({ error: "No books found" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const cancelReservation = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const reservationId = req.params.reservationId
+
+        //removing the reservation from the book reservationorder and udpating the status
+        const reservationData = await Reservations.findById(reservationId)
+        const bookId = reservationData.bookId
+        const bookData = await Books.findById(bookId)
+
+        //Update nextCheckoutBy if the member is the current nextCheckoutBy
+        if(bookData.nextCheckoutBy.toString() === memberId.toString()) {
+            const secondReservationId = bookData.reservationOrder[1].reservation
+            const secondReservationData = await Reservations.findById(secondReservationId)
+            bookData.nextCheckoutBy = secondReservationData.memberId
+            await bookData.save()
+        }
+        const bookUpdate = await Books.findByIdAndUpdate(
+            bookId,
+            {
+                $pull: { reservationOrder: { reservation: reservationId } }
+            }
+        )
+        //status update
+        reservationData.status = 'Cancelled'
+        const updateReservation = await reservationData.save()
+
+        if (updateReservation && bookUpdate) {
+            console.log("updated all is set");
+            res.status(200).json({ message: "Your book reservation has been cancelled" })
+        } else {
+            res.status(404).json({ error: "Couldn't cancel reservation" })
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -792,5 +895,7 @@ module.exports = {
     reserveBook,
     getReservedBooks,
     verifyEmail,
-    getSingleBook
+    getSingleBook,
+    searchBooks,
+    cancelReservation
 }

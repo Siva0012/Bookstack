@@ -72,15 +72,12 @@ const memberSchema = new mongoose.Schema({
         type : Number,
         default : 0
     },
-    reservedBooks : [
+    reservations : [
         {
-            book : {
+            reservation : {
                 type : mongoose.Schema.Types.ObjectId,
-                ref : 'Books'
-            },
-            reservedOn : {
-                type : Date,
-                default : new Date()
+                ref : 'Reservations',
+                required : true
             }
         }
     ]

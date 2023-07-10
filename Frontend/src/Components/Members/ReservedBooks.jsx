@@ -1,32 +1,50 @@
 import { useState, useEffect } from "react";
-import { getReservedBooks } from "../../Utils/MemberApis";
+import { cancelReservation as cancelReservationApi, getReservedBooks } from "../../Utils/MemberApis";
 import BookCard from "../Cards/BookCard";
 import BookCardHorizontal from "../Cards/BookCardHorizontal";
+import { toast } from "react-toastify";
+
 
 function ReservedBooks() {
   const [reservedBooks, setReservedBooks] = useState([]);
+
+  const cancelReservation = (reservationId) => {
+    console.log("cancel reservation" , reservationId);
+    cancelReservationApi(reservationId)
+    .then((response) => {
+      if(response.data.message) {
+        toast.success(response.data.message)
+      }
+    })
+    .catch((err) => {
+      toast.error(err.response.data.error)
+    })
+  }
+
   useEffect(() => {
     getReservedBooks().then((response) => {
       if (response.data.reservedBooks) {
-        setReservedBooks(response.data.reservedBooks.reservedBooks);
+        console.log(response.data.reservedBooks);
+        setReservedBooks(response.data.reservedBooks);
       }
     });
   }, []);
   return (
     <div className="">
       <h1 className="text-2xl tracking-wide mb-3 uppercase font-semibold text-white">
-        Your book reservations
+        book reservations
       </h1>
       {reservedBooks.length > 0 ? (
         reservedBooks &&
-        reservedBooks.map((book) => {
+        reservedBooks.map((reservation) => {
           return (
-            <>
-              <BookCardHorizontal
-                bookData={book.book}
-                reservedOn={book.reservedOn}
+              <BookCardHorizontal key={reservation._id}
+                bookData={reservation.reservation.bookId}
+                reservedOn={reservation.reservation.reservedOn}
+                status ={reservation.reservation.status}
+                reservationId = {reservation.reservation._id}
+                cancelReservation = {cancelReservation}
               />
-            </>
           );
         })
       ) : (

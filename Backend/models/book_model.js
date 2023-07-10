@@ -50,6 +50,9 @@ const bookSchema = new mongoose.Schema(
         publicId: {
             type: String
         },
+        shelfNumber: {
+            type: String
+        },
         dateAdded: {
             type: Date,
             default: Date.now()
@@ -74,26 +77,17 @@ const bookSchema = new mongoose.Schema(
         },
         reservationOrder: [
             {
-                member: {
-                    type: mongoose.Schema.Types.ObjectId
-                },
-                reservedOn: {
-                    type: Date
+                reservation : {
+                    type : mongoose.Schema.Types.ObjectId
                 }
             }
         ],
+        nextCheckoutBy : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'Members'
+        }
 
     }
 )
-
-// bookSchema.pre('findOneAndUpdate' , function(next) {
-//     const availableStock = this.getUpdate().$set.availableStock
-//     if(availableStock <= 0) {
-//         this.updateMany({} , {$set : {isAvailable : false}})
-//     } else {
-//         this.updateMany({} , {$set : {isAvailable : true}})
-//     }
-//     next()
-// })
 
 module.exports = mongoose.model("Books", bookSchema)

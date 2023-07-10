@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState , useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import NavDropdown from "./NavDropdown";
@@ -6,7 +6,14 @@ import { GiPaperBagOpen } from "react-icons/gi";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import MobileNavDropdown from "./MobileNavDropdown";
 
+//member API
+import { searchBooks } from "../../Utils/MemberApis";
+import SearchCard from "../Cards/SearchCard";
+
 function Nav() {
+  const [searchBookData, setSearchBookData] = useState([]);
+  const [searchKey, setSearchKey] = useState("");
+
   const navigate = useNavigate();
   const [nav, setNav] = useState(false);
   const handleNav = () => {
@@ -14,11 +21,20 @@ function Nav() {
   };
 
   const logout = () => {
-    console.log("logout called");
     localStorage.removeItem("userJwt");
     navigate("/login");
   };
 
+  const handleSearch = (e) => {
+    setSearchKey(e.target.value);
+    searchBooks(searchKey).then((response) => {
+      console.log(response.data.bookData);
+      setSearchBookData(response.data.bookData);
+    });
+  };
+
+  
+  
   return (
     <div className="text-black bg-user-nav flex justify-between items-center px-3 lg:px-5 md:px-5 h-20">
       <h1 className="text-3xl font-bold text-black font-nunito uppercase">
@@ -38,10 +54,38 @@ function Nav() {
             <Link to="/profile">Profile</Link>
           </li>
           <li className="p-4">
-            <Link to='/book-bag' >Bookbag</Link>
+            <Link to="/book-bag">Bookbag</Link>
           </li>
         </ul>
       </div>
+      <div className="mr-10">
+        {" "}
+        <input
+          onChange={handleSearch}
+          className="rounded-md"
+          type="text"
+          placeholder="Search books or authors"
+        />
+      </div>
+      {searchKey && searchBookData.length ? (
+        <div className=" w-[500px] rounded-md bg-white/50 px-4 py-5 absolute right-[110px] top-[90px] ">
+          <div className="overflow-auto max-h-[500px]">
+            {searchBookData &&
+              searchBookData.map((bookData) => {
+                return <SearchCard key={bookData._id} bookData={bookData} />;
+              })}
+          </div>
+        </div>
+      ) : searchKey && !searchBookData.length ? (
+        <div className=" w-[600px] rounded-md bg-white/50 px-4 py-5 absolute right-[110px] top-[90px] ">
+          <div className="overflow-auto max-h-[500px] text-center">
+            <h1>No books found !!</h1>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
+
       <div className="hidden md:block hover:cursor-pointer hover:text-red-600">
         <span onClick={logout}>Logout</span>
       </div>

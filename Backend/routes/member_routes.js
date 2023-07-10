@@ -32,5 +32,7 @@ member_router.post('/pay-fine' , verifyMemberToken , memberController.changeFine
 member_router.get('/reserve-book/:bookId', verifyMemberToken , memberController.reserveBook)
 member_router.get('/reserved-books' , verifyMemberToken , memberController.getReservedBooks)
 member_router.get('/book/:bookId' , verifyMemberToken , memberController.getSingleBook)
+member_router.get('/search-books/:searchKey' , verifyMemberToken , memberController.searchBooks)
+member_router.patch('/cancel-reservation/:reservationId' , verifyMemberToken , memberController.cancelReservation)
 
 module.exports = member_router

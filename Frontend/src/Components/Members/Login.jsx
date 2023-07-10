@@ -75,6 +75,7 @@ export default function Login() {
     googleLogin(user)
       .then((response) => {
         localStorage.setItem("userJwt", response.data.token);
+        dispatch(updateMemberData(response.data.member))
         notify(response.data.message);
         navigate("/");
       })
