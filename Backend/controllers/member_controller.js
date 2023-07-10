@@ -711,29 +711,29 @@ const reserveBook = async (req, res, next) => {
 
         //check whether the book has already reserved or not by the user
         const memberDetails = await Members.findById(memberId) //populating all data from the reservation field
-        .populate(
-            {
-                path : 'reservations.reservation',
-                populate : [
-                    {path : 'memberId' , model : 'Members'},
-                    {path : 'bookId' , model : 'Books'}
-                ]
-            }
-        )
+            .populate(
+                {
+                    path: 'reservations.reservation',
+                    populate: [
+                        { path: 'memberId', model: 'Members' },
+                        { path: 'bookId', model: 'Books' }
+                    ]
+                }
+            )
 
         const isAlreadyExist = memberDetails.reservations.filter((reservation) => {
             return reservation.reservation.bookId._id.toString() === bookId
         })
-        if(isAlreadyExist.length) {
-            return res.status(404).json({error : 'You have already reserved this book !!'})
-        } 
+        if (isAlreadyExist.length) {
+            return res.status(404).json({ error: 'You have already reserved this book !!' })
+        }
         //if there is no reservation
         // create new book reservation
         const reservation = new Reservations(
             {
-                memberId : memberId,
-                bookId : bookId,
-                reservedOn : new Date()
+                memberId: memberId,
+                bookId: bookId,
+                reservedOn: new Date()
             }
         )
 
@@ -741,14 +741,14 @@ const reserveBook = async (req, res, next) => {
         //adding reservation to member
         memberDetails.reservations.push(
             {
-                reservation : reservation._id
+                reservation: reservation._id
             }
         )
         memberDetails.save()
         //adding reservation to book
         bookData.reservationOrder.push(
             {
-                reservation : reservation._id
+                reservation: reservation._id
             }
         )
         bookData.save()
@@ -764,12 +764,25 @@ const reserveBook = async (req, res, next) => {
 const getReservedBooks = async (req, res, next) => {
     try {
         const memberId = req.memberId
-        const reservedBooks = await Members.findById(memberId).populate('reservations.reservation')
+        const reservedBooks = await Members.findById(memberId)
+            .select('-password')
+            .populate(
+                {
+                    path: 'reservations.reservation',
+                    populate: [
+                        { path: 'bookId', model: 'Books' }
+                    ]
+                }
+            )
+        console.log(reservedBooks.reservations);
         if (reservedBooks) {
-            res.status(200).json({ message: "Reserved Books", reservedBooks: reservedBooks })
-        } else {
-            res.status(404).json({ error: "No reserved books exists !!" })
+            res.status(200).json({ message: "Reserved books", reservedBooks: reservedBooks.reservations })
         }
+        // if (reservedBooks) {
+        //     res.status(200).json({ message: "Reserved Books", reservedBooks: reservedBooks })
+        // } else {
+        //     res.status(404).json({ error: "No reserved books exists !!" })
+        // }
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "Internal server Error" })

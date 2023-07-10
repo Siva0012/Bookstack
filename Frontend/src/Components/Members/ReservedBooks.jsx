@@ -8,7 +8,8 @@ function ReservedBooks() {
   useEffect(() => {
     getReservedBooks().then((response) => {
       if (response.data.reservedBooks) {
-        setReservedBooks(response.data.reservedBooks.reservedBooks);
+        console.log(response.data.reservedBooks);
+        setReservedBooks(response.data.reservedBooks);
       }
     });
   }, []);
@@ -19,12 +20,12 @@ function ReservedBooks() {
       </h1>
       {reservedBooks.length > 0 ? (
         reservedBooks &&
-        reservedBooks.map((book) => {
+        reservedBooks.map((reservation) => {
           return (
             <>
               <BookCardHorizontal
-                bookData={book.book}
-                reservedOn={book.reservedOn}
+                bookData={reservation.reservation.bookId}
+                reservedOn={reservation.reservedOn}
               />
             </>
           );
