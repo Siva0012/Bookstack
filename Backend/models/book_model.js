@@ -82,6 +82,10 @@ const bookSchema = new mongoose.Schema(
                 }
             }
         ],
+        nextCheckoutBy : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'Members'
+        }
 
     }
 )

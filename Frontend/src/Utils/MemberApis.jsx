@@ -108,6 +108,10 @@ const searchBooks = (searchKey) => {
     return memberAxiosInstance.get(`/search-books/${searchKey}`)
 }
 
+const cancelReservation = (reservationId) => {
+    return memberAxiosInstance.patch(`/cancel-reservation/${reservationId}`)
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -135,5 +139,6 @@ export {
     getReservedBooks,
     verifyEmail,
     getSingleBook,
-    searchBooks
+    searchBooks,
+    cancelReservation
 }

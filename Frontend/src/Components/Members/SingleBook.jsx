@@ -41,7 +41,34 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
           <div className=" border-user-from border lg:p-1 rounded-sm italic lg:text-sm lg:mb-1 ">
             <p>{bookData.description}</p>
           </div>
-          {bookData.availableStock > 0 ? (
+          {
+            bookData.availableStock > 0 ?
+            (
+              <div
+              onClick={() => handleAddtoBag(bookData._id)}
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+            >
+              Checkout
+            </div>
+            ) : (
+              bookData.availableStock > 0 && bookData.reservationOrder.length < bookData.maxReservations ?
+              (
+                <div
+                onClick={() => handleBookReserve(bookData._id)}
+                className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+              >
+                Reserve
+              </div>
+              ) : (
+                <div
+                className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-500 lg:py-1 rounded-md text-center hover:bg-white hover:text-red-700 hover:shadow-[0px_0px_8px_rgba(255,0,0,0.40)]"
+              >
+                Reservation full
+              </div>
+              )
+            )
+          }
+          {/* {bookData.availableStock > 0 ? (
             <div
               onClick={() => handleAddtoBag(bookData._id)}
               className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
@@ -55,7 +82,7 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             >
               Reserve
             </div>
-          )}
+          )} */}
         </div>
       </div>
     )

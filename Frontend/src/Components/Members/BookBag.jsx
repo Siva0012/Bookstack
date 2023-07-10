@@ -17,19 +17,6 @@ function BookBag() {
   const [update, setupdate] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [bookId, setBookId] = useState("");
-  useEffect(() => {
-    async function getData() {
-      try {
-        const response = await getBookBag();
-        if (response) {
-          setMember(response.data.memberData);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    getData();
-  }, [update]);
 
   const handleRemove = (bookId) => {
     setBookId(bookId);
@@ -75,6 +62,20 @@ function BookBag() {
             }
           });
   };
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const response = await getBookBag();
+        if (response) {
+          setMember(response.data.memberData);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getData();
+  }, [update, handleCheckout]);
 
   return (
     <div className="p-2">

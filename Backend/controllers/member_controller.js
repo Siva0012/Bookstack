@@ -72,7 +72,13 @@ const register = async (req, res, next) => {
                 ).save()
                 if (verificationToken) {
                     const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
-                    const sendMail = await sendEmail(member.email, "Verify Email", url)
+                    const message = `  <p>Dear ${member.name},</p>
+                    <p>Thank you for registering with our website. To verify your email address, please click on the following link:</p>
+                    <p><a href="${url}</a></p>
+                    <p>If you did not register with our website, please disregard this email.</p>
+                    <p>Best regards,</p>
+                    <p>Bookstack</p>`
+                    const sendMail = await sendEmail(member.email, "Verify Email", message)
                     res.status(200).json({ message: "Created member successfully", memberCreated: true })
                 }
             } else {
@@ -709,7 +715,7 @@ const reserveBook = async (req, res, next) => {
             return res.status(404).json({ error: "You have reached your reservation limit !!" })
         }
 
-        //check whether the book has already reserved or not by the user
+        //check whether the book has already reserved by the user
         const memberDetails = await Members.findById(memberId) //populating all data from the reservation field
             .populate(
                 {
@@ -722,7 +728,7 @@ const reserveBook = async (req, res, next) => {
             )
 
         const isAlreadyExist = memberDetails.reservations.filter((reservation) => {
-            return reservation.reservation.bookId._id.toString() === bookId
+            return reservation.reservation.bookId._id.toString() === bookId && reservation.reservation.status === 'Reserved'
         })
         if (isAlreadyExist.length) {
             return res.status(404).json({ error: 'You have already reserved this book !!' })
@@ -746,6 +752,11 @@ const reserveBook = async (req, res, next) => {
         )
         memberDetails.save()
         //adding reservation to book
+
+        //add the memberId nextCheckoutBy field if the book has no previous reservations
+        if(bookData.reservationOrder.length === 0) {
+            bookData.nextCheckoutBy = memberId
+        }
         bookData.reservationOrder.push(
             {
                 reservation: reservation._id
@@ -774,15 +785,12 @@ const getReservedBooks = async (req, res, next) => {
                     ]
                 }
             )
-        console.log(reservedBooks.reservations);
         if (reservedBooks) {
             res.status(200).json({ message: "Reserved books", reservedBooks: reservedBooks.reservations })
+        } else {
+            res.status(500).json({ error: "No reserved books exists !!" })
         }
-        // if (reservedBooks) {
-        //     res.status(200).json({ message: "Reserved Books", reservedBooks: reservedBooks })
-        // } else {
-        //     res.status(404).json({ error: "No reserved books exists !!" })
-        // }
+
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: "Internal server Error" })
@@ -822,6 +830,45 @@ const searchBooks = async (req, res, next) => {
     }
 }
 
+const cancelReservation = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const reservationId = req.params.reservationId
+
+        //removing the reservation from the book reservationorder and udpating the status
+        const reservationData = await Reservations.findById(reservationId)
+        const bookId = reservationData.bookId
+        const bookData = await Books.findById(bookId)
+
+        //Update nextCheckoutBy if the member is the current nextCheckoutBy
+        if(bookData.nextCheckoutBy.toString() === memberId.toString()) {
+            const secondReservationId = bookData.reservationOrder[1].reservation
+            const secondReservationData = await Reservations.findById(secondReservationId)
+            bookData.nextCheckoutBy = secondReservationData.memberId
+            await bookData.save()
+        }
+        const bookUpdate = await Books.findByIdAndUpdate(
+            bookId,
+            {
+                $pull: { reservationOrder: { reservation: reservationId } }
+            }
+        )
+        //status update
+        reservationData.status = 'Cancelled'
+        const updateReservation = await reservationData.save()
+
+        if (updateReservation && bookUpdate) {
+            console.log("updated all is set");
+            res.status(200).json({ message: "Your book reservation has been cancelled" })
+        } else {
+            res.status(404).json({ error: "Couldn't cancel reservation" })
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -849,5 +896,6 @@ module.exports = {
     getReservedBooks,
     verifyEmail,
     getSingleBook,
-    searchBooks
+    searchBooks,
+    cancelReservation
 }

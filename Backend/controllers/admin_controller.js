@@ -6,6 +6,8 @@ const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const Banners = require('../models/banner_model')
 const LenderHistory = require('../models/lender_history')
+const Reservatons = require('../models/reservation_model')
+const sendEmail = require('../utils/send_email')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
@@ -521,6 +523,36 @@ const changeCheckoutStatus = async (req, res, next) => {
             )
         }
         if (status === 'Returned') {
+
+            //checking the book reservation
+            const bookData = await Books.findById(bookId)
+            if (bookData.availableStock === 0 && bookData.reservationOrder.length >= bookData.maxReservations) {
+                //finding the first reservation of the book
+                const reservationId = bookData.reservationOrder[0].reservation
+                const reservationData = await Reservatons.findById(reservationId)
+                //finding the member data
+                const member = await Members.findById(reservationData.memberId)
+                //sending notification to the member
+                console.log("member", member.name, member.email);
+                const message = `<p>Dear ${member.name},</p>
+                <p>We are pleased to inform you that the book you reserved, "${bookData.title}", is now available for checkout at our library. You can proceed to the library and collect the book at your convenience.</p>
+                <p>Please note that the book will be held for you for a limited time, and if you fail to collect it within 8 hours from now, your reservation will be canceled.</p>
+                <p>If you have any questions or need further assistance, feel free to contact our library staff.</p>
+                <p>Thank you for using our library services.</p>
+                <p>Best regards,<br>Bookstack</p>`
+                await sendEmail(member.email, "Book reservation", message)
+
+                //change the nextCheckoutBy to give next preference to the member
+                bookData.nextCheckoutBy = member._id
+                await bookData.save()
+
+                // change the notification date in the reservation data
+                reservationData.notification.hasNotified = true
+                reservationData.notification.notifiedOn = new Date()
+                await reservationData.save()
+
+            }
+
             //update the available stock of the book
             const updateStock = await Books.findOneAndUpdate(
                 { _id: bookId },
@@ -536,8 +568,9 @@ const changeCheckoutStatus = async (req, res, next) => {
                 { $set: { returnDate: returnDate } }
             )
 
-        }
+            return res.status(200).json({ message: 'reservationsssssssss' })
 
+        }
         const lenderUpdate = await LenderHistory.findOneAndUpdate(
             { _id: lenderId },
             {

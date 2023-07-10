@@ -15,6 +15,10 @@ const reservationShema = new mongoose.Schema(
             reservedOn : {
                   type : Date,
             },
+            status : {
+                  type : String,
+                  default : "Reserved"
+            },
             notification : {
                   hasNotified : {
                         type : Boolean,
