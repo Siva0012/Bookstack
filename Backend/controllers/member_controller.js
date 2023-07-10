@@ -3,6 +3,7 @@ const Books = require('../models/book_model')
 const Categories = require('../models/category_model')
 const LenderHistory = require('../models/lender_history')
 const Banners = require('../models/banner_model')
+const Reservations = require('../models/reservation_model')
 const Tokens = require('../models/token')
 const sendEmail = require('../utils/send_email')
 const escapeRegExp = require('lodash.escaperegexp')
@@ -685,8 +686,10 @@ const reserveBook = async (req, res, next) => {
     try {
         const memberId = req.memberId
         const bookId = req.params.bookId
+
         const memberData = await Members.findById(memberId)
         const bookData = await Books.findById(bookId)
+
 
         //check the member status
 
@@ -699,41 +702,61 @@ const reserveBook = async (req, res, next) => {
             return res.status(404).json({ error: "You have existing fines !!" })
         }
         //check for reserved books numbers
-        if (memberData.membershipType === 'Student' && memberData.reservedBooks >= 1) {
+        if (memberData.membershipType === 'Student' && memberData.reservations >= 1) {
             return res.status(404).json({ error: "You have reached your reservation limit !!" })
         }
-        if (memberData.membershipType === 'Premium' && memberData.reservedBooks >= 3) {
+        if (memberData.membershipType === 'Premium' && memberData.reservations >= 3) {
             return res.status(404).json({ error: "You have reached your reservation limit !!" })
         }
+
         //check whether the book has already reserved or not by the user
-        const isAlreadyExist = memberData.reservedBooks.filter((reservedBook) => {
-            return reservedBook.book == bookId
-        })
-        if (isAlreadyExist.length) {
-            return res.status(404).json({ error: "You have already reserved this book !!" })
-        }
-
-        //approve the reservation
-
-        //adding book to memberSchema
-        memberData.reservedBooks.push(
+        const memberDetails = await Members.findById(memberId) //populating all data from the reservation field
+        .populate(
             {
-                book: bookId,
-                reservedOn: new Date()
+                path : 'reservations.reservation',
+                populate : [
+                    {path : 'memberId' , model : 'Members'},
+                    {path : 'bookId' , model : 'Books'}
+                ]
             }
         )
-        await memberData.save()
-        //adding member to book schema
+
+        const isAlreadyExist = memberDetails.reservations.filter((reservation) => {
+            return reservation.reservation.bookId._id.toString() === bookId
+        })
+        if(isAlreadyExist.length) {
+            return res.status(404).json({error : 'You have already reserved this book !!'})
+        } 
+        //if there is no reservation
+        // create new book reservation
+        const reservation = new Reservations(
+            {
+                memberId : memberId,
+                bookId : bookId,
+                reservedOn : new Date()
+            }
+        )
+
+        await reservation.save()
+        //adding reservation to member
+        memberDetails.reservations.push(
+            {
+                reservation : reservation._id
+            }
+        )
+        memberDetails.save()
+        //adding reservation to book
         bookData.reservationOrder.push(
             {
-                member: memberId,
-                reservedOn: new Date()
+                reservation : reservation._id
             }
         )
-        await bookData.save()
+        bookData.save()
+
         res.status(200).json({ message: `Book reservation for "${bookData.title}" has been processed !!` })
 
     } catch (err) {
+        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -741,7 +764,7 @@ const reserveBook = async (req, res, next) => {
 const getReservedBooks = async (req, res, next) => {
     try {
         const memberId = req.memberId
-        const reservedBooks = await Members.findById(memberId).populate('reservedBooks.book').select('-password')
+        const reservedBooks = await Members.findById(memberId).populate('reservations.reservation')
         if (reservedBooks) {
             res.status(200).json({ message: "Reserved Books", reservedBooks: reservedBooks })
         } else {
