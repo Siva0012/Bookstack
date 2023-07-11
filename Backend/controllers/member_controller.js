@@ -474,7 +474,6 @@ const changeFineStatus = async (req, res, next) => {
 const addToBookBag = async (req, res, next) => {
 
     try {
-        console.log("fsldfjsodi");
         const memberId = req.memberId
         const bookId = req.params.bookId
         const memberData = await Members.findById(memberId)
@@ -577,6 +576,37 @@ const checkoutBooks = async (req, res, next) => {
             } else {
                 const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
                 bookIds.bookBag.forEach(async (data) => {
+
+                    //check for book reservation
+                    const bookId = data.book._id
+                    const bookData = await Books.findById(bookId)
+                    //checking whether the book is a reserved book or not and update the reservation preference
+                    if(bookData.availableStock === 1 && bookData.reservationOrder.length > 0) {
+                        //finding the second reservation of the book
+                        if(bookData.reservationOrder.length > 1) {
+                            const reservationId = bookData.reservationOrder[1].reservation
+                            const reservationData = await Reservations.findById(reservationId)
+                            //finding the member data
+                            const member = await Members.findById(reservationData.memberId)
+                            console.log("Next member is" , member.name);
+                            //change the nextCheckoutBy to next member
+                            bookData.nextCheckoutBy = member._id
+                            //set the reservation status to expire
+                            const currentReservationId = bookData.reservationOrder[0].reservation
+                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId , {$set : {status : "Completed"}})
+                            //removing the current reservation from the reservation order array
+                            bookData.reservationOrder.shift()
+
+                        } else {
+                            //set the reservation status to expire
+                            const currentReservationId = bookData.reservationOrder[0].reservation
+                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId , {$set : {status : "Completed"}})
+                            //removing the current reservation from the reservation order array
+                            bookData.reservationOrder.shift()
+                            bookData.nextCheckoutBy = null
+                        }
+                        await bookData.save()
+                    }
 
                     //updating available stock
                     await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
