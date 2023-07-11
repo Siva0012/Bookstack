@@ -48,12 +48,12 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
           {
             bookData && 
             bookData.nextCheckoutBy &&
-            bookData.nextCheckoutBy.toString() === memberId.toString() && availableStock > 0 ? (
+            bookData.nextCheckoutBy.toString() === memberId.toString() && bookData.availableStock === 1 ? (
               <div
               onClick={() => handleAddtoBag(bookData._id)}
-              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-400 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-blue-600 lg:py-1 rounded-md text-center hover:bg-white hover:text-blue-600 hover:shadow-[0px_0px_8px_rgba(0,0,255,0.40)]"
             >
-              Add to book-bag/r
+              Add to book-bag
             </div>
             ) : bookData.availableStock > 0 &&
             bookData.maxReservations !== bookData.reservationOrder.length ? (
@@ -67,13 +67,13 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             bookData.reservationOrder.length < bookData.maxReservations ? (
               <div
               onClick={() => handleAddtoBag(bookData._id)}
-              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-button-green lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-400 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
             >
               Reserve
             </div>
             ) : (
               <div
-              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-500 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-red-500 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
             >
               Reservation full
             </div>

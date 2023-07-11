@@ -78,12 +78,12 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
       <div className="mt-4">
         {bookData &&
         bookData.nextCheckoutBy &&
-        bookData.nextCheckoutBy.toString() === memberId.toString() ? (
+        bookData.nextCheckoutBy.toString() === memberId.toString() && bookData.availableStock === 1 ?  (
           <button
             onClick={() => handleAddtoBag(bookData._id)}
-            className="text-sm bg-green-400 text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
+            className="text-sm bg-blue-600 text-white font-bold w-full py-2 rounded-md hover:text-blue-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
           >
-            Add to book-bag/r
+            Add to book-bag
           </button>
         ) : bookData.availableStock > 0 &&
           bookData.maxReservations !== bookData.reservationOrder.length ? (
@@ -97,12 +97,12 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
           bookData.reservationOrder.length < bookData.maxReservations ? (
           <button
             onClick={() => handleBookReserve(bookData._id)}
-            className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
+            className="text-sm bg-yellow-400 text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
           >
             Reserve
           </button>
         ) : (
-          <button className="text-sm bg-yellow-500 text-white font-bold w-full py-2 rounded-md hover:text-red-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+          <button className="text-sm bg-red-500 text-white font-bold w-full py-2 rounded-md hover:text-red-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
             Reservation full
           </button>
         )}

@@ -10,14 +10,16 @@ const preferenceUpdater = async () => {
                 ])
             // const reservedBooks = await Books.find({ $expr: { $gte: [{ $size: '$reservationOrder' }, '$maxReservations'] } })
             // console.log("reservedBookss" , reservedBooks);
-            reservedBooks.forEach(async (bookData , i) => {
-                  // console.log("preference updater");
-                  const reservationId = bookData.reservationOrder[0].reservation
-                  const reservationData = await Reservations.findById(reservationId)
-                  const memberId = reservationData.memberId
-                  // console.log(memberId , i);
-                  await Books.findByIdAndUpdate(bookData._id , {$set : {nextCheckoutBy : memberId}})
-            })
+            if(reservedBooks) {
+                  reservedBooks.forEach(async (bookData , i) => {
+                        // console.log("preference updater");
+                        const reservationId = bookData.reservationOrder[0].reservation
+                        const reservationData = await Reservations.findById(reservationId)
+                        const memberId = reservationData.memberId
+                        // console.log(memberId , i);
+                        await Books.findByIdAndUpdate(bookData._id , {$set : {nextCheckoutBy : memberId}})
+                  })
+            }
       }catch(err) {
             console.log(err);
       }
