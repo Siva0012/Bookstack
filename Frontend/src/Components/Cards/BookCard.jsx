@@ -85,13 +85,13 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
           (
             <button
             onClick={() => handleAddtoBag(bookData._id)}
-            className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
+            className="text-sm bg-green-400 text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
           >
             Add to book-bag
           </button>
           ) : (
             
-              bookData.availableStock > 0 ?
+              bookData.availableStock > 0 && bookData.maxReservations !== bookData.reservationOrder.length ?
               (
                 <button
                 onClick={() => handleAddtoBag(bookData._id)}
