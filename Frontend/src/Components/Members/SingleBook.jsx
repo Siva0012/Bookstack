@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import {useSelector} from 'react-redux'
 
 //member APIs
 import { getSingleBook } from "../../Utils/MemberApis";
 
 function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
+
+  const memberId = useSelector(state => state.memberData.value._id)
+
   return (
     bookData && (
       <div className="mx-auto lg:flex lg:flex-row lg:justify-evenly lg:p-8 rounded-md bg-user-nav text-black lg:w-[800px] h-fit">
@@ -42,47 +46,40 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             <p>{bookData.description}</p>
           </div>
           {
-            bookData.availableStock > 0 ?
-            (
+            bookData && 
+            bookData.nextCheckoutBy &&
+            bookData.nextCheckoutBy.toString() === memberId.toString() && availableStock > 0 ? (
               <div
               onClick={() => handleAddtoBag(bookData._id)}
-              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-400 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
             >
-              Checkout
+              Add to book-bag/r
             </div>
-            ) : (
-              bookData.availableStock > 0 && bookData.reservationOrder.length < bookData.maxReservations ?
-              (
-                <div
-                onClick={() => handleBookReserve(bookData._id)}
-                className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
-              >
-                Reserve
-              </div>
-              ) : (
-                <div
-                className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-500 lg:py-1 rounded-md text-center hover:bg-white hover:text-red-700 hover:shadow-[0px_0px_8px_rgba(255,0,0,0.40)]"
-              >
-                Reservation full
-              </div>
-              )
-            )
-          }
-          {/* {bookData.availableStock > 0 ? (
-            <div
+            ) : bookData.availableStock > 0 &&
+            bookData.maxReservations !== bookData.reservationOrder.length ? (
+              <div
               onClick={() => handleAddtoBag(bookData._id)}
-              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-button-green lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
             >
-              Checkout
+              Add to book-bag
             </div>
-          ) : (
-            <div
-              onClick={() => handleBookReserve(bookData._id)}
-              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-green-700 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+            ) : bookData.availableStock === 0 &&
+            bookData.reservationOrder.length < bookData.maxReservations ? (
+              <div
+              onClick={() => handleAddtoBag(bookData._id)}
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-button-green lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
             >
               Reserve
             </div>
-          )} */}
+            ) : (
+              <div
+              className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-500 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
+            >
+              Reservation full
+            </div>
+            )
+          }
+
         </div>
       </div>
     )

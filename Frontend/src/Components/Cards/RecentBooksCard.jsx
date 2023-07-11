@@ -1,9 +1,11 @@
 import { AiFillStar } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function RecentBooksCard({ bookData }) {
   const navigate = useNavigate();
+  const memberId = useSelector((state) => state.memberData.value._id);
 
   return (
     <div
@@ -52,7 +54,28 @@ function RecentBooksCard({ bookData }) {
         </div>
       </div>
       <div className="mt-4">
-        {bookData.availableStock > 0 ? (
+        {bookData &&
+        bookData.nextCheckoutBy &&
+        bookData.nextCheckoutBy.toString() === memberId.toString() ? (
+          <button className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+            Add to book-bag/r
+          </button>
+        ) : bookData.availableStock > 0 &&
+          bookData.maxReservations !== bookData.reservationOrder.length ? (
+          <button className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+            Add to book-bag
+          </button>
+        ) : bookData.availableStock === 0 &&
+        bookData.reservationOrder.length < bookData.maxReservations ? (
+          <button className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+          Reserve
+        </button>
+        ) : (
+          <button className="text-sm bg-yellow-500 text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+            Reservation full
+          </button>
+        )}
+        {/* {bookData.availableStock > 0 ? (
           <button className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
             Add to book-bag
           </button>
@@ -65,7 +88,7 @@ function RecentBooksCard({ bookData }) {
           <button className="text-sm bg-yellow-500 text-white font-bold w-full py-2 rounded-md hover:text-orange-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
             Reservation full
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -1,16 +1,18 @@
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import NavDropdown from "./NavDropdown";
 import { GiPaperBagOpen } from "react-icons/gi";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import MobileNavDropdown from "./MobileNavDropdown";
+import { useSelector } from "react-redux";
 
 //member API
 import { searchBooks } from "../../Utils/MemberApis";
 import SearchCard from "../Cards/SearchCard";
 
 function Nav() {
+  const memberName = useSelector((state) => state.memberData.value.name);
   const [searchBookData, setSearchBookData] = useState([]);
   const [searchKey, setSearchKey] = useState("");
 
@@ -33,8 +35,6 @@ function Nav() {
     });
   };
 
-  
-  
   return (
     <div className="text-black bg-user-nav flex justify-between items-center px-3 lg:px-5 md:px-5 h-20">
       <h1 className="text-3xl font-bold text-black font-nunito uppercase">
@@ -51,10 +51,10 @@ function Nav() {
             </Link>
           </li>
           <li className="p-4">
-            <Link to="/profile">Profile</Link>
+            <Link to="/book-bag">Bookbag</Link>
           </li>
           <li className="p-4">
-            <Link to="/book-bag">Bookbag</Link>
+            <Link to="/profile" className="capitalize text-blue-600 font-semibold">{memberName}</Link>
           </li>
         </ul>
       </div>

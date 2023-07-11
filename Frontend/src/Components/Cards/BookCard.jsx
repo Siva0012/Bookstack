@@ -1,20 +1,19 @@
 import { AiFillStar } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
-import {useSelector} from 'react-redux'
-
+import { useSelector } from "react-redux";
 
 function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
-
-  const navigate = useNavigate()  
-  const memberId = useSelector(state => state.memberData.value._id)
+  const navigate = useNavigate();
+  const memberId = useSelector((state) => state.memberData.value._id);
 
   return (
     <div
       id="card"
       className="p-4 mx-auto bg-white drop-shadow-[0_0px_8px_rgba(0,0,0,0.2)] w-[220px] md:w-[240px] lg:w-[280px] rounded-xl"
     >
-      {bookData.availableStock <= 0 && bookData.reservationOrder.length >= bookData.maxReservations ? (
+      {bookData.availableStock <= 0 &&
+      bookData.reservationOrder.length >= bookData.maxReservations ? (
         <div className="mb-3 drop-shadow-[0_0px_3px_rgba(255,0,0,0.8)]">
           <div className=" ms-auto py-[2px] md:py-1 px-1 md:px-2 rounded-full bg-white w-fit flex items-center">
             <span className=" text-[12px] md:text-sm lg:text-sm text-red-600 tracking-wide font-medium">
@@ -45,7 +44,7 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
         </div>
       </div> */}
       <div
-      onClick={() => navigate(`/book/${bookData._id}`)}
+        onClick={() => navigate(`/book/${bookData._id}`)}
         id="image"
         className="mb-3 w-[6rem] h-[8rem] md:w-[7rem] md:h-[9rem] mx-auto drop-shadow-[0px_0px_3px_rgba(0,0,0,0.25)] cursor-pointer hover:-translate-y-2 hover:drop-shadow-[5px_10px_5px_rgba(0,0,0,0.5)] duration-500"
       >
@@ -69,9 +68,7 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
             className="hover:text-user-to cursor-pointer space-y-1"
           >
             <h1 className="font-bold text-sm capitalize">{bookData.author}</h1>
-            <p className="text-sm truncate capitalize ">
-              {bookData.title}
-            </p>
+            <p className="text-sm truncate capitalize ">{bookData.title}</p>
           </div>
           <div id="rating" className="">
             <AiFillStar className="text-md" color="#FF9529" />
@@ -79,70 +76,37 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
         </div>
       </div>
       <div className="mt-4">
-        { 
-          bookData && bookData.nextCheckoutBy &&
-          bookData.nextCheckoutBy.toString() === memberId.toString() ? 
-          (
-            <button
+        {bookData &&
+        bookData.nextCheckoutBy &&
+        bookData.nextCheckoutBy.toString() === memberId.toString() ? (
+          <button
             onClick={() => handleAddtoBag(bookData._id)}
-            className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
+            className="text-sm bg-green-400 text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
           >
-            Add to book-bag
+            Add to book-bag/r
           </button>
-          ) : (
-            
-              bookData.availableStock > 0 ?
-              (
-                <button
-                onClick={() => handleAddtoBag(bookData._id)}
-                className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
-              >
-                Add to book-bag
-              </button>
-              ):(
-                bookData.availableStock > 0 && bookData.reservationOrder.length < bookData.maxReservations ?
-                (
-                  <button
-                  onClick={() => handleBookReserve(bookData._id)}
-                  className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
-                >
-                  Reserve
-                </button>
-                ) : (
-                  <button
-                  className="text-sm bg-yellow-500 text-white font-bold w-full py-2 rounded-md hover:text-red-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
-                >
-                  Reservation full
-                </button>
-                )
-              )
-            
-          )
-        }
-        
-        {/* {bookData.availableStock > 0 && bookData.reservationOrder.length < bookData.maxReservations ? (
+        ) : bookData.availableStock > 0 &&
+          bookData.maxReservations !== bookData.reservationOrder.length ? (
           <button
             onClick={() => handleAddtoBag(bookData._id)}
             className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
           >
             Add to book-bag
           </button>
+        ) : bookData.availableStock === 0 &&
+          bookData.reservationOrder.length < bookData.maxReservations ? (
+          <button
+            onClick={() => handleBookReserve(bookData._id)}
+            className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
+          >
+            Reserve
+          </button>
         ) : (
-          <>
-            {bookData.reservationOrder.length >= bookData.maxReservations ? (
-              <button className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
-                Not available
-              </button>
-            ) : (
-              <button
-                onClick={() => handleBookReserve(bookData._id)}
-                className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-green-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]"
-              >
-                Reserve
-              </button>
-            )}
-          </>
-        )} */}
+          <button className="text-sm bg-yellow-500 text-white font-bold w-full py-2 rounded-md hover:text-red-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+            Reservation full
+          </button>
+        )}
+
       </div>
     </div>
     // <div
