@@ -714,7 +714,15 @@ const reserveBook = async (req, res, next) => {
         if (memberData.membershipType === 'Premium' && memberData.reservations >= 3) {
             return res.status(404).json({ error: "You have reached your reservation limit !!" })
         }
-
+        //check if the book is already obtained by the member
+        const lenderData = await LenderHistory.find(
+            {
+                member: memberId, $or: [{ status: 'Approved' }, { status: 'Pending' }, { status: 'Borrowed' }]
+            }
+        )
+        if (lenderData.length > 0) {
+            return res.status(404).json({ error: "This book has already occupied or requested by you !!" })
+        }
         //check whether the book has already reserved by the user
         const memberDetails = await Members.findById(memberId) //populating all data from the reservation field
             .populate(
@@ -754,7 +762,7 @@ const reserveBook = async (req, res, next) => {
         //adding reservation to book
 
         //add the memberId nextCheckoutBy field if the book has no previous reservations
-        if(bookData.reservationOrder.length === 0) {
+        if (bookData.reservationOrder.length === 0) {
             bookData.nextCheckoutBy = memberId
         }
         bookData.reservationOrder.push(
@@ -841,10 +849,14 @@ const cancelReservation = async (req, res, next) => {
         const bookData = await Books.findById(bookId)
 
         //Update nextCheckoutBy if the member is the current nextCheckoutBy
-        if(bookData.nextCheckoutBy.toString() === memberId.toString()) {
+        if (bookData.nextCheckoutBy.toString() === memberId.toString()) {
             const secondReservationId = bookData.reservationOrder[1].reservation
-            const secondReservationData = await Reservations.findById(secondReservationId)
-            bookData.nextCheckoutBy = secondReservationData.memberId
+            if (secondReservationId) {
+                const secondReservationData = await Reservations.findById(secondReservationId)
+                bookData.nextCheckoutBy = secondReservationData.memberId
+            } else {
+                bookData.nextCheckoutBy = null
+            }
             await bookData.save()
         }
         const bookUpdate = await Books.findByIdAndUpdate(
@@ -865,6 +877,25 @@ const cancelReservation = async (req, res, next) => {
         }
     } catch (err) {
         console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const getFineHistory = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const fineData = await LenderHistory.find(
+            {
+                member: memberId, hasFinePaid: true
+            }
+        )
+        if (fineData) {
+            res.status(200).json({ message: "Fine histories", fineData: fineData })
+        } else {
+            res.status(404).json({ error: "No fine data found" })
+        }
+    } catch (err) {
+        console.log(err)
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -897,5 +928,6 @@ module.exports = {
     verifyEmail,
     getSingleBook,
     searchBooks,
-    cancelReservation
+    cancelReservation,
+    getFineHistory
 }
