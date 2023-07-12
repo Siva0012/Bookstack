@@ -4,7 +4,7 @@ function BannerConfirmationModal({ open, onClose, children }) {
     <div
       onClick={onClose}
       className={`fixed inset-0  flex justify-center items-center transition-colors ${
-        open ? "visible bg-black/20" : "invisible"
+        open ? "visible bg-black/20 z-[1] backdrop-blur-sm" : "invisible"
       }`}
     >
       <div

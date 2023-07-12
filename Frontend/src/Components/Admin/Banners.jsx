@@ -27,7 +27,18 @@ function Banners() {
 
   //confirmation modal
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [bannerId, setBannerId] = useState('');
+  const [bannerId, setBannerId] = useState("");
+
+  //image validator
+  const validate = (image) => {
+    const fileExtension = image.name.split(".").pop().toLowerCase();
+    const acceptedFormats = ["jpg", "jpeg", "png", "gif"];
+    if (!acceptedFormats.includes(fileExtension)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   //edit modal
   const [showEditModal, setShowEditModal] = useState(false);
@@ -86,6 +97,11 @@ function Banners() {
     seteditImageLoader(true);
     const file = e.target.files[0];
     setEditBannerImage(file);
+    if(!validate(file)) {
+      seteditImageLoader(false)
+      toast.error(`Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`)
+      return
+    }
     const formData = new FormData();
     formData.append("bannerPhoto", file);
     updateBannerImage(editValues.bannerId, formData).then((response) => {
@@ -118,7 +134,7 @@ function Banners() {
       .then((response) => {
         if (response.data) {
           toast.success(response.data.message);
-          setShowConfirmationModal(false)
+          setShowConfirmationModal(false);
         }
       })
       .catch((err) => toast.error(err.response.data.error));
@@ -146,6 +162,14 @@ function Banners() {
       toast.warning("All fields are requried !!");
     } else {
       setimageLoader(true);
+      if (!validate(formValues.bannerPhoto)) {
+        setimageLoader(false);
+        toast.error(
+          `Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`
+        );
+
+        return;
+      }
       const formData = new FormData();
       formData.append("title", formValues.title);
       formData.append("description", formValues.description);
@@ -246,8 +270,8 @@ function Banners() {
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                               <span
                                 onClick={() => {
-                                  setShowConfirmationModal(true)
-                                  setBannerId(banner._id)
+                                  setShowConfirmationModal(true);
+                                  setBannerId(banner._id);
                                 }}
                                 className="relative inline-block px-3 py-1 font-semibold min-w-[90px] text-green-900 leading-tight hover:cursor-pointer"
                               >
@@ -266,28 +290,43 @@ function Banners() {
                                 )}
                               </span>
                               <BannerConfirmationModal
-                                open={showConfirmationModal && bannerId === banner._id}
+                                open={
+                                  showConfirmationModal &&
+                                  bannerId === banner._id
+                                }
                                 onClose={() => setShowConfirmationModal(false)}
                               >
                                 <FiTrash2
                                   size={56}
                                   className="mx-auto text-red-600"
                                 />
-                                <div className="mx-auto text-center my-4 w-48">
+                                <div className="mx-auto text-center my-4 w-49">
                                   <h3 className="text-lg font-black text-gray-800">
-                                    Confirm Delete
+                                    Confirm Change
                                   </h3>
-                                  <p className="text-sm text-black">
+                                  <p className="text-sm mt-2 text-black">
                                     Are you sure you want to
-                                    {banner.active ? <span className="text-red-600 font-semibold"> Disable </span> : <span className="text-green-600 font-semibold"> Enable </span>}
-                                    the banner
-                                    status ?
+                                    {banner.active ? (
+                                      <span className="text-red-600 font-semibold">
+                                        {" "}
+                                        Disable{" "}
+                                      </span>
+                                    ) : (
+                                      <span className="text-green-600 font-semibold">
+                                        {" "}
+                                        Enable{" "}
+                                      </span>
+                                    )}
+                                    the banner status ?
                                   </p>
                                 </div>
-                                <div className="flex gap-4 text-center">
+                                <div className="text-center">
+                                  <div className="flex justify-evenly">
                                   <button
-                                    onClick={() => handleBanner(banner._id , banner.active)}
-                                    className=" bg-red-600 py-1 px-2 text-white rounded-md w-full"
+                                    onClick={() =>
+                                      handleBanner(banner._id, banner.active)
+                                    }
+                                    className=" bg-red-600 hover:bg-red-700 py-1 px-3 text-white rounded-md w-fit"
                                   >
                                     {banner.active ? "Disable" : "Enable"}
                                   </button>
@@ -295,10 +334,12 @@ function Banners() {
                                     onClick={() =>
                                       setShowConfirmationModal(false)
                                     }
-                                    className=" bg-white text-blue-600 hover:shadow-lg py-1 px-2 rounded-md w-full hover:bg-blue-600 hover:text-white"
+                                    className=" hover:bg-blue-700 hover:text-white hover:shadow-lg py-1 px-3 rounded-md w-fit bg-blue-600 text-white"
                                   >
                                     Cancel
                                   </button>
+
+                                  </div>
                                 </div>
                               </BannerConfirmationModal>
                             </td>
