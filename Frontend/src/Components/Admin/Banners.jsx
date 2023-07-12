@@ -5,6 +5,8 @@ import Modal from "../Modal/Modal";
 import EditModal from "../Modal/EditModal";
 import moment from "moment/moment";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import { FiTrash2 } from "react-icons/fi";
+import BannerConfirmationModal from "../Modal/BannerConfirmation";
 
 //admin APIs
 import {
@@ -12,7 +14,7 @@ import {
   addBanner,
   changeBannerStatus,
   updateBannerImage,
-  updateBannerContent
+  updateBannerContent,
 } from "../../Utils/AdminApis";
 import { toast } from "react-toastify";
 
@@ -22,6 +24,10 @@ function Banners() {
     margin: "0 auto",
     borderColor: "red",
   };
+
+  //confirmation modal
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [bannerId, setBannerId] = useState('');
 
   //edit modal
   const [showEditModal, setShowEditModal] = useState(false);
@@ -34,20 +40,20 @@ function Banners() {
     title: "",
     description: "",
     bannerId: "",
-    url : ""
+    url: "",
   });
 
   //for bannerdata
   const [banners, setBanners] = useState([]);
 
   //edit banner
-  const handleEditBanner = (bannerId, title, description, image , url) => {
+  const handleEditBanner = (bannerId, title, description, image, url) => {
     setShowEditModal(true);
     seteditValues({
       title: title,
       description: description,
       bannerId: bannerId,
-      url : url
+      url: url,
     });
     setEditBannerImage(image);
   };
@@ -60,19 +66,21 @@ function Banners() {
   };
 
   const handleEditValues = () => {
-    const formData = new FormData()
-    formData.append('title' , editValues.title)
-    formData.append('description' , editValues.description)
-    formData.append('url' , editValues.url)
-    updateBannerContent(editValues.bannerId , {title : editValues.title , description : editValues.description , url : editValues.url})
-    .then((response) => {
-      if(response.data.updated) {
-        toast.success("updated banner data")
-        setShowEditModal(false)
+    const formData = new FormData();
+    formData.append("title", editValues.title);
+    formData.append("description", editValues.description);
+    formData.append("url", editValues.url);
+    updateBannerContent(editValues.bannerId, {
+      title: editValues.title,
+      description: editValues.description,
+      url: editValues.url,
+    }).then((response) => {
+      if (response.data.updated) {
+        toast.success("updated banner data");
+        setShowEditModal(false);
       }
-    })
-
-  }
+    });
+  };
 
   const handleEditImageChange = (e) => {
     seteditImageLoader(true);
@@ -99,7 +107,7 @@ function Banners() {
     description: "",
     bannerPhoto: "",
     bannerId: "",
-    url : ""
+    url: "",
   });
 
   //update banner status
@@ -110,6 +118,7 @@ function Banners() {
       .then((response) => {
         if (response.data) {
           toast.success(response.data.message);
+          setShowConfirmationModal(false)
         }
       })
       .catch((err) => toast.error(err.response.data.error));
@@ -141,7 +150,7 @@ function Banners() {
       formData.append("title", formValues.title);
       formData.append("description", formValues.description);
       formData.append("bannerPhoto", formValues.bannerPhoto);
-      formData.append('url' , formValues.url)
+      formData.append("url", formValues.url);
 
       //call api
       addBanner(formData)
@@ -162,7 +171,7 @@ function Banners() {
         setBanners(response.data.bannerData);
       }
     });
-  }, [showEditModal , showModal , handleBanner]);
+  }, [showEditModal, showModal, handleBanner]);
 
   return (
     <>
@@ -236,9 +245,10 @@ function Banners() {
                             </td>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                               <span
-                                onClick={() =>
-                                  handleBanner(banner._id, banner.active)
-                                }
+                                onClick={() => {
+                                  setShowConfirmationModal(true)
+                                  setBannerId(banner._id)
+                                }}
                                 className="relative inline-block px-3 py-1 font-semibold min-w-[90px] text-green-900 leading-tight hover:cursor-pointer"
                               >
                                 <span
@@ -255,6 +265,42 @@ function Banners() {
                                   </span>
                                 )}
                               </span>
+                              <BannerConfirmationModal
+                                open={showConfirmationModal && bannerId === banner._id}
+                                onClose={() => setShowConfirmationModal(false)}
+                              >
+                                <FiTrash2
+                                  size={56}
+                                  className="mx-auto text-red-600"
+                                />
+                                <div className="mx-auto text-center my-4 w-48">
+                                  <h3 className="text-lg font-black text-gray-800">
+                                    Confirm Delete
+                                  </h3>
+                                  <p className="text-sm text-black">
+                                    Are you sure you want to
+                                    {banner.active ? <span className="text-red-600 font-semibold"> Disable </span> : <span className="text-green-600 font-semibold"> Enable </span>}
+                                    the banner
+                                    status ?
+                                  </p>
+                                </div>
+                                <div className="flex gap-4 text-center">
+                                  <button
+                                    onClick={() => handleBanner(banner._id , banner.active)}
+                                    className=" bg-red-600 py-1 px-2 text-white rounded-md w-full"
+                                  >
+                                    {banner.active ? "Disable" : "Enable"}
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      setShowConfirmationModal(false)
+                                    }
+                                    className=" bg-white text-blue-600 hover:shadow-lg py-1 px-2 rounded-md w-full hover:bg-blue-600 hover:text-white"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </BannerConfirmationModal>
                             </td>
                             {/*Edit */}
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -486,6 +532,8 @@ function Banners() {
           </form>
         </div>
       </Modal>
+
+      {/* confirmation modal */}
     </>
   );
 }

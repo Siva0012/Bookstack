@@ -150,7 +150,7 @@ function BookBag() {
         )}
       </div>
       <ConfirmationModal
-        removeBook={() => removeBook(bookId)}
+        // removeBook={() => removeBook(bookId)}
         open={showConfirmationModal}
         onClose={() => setShowConfirmationModal(false)}
       >

@@ -1,4 +1,4 @@
-function ConfirmationModal({ open, onClose, children }) {
+function BannerConfirmationModal({ open, onClose, children }) {
   return (
     // backdrop
     <div
@@ -25,4 +25,4 @@ function ConfirmationModal({ open, onClose, children }) {
   );
 }
 
-export default ConfirmationModal;
+export default BannerConfirmationModal;
