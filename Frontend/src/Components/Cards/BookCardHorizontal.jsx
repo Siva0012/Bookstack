@@ -1,6 +1,7 @@
 import moment from "moment/moment";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function BookCardHorizontal({
   bookData,
@@ -9,6 +10,7 @@ function BookCardHorizontal({
   reservationId,
   cancelReservation,
 }) {
+  const memberId = useSelector(state => state.memberData.value._id)
   return (
     <div className="lg:w-[600px] flex bg-white rounded-md p-2 mb-2">
       <div className="md:w-[120px] md:h-[120px] ">
@@ -29,8 +31,17 @@ function BookCardHorizontal({
             {moment(reservedOn).format("MMMM Do YYYY h:mm:ss a")}
           </span>
         </h2>
-        {status === "Reserved" ? (
-          <>
+        {
+          status === "Reserved" && bookData.nextCheckoutBy.toString() === memberId ? (
+            <Link to={`/book/${bookData._id}`}>
+            <button
+              className="bg-blue-600 w-fit px-2 rounded-md text-sm py-1 text-white"
+            >
+              Checkout-book
+            </button>
+          </Link>
+          ) : status === "Reserved" ? (
+            <>
             <button
               onClick={() => cancelReservation(reservationId)}
               className="bg-red-600 w-fit px-2 rounded-md text-sm py-1 text-white"
@@ -38,17 +49,39 @@ function BookCardHorizontal({
               Cancel reservation
             </button>
           </>
-        ) : status === "Cancelled" ? (
-          <h1 className="text-sm text-red-500">
+          ) : status === "Cancelled" ? (
+            <h1 className="text-sm text-red-500">
             You have cancelled this reservation !!
           </h1>
-        ) : (
-          <h1 className="text-sm text-red-500">
+          ) : status === "Expired" ? (
+            <h1 className="text-sm text-red-500">
             This reservation has Expired
           </h1>
-        )
-        // <h1 className="text-start italic sm">This reservation has expired</h1>
+          ) : ''
         }
+        {/* {
+          status === "Reserved" ? (
+            <>
+              <button
+                onClick={() => cancelReservation(reservationId)}
+                className="bg-red-600 w-fit px-2 rounded-md text-sm py-1 text-white"
+              >
+                Cancel reservation
+              </button>
+            </>
+          ) : status === "Cancelled" ? (
+            <h1 className="text-sm text-red-500">
+              You have cancelled this reservation !!
+            </h1>
+          ) : status === "Expired" ? (
+            <h1 className="text-sm text-red-500">
+              This reservation has Expired
+            </h1>
+          ) : (
+            ''
+          )
+          // <h1 className="text-start italic sm">This reservation has expired</h1>
+        } */}
       </div>
     </div>
   );

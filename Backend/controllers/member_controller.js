@@ -921,7 +921,6 @@ const cancelReservation = async (req, res, next) => {
         const updateReservation = await reservationData.save()
 
         if (updateReservation && bookUpdate) {
-            console.log("updated all is set");
             res.status(200).json({ message: "Your book reservation has been cancelled" })
         } else {
             res.status(404).json({ error: "Couldn't cancel reservation" })
