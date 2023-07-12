@@ -359,7 +359,7 @@ const removeBook = async (req, res, next) => {
 
 const addBanner = async (req, res, next) => {
     try {
-        const { title, description } = req.body
+        const { title, description , url } = req.body
         const bannerImage = req.file.path
         const isExists = await Banners.findOne({ title: title })
         if (!isExists) {
@@ -371,8 +371,9 @@ const addBanner = async (req, res, next) => {
             const banner = new Banners({
                 title: title,
                 description: description,
+                url : url,
                 image: imageUploaded.url,
-                publicId: imageUploaded.public_id
+                publicId: imageUploaded.public_id,
             })
             const updateResponse = await banner.save()
             if (updateResponse) {
@@ -478,8 +479,8 @@ const updateBannerImage = async (req, res, next) => {
 const updateBannerContent = async (req, res, next) => {
     try {
         const bannerId = req.params.bannerId
-        const { title, description } = req.body
-        const update = { title: title, description: description }
+        const { title, description , url } = req.body
+        const update = { title: title, description: description , url : url }
         const bannerUpdate = await Banners.findByIdAndUpdate(bannerId, { $set: update })
         if (bannerUpdate) {
             res.status(200).json({ message: "Updated banner", updated: true })

@@ -1,10 +1,10 @@
-function ConfirmationModal({ open, onClose, children }) {
+function BannerConfirmationModal({ open, onClose, children }) {
   return (
     // backdrop
     <div
       onClick={onClose}
       className={`fixed inset-0  flex justify-center items-center transition-colors ${
-        open ? "visible bg-black/20 backdrop-blur-sm z-[10]" : "invisible"
+        open ? "visible bg-black/20 z-[1] backdrop-blur-sm" : "invisible"
       }`}
     >
       <div
@@ -25,4 +25,4 @@ function ConfirmationModal({ open, onClose, children }) {
   );
 }
 
-export default ConfirmationModal;
+export default BannerConfirmationModal;

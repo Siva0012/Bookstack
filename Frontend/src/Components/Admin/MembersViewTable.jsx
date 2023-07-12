@@ -9,8 +9,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateMembers } from "../../Redux/Admin/MemberSlice";
 import { updateSingleMember } from "../../Redux/Admin/SingleMemberSlice";
 import { toast } from "react-toastify";
+import ConfirmationModal from "../Modal/ConfirmationModal";
 
 function MembersViewTable() {
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [memberId, setMemberId] = useState(false);
   const [members, setmembers] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,8 +38,10 @@ function MembersViewTable() {
     blockMember({ memberId: memberId, isBlocked: data })
       .then((response) => {
         if (response.data.isBlocked) {
+          setShowConfirmationModal(false)
           toast.success(`Blocked "${response.data.memberName}"`);
         } else if (!response.data.isBlocked) {
+          setShowConfirmationModal(false)
           toast.success(`Unblocked "${response.data.memberName}"`);
         }
       })
@@ -130,9 +135,11 @@ function MembersViewTable() {
                             </td>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                               <span
-                                onClick={() =>
-                                  handleAction(member._id, member.isBlocked)
-                                }
+                                onClick={() => {
+                                  setShowConfirmationModal(true);
+                                  console.log("dafsdfds");
+                                  setMemberId(member._id);
+                                }}
                                 className="relative inline-block px-3 py-1 font-semibold min-w-[90px] text-center  text-green-900 leading-tight hover:cursor-pointer"
                               >
                                 <span
@@ -148,6 +155,46 @@ function MembersViewTable() {
                                     Block
                                   </span>
                                 )}
+                                <ConfirmationModal
+                                  open={
+                                    showConfirmationModal &&
+                                    member._id === memberId
+                                  }
+                                  onClose={() =>
+                                    setShowConfirmationModal(false)
+                                  }
+                                >
+                                  <div className="mx-auto text-center my-4 w-49 ">
+                                    <h3 className="text-lg font-bold text-black">
+                                      Confirm {member.isBlocked ? "Unblock" : "Block" }
+                                    </h3>
+                                    <p className="text-sm mt-2 text-black">
+                                      Are you sure you want to {member.isBlocked ? <span className="text-green-700"> Unblock </span> : <span className="text-red-600"> Block </span>}
+                                      <span className="text-lg font-semibold"> "{member.name}"</span>
+                                    </p>
+                                  </div>
+                                  <div className="flex justify-evenly text-center">
+                                    <button
+                                      onClick={() =>
+                                        handleAction(
+                                          member._id,
+                                          member.isBlocked
+                                        )
+                                      }
+                                      className={member.isBlocked ? `bg-green-600 hover:bg-green-700 py-2 px-4 rounded-md text-white`:`bg-red-600 hover:red-700 py-2 px-4 rounded-md text-white`}
+                                    >
+                                      {member.isBlocked ? "Unblock" : "Block" }
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        setShowConfirmationModal(false)
+                                      }
+                                      className=" hover:bg-blue-700 hover:text-white hover:shadow-lg py-1 px-3 rounded-md w-fit bg-blue-600 text-white"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </ConfirmationModal>
                               </span>
                             </td>
                           </tr>

@@ -5,6 +5,8 @@ import Modal from "../Modal/Modal";
 import EditModal from "../Modal/EditModal";
 import moment from "moment/moment";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import { FiTrash2 } from "react-icons/fi";
+import BannerConfirmationModal from "../Modal/BannerConfirmation";
 
 //admin APIs
 import {
@@ -12,16 +14,30 @@ import {
   addBanner,
   changeBannerStatus,
   updateBannerImage,
-  updateBannerContent
+  updateBannerContent,
 } from "../../Utils/AdminApis";
 import { toast } from "react-toastify";
 
 function Banners() {
-  const navigate = useNavigate();
   const override = {
     display: "block",
     margin: "0 auto",
     borderColor: "red",
+  };
+
+  //confirmation modal
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [bannerId, setBannerId] = useState("");
+
+  //image validator
+  const validate = (image) => {
+    const fileExtension = image.name.split(".").pop().toLowerCase();
+    const acceptedFormats = ["jpg", "jpeg", "png", "gif"];
+    if (!acceptedFormats.includes(fileExtension)) {
+      return false;
+    } else {
+      return true;
+    }
   };
 
   //edit modal
@@ -35,18 +51,20 @@ function Banners() {
     title: "",
     description: "",
     bannerId: "",
+    url: "",
   });
 
   //for bannerdata
   const [banners, setBanners] = useState([]);
 
   //edit banner
-  const handleEditBanner = (bannerId, title, description, image) => {
+  const handleEditBanner = (bannerId, title, description, image, url) => {
     setShowEditModal(true);
     seteditValues({
       title: title,
       description: description,
       bannerId: bannerId,
+      url: url,
     });
     setEditBannerImage(image);
   };
@@ -59,24 +77,31 @@ function Banners() {
   };
 
   const handleEditValues = () => {
-    console.log("editvalues" , editValues);
-    const formData = new FormData()
-    formData.append('title' , editValues.title)
-    formData.append('description' , editValues.description)
-    updateBannerContent(editValues.bannerId , {title : editValues.title , description : editValues.description})
-    .then((response) => {
-      if(response.data.updated) {
-        toast.success("updated banner data")
-        setShowEditModal(false)
+    const formData = new FormData();
+    formData.append("title", editValues.title);
+    formData.append("description", editValues.description);
+    formData.append("url", editValues.url);
+    updateBannerContent(editValues.bannerId, {
+      title: editValues.title,
+      description: editValues.description,
+      url: editValues.url,
+    }).then((response) => {
+      if (response.data.updated) {
+        toast.success("updated banner data");
+        setShowEditModal(false);
       }
-    })
-
-  }
+    });
+  };
 
   const handleEditImageChange = (e) => {
     seteditImageLoader(true);
     const file = e.target.files[0];
     setEditBannerImage(file);
+    if(!validate(file)) {
+      seteditImageLoader(false)
+      toast.error(`Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`)
+      return
+    }
     const formData = new FormData();
     formData.append("bannerPhoto", file);
     updateBannerImage(editValues.bannerId, formData).then((response) => {
@@ -98,6 +123,7 @@ function Banners() {
     description: "",
     bannerPhoto: "",
     bannerId: "",
+    url: "",
   });
 
   //update banner status
@@ -108,6 +134,7 @@ function Banners() {
       .then((response) => {
         if (response.data) {
           toast.success(response.data.message);
+          setShowConfirmationModal(false);
         }
       })
       .catch((err) => toast.error(err.response.data.error));
@@ -129,15 +156,25 @@ function Banners() {
     if (
       formValues.title === "" ||
       formValues.description === "" ||
-      formValues.bannerPhoto === ""
+      formValues.bannerPhoto === "" ||
+      formValues.url === ""
     ) {
       toast.warning("All fields are requried !!");
     } else {
       setimageLoader(true);
+      if (!validate(formValues.bannerPhoto)) {
+        setimageLoader(false);
+        toast.error(
+          `Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`
+        );
+
+        return;
+      }
       const formData = new FormData();
       formData.append("title", formValues.title);
       formData.append("description", formValues.description);
       formData.append("bannerPhoto", formValues.bannerPhoto);
+      formData.append("url", formValues.url);
 
       //call api
       addBanner(formData)
@@ -158,7 +195,7 @@ function Banners() {
         setBanners(response.data.bannerData);
       }
     });
-  }, [showEditModal , showModal , handleBanner]);
+  }, [showEditModal, showModal, handleBanner]);
 
   return (
     <>
@@ -232,9 +269,10 @@ function Banners() {
                             </td>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                               <span
-                                onClick={() =>
-                                  handleBanner(banner._id, banner.active)
-                                }
+                                onClick={() => {
+                                  setShowConfirmationModal(true);
+                                  setBannerId(banner._id);
+                                }}
                                 className="relative inline-block px-3 py-1 font-semibold min-w-[90px] text-green-900 leading-tight hover:cursor-pointer"
                               >
                                 <span
@@ -251,6 +289,59 @@ function Banners() {
                                   </span>
                                 )}
                               </span>
+                              <BannerConfirmationModal
+                                open={
+                                  showConfirmationModal &&
+                                  bannerId === banner._id
+                                }
+                                onClose={() => setShowConfirmationModal(false)}
+                              >
+                                <FiTrash2
+                                  size={56}
+                                  className="mx-auto text-red-600"
+                                />
+                                <div className="mx-auto text-center my-4 w-49">
+                                  <h3 className="text-lg font-black text-gray-800">
+                                    Confirm Change
+                                  </h3>
+                                  <p className="text-sm mt-2 text-black">
+                                    Are you sure you want to
+                                    {banner.active ? (
+                                      <span className="text-red-600 font-semibold">
+                                        {" "}
+                                        Disable{" "}
+                                      </span>
+                                    ) : (
+                                      <span className="text-green-600 font-semibold">
+                                        {" "}
+                                        Enable{" "}
+                                      </span>
+                                    )}
+                                    the banner status ?
+                                  </p>
+                                </div>
+                                <div className="text-center">
+                                  <div className="flex justify-evenly">
+                                  <button
+                                    onClick={() =>
+                                      handleBanner(banner._id, banner.active)
+                                    }
+                                    className=" bg-red-600 hover:bg-red-700 py-1 px-3 text-white rounded-md w-fit"
+                                  >
+                                    {banner.active ? "Disable" : "Enable"}
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      setShowConfirmationModal(false)
+                                    }
+                                    className=" hover:bg-blue-700 hover:text-white hover:shadow-lg py-1 px-3 rounded-md w-fit bg-blue-600 text-white"
+                                  >
+                                    Cancel
+                                  </button>
+
+                                  </div>
+                                </div>
+                              </BannerConfirmationModal>
                             </td>
                             {/*Edit */}
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -260,7 +351,8 @@ function Banners() {
                                     banner._id,
                                     banner.title,
                                     banner.description,
-                                    banner.image
+                                    banner.image,
+                                    banner.url
                                   )
                                 }
                                 className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight hover:cursor-pointer"
@@ -285,7 +377,7 @@ function Banners() {
 
       {/*Edit banner*/}
       <Modal isVisible={showEditModal} onClose={() => setShowEditModal(false)}>
-        <div className="p-6">
+        <div className="px-6 py-2">
           <h3 className="text-xl font-semibold text-gray-900 mb-5">
             Edit Banner
           </h3>
@@ -294,8 +386,8 @@ function Banners() {
             className="shadow-[0px_0px_20px_rgba(0,0,0,0.3)] mx-auto"
             encType="multipart/formdata"
           >
-            <div className="flex flex-col items-center justify-center py-3">
-              <div className="w-[350px] p-2  ">
+            <div className="flex flex-col items-center justify-center py-1">
+              <div className="w-[350px] p-1 ">
                 <div className="w-full relative">
                   {editImageLoader ? (
                     <HashLoader
@@ -359,9 +451,22 @@ function Banners() {
                   </label>
                 </div>
                 <div className="w-full mt-3">
+                  <label htmlFor="title" className="border rounded-md">
+                    url
+                    <input
+                      onChange={handleEditChange}
+                      className="w-full rounded-md"
+                      id="url"
+                      name="url"
+                      type="text"
+                      value={editValues.url}
+                    />
+                  </label>
+                </div>
+                <div className="w-full mt-3">
                   <label htmlFor="description" className="border rounded-md">
                     description
-                    <input
+                    <textarea
                       onChange={handleEditChange}
                       className="w-full rounded-md"
                       id="description"
@@ -420,9 +525,21 @@ function Banners() {
                   </label>
                 </div>
                 <div className="w-full mt-3">
+                  <label htmlFor="url" className="border rounded-md">
+                    url
+                    <input
+                      className="w-full rounded-md"
+                      id="url"
+                      name="url"
+                      type="text"
+                      onChange={handleChange}
+                    />
+                  </label>
+                </div>
+                <div className="w-full mt-3">
                   <label htmlFor="description" className="border rounded-md">
                     description
-                    <input
+                    <textarea
                       className="w-full rounded-md"
                       id="description"
                       name="description"
@@ -456,6 +573,8 @@ function Banners() {
           </form>
         </div>
       </Modal>
+
+      {/* confirmation modal */}
     </>
   );
 }
