@@ -20,15 +20,15 @@ import FinePaymentPage from "../Pages/Members/FinePaymentPage";
 import ReservedBooksPage from "../Pages/Members/ReservedBooksPage";
 import EmailVerification from "../Pages/Members/EmailVerification";
 import SingleBookPage from "../Pages/Members/SingleBookPage";
+import ErrorPage from "../Pages/Members/ErrorPage";
 
 function UserRoutes() {
-
   return (
-    
     <Routes>
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/:memberId/verify/:token" element={<EmailVerification />} />
+      <Route path="*" element={<ErrorPage />} />
       <Route element={<ProtectedRoutes role={"user"} route={"/login"} />}>
         <Route element={<MemberLayout />}>
           <Route path="/test" element={<Modal />} />
@@ -39,16 +39,15 @@ function UserRoutes() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/book-bag" element={<BookBagPage />} />
           <Route path="/upgrade-to-premium" element={<UpgradePage />} />
-          <Route path='/checkouts' element={<CheckoutsPage />} />
+          <Route path="/checkouts" element={<CheckoutsPage />} />
           <Route path="/fines" element={<FinePage />} />
           <Route path="/fine-payment" element={<FinePaymentPage />} />
           <Route path="/reserved-books" element={<ReservedBooksPage />} />
-          <Route path="/book/:bookId" element={< SingleBookPage />} />
+          <Route path="/book/:bookId" element={<SingleBookPage />} />
         </Route>
       </Route>
     </Routes>
   );
 }
-
 
 export default UserRoutes;
