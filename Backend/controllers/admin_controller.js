@@ -523,9 +523,10 @@ const changeCheckoutStatus = async (req, res, next) => {
             )
         }
         if (status === 'Returned') {
-            //checking the book reservation
+            //checking for book reservation
             const bookData = await Books.findById(bookId)
-            if (bookData.availableStock === 0 && bookData.reservationOrder.length >= bookData.maxReservations) {
+            if (bookData.availableStock === 0 && bookData.reservationOrder.length > 0) {
+                
                 //finding the first reservation of the book
                 const reservationId = bookData.reservationOrder[0].reservation
                 const reservationData = await Reservations.findById(reservationId)
@@ -542,8 +543,8 @@ const changeCheckoutStatus = async (req, res, next) => {
                 console.log("sending mail to " , member.name);
                 await sendEmail(member.email, "Book reservation", message)
 
-                //change the nextCheckoutBy to give preference to the next member
-                bookData.nextCheckoutBy = member._id
+                // //change the nextCheckoutBy to give preference to the next member
+                // bookData.nextCheckoutBy = member._id
                 await bookData.save()
 
                 // change the notification date in the reservation data
@@ -581,6 +582,7 @@ const changeCheckoutStatus = async (req, res, next) => {
             res.status(200).json({ message: `Changed status to "${status}" ` })
         }
     } catch (err) {
+        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
