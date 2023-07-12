@@ -56,7 +56,7 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
               Add to book-bag
             </div>
             ) : bookData.availableStock > 0 &&
-            bookData.maxReservations !== bookData.reservationOrder.length ? (
+            bookData.reservationOrder.length === 0 ? (
               <div
               onClick={() => handleAddtoBag(bookData._id)}
               className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-button-green lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
@@ -64,7 +64,7 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
               Add to book-bag
             </div>
             ) : bookData.availableStock === 0 &&
-            bookData.reservationOrder.length < bookData.maxReservations ? (
+            bookData.reservationOrder.length < bookData.maxReservations || bookData.availableStock > 0 && bookData.reservationOrder.length ? (
               <div
               onClick={() => handleAddtoBag(bookData._id)}
               className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-400 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"

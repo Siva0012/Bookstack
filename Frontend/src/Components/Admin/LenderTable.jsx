@@ -13,15 +13,6 @@ function LenderTable() {
     setSelectedOption(option);
   };
 
-  useEffect(() => {
-    //     getLenderHistory().then((response) => {
-    //       if (response.data.lenderData) {
-    //         setlenderData(response.data.lenderData);
-    //       }
-    //     });
-    fetchLenderData();
-  }, []);
-
   const fetchLenderData = async () => {
     try {
       const response = await getLenderHistory();
@@ -44,6 +35,10 @@ function LenderTable() {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    fetchLenderData();
+  }, [updateStatus]);
 
   return (
     <>

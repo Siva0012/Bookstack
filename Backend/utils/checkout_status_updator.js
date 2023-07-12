@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const LenderHistory = require('../models/lender_history');
+const Books = require('../models/book_model')
 
 const updateExpiredCheckoutStatus = async () => {
      const currentTime = new Date();
@@ -20,6 +21,12 @@ const updateExpiredCheckoutStatus = async () => {
                for (const request of expiredRequests) {
                     request.hasFinePaid = true
                     request.status = 'Expired';
+                    //update the stock of expired books
+                    const bookId = request.book
+                    const bookUpdate = await Books.findByIdAndUpdate(
+                         bookId,
+                         {$inc : {availableStock : +1}}
+                    )
                     await request.save();
                }
           }

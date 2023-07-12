@@ -575,32 +575,49 @@ const checkoutBooks = async (req, res, next) => {
                 return res.status(404).json({ error: "You have already reached you checkout limits !!" })
             } else {
                 const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
-                bookIds.bookBag.forEach(async (data) => {
+                //check whether the book is already checked out by the member
+                let bookAlreadyCheckedout = false
+                let existBook
+                for (const data of bookIds.bookBag) {
+                    const existingBookCheckouts = await LenderHistory.find(
+                        {
+                            member: memberId,
+                            book: data.book._id,
+                            $or: [{ status: 'Pending' }, { status: 'Approved' }, { status: 'Borrowed' }]
+                        }
+                    )
+                    console.log("existing checkoutss" , existingBookCheckouts);
+                    if (existingBookCheckouts.length > 0) {
+                        bookAlreadyCheckedout = true
+                        existBook = data.book.title
+                        break
+                        // return res.status(404).json({ error: `The book "${data.book.title}" has already checked out or requested by you !!` })
+                    }
 
                     //check for book reservation
                     const bookId = data.book._id
                     const bookData = await Books.findById(bookId)
                     //checking whether the book is a reserved book or not and update the reservation preference
-                    if(bookData.availableStock === 1 && bookData.reservationOrder.length > 0) {
+                    if (bookData.availableStock === 1 && bookData.reservationOrder.length > 0) {
                         //finding the second reservation of the book
-                        if(bookData.reservationOrder.length > 1) {
+                        if (bookData.reservationOrder.length > 1) {
                             const reservationId = bookData.reservationOrder[1].reservation
                             const reservationData = await Reservations.findById(reservationId)
                             //finding the member data
                             const member = await Members.findById(reservationData.memberId)
-                            console.log("Next member is" , member.name);
+                            console.log("Next member is", member.name);
                             //change the nextCheckoutBy to next member
                             bookData.nextCheckoutBy = member._id
                             //set the reservation status to expire
                             const currentReservationId = bookData.reservationOrder[0].reservation
-                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId , {$set : {status : "Completed"}})
+                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId, { $set: { status: "Completed" } })
                             //removing the current reservation from the reservation order array
                             bookData.reservationOrder.shift()
 
                         } else {
                             //set the reservation status to expire
                             const currentReservationId = bookData.reservationOrder[0].reservation
-                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId , {$set : {status : "Completed"}})
+                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId, { $set: { status: "Completed" } })
                             //removing the current reservation from the reservation order array
                             bookData.reservationOrder.shift()
                             bookData.nextCheckoutBy = null
@@ -637,8 +654,12 @@ const checkoutBooks = async (req, res, next) => {
                             $pull: { bookBag: { book: data.book._id } }
                         }
                     )
-                })
-                res.status(200).json({ message: "Checkout successfull" })
+                }
+                if (bookAlreadyCheckedout) {
+                    res.status(404).json({ error: `The book "${existBook}" has already checked out or requested by you !!` })
+                } else {
+                    res.status(200).json({ message: "Checkout successfull" })
+                }
             }
 
         } else {
