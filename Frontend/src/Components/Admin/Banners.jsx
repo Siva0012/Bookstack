@@ -17,7 +17,6 @@ import {
 import { toast } from "react-toastify";
 
 function Banners() {
-  const navigate = useNavigate();
   const override = {
     display: "block",
     margin: "0 auto",
@@ -35,18 +34,20 @@ function Banners() {
     title: "",
     description: "",
     bannerId: "",
+    url : ""
   });
 
   //for bannerdata
   const [banners, setBanners] = useState([]);
 
   //edit banner
-  const handleEditBanner = (bannerId, title, description, image) => {
+  const handleEditBanner = (bannerId, title, description, image , url) => {
     setShowEditModal(true);
     seteditValues({
       title: title,
       description: description,
       bannerId: bannerId,
+      url : url
     });
     setEditBannerImage(image);
   };
@@ -59,11 +60,11 @@ function Banners() {
   };
 
   const handleEditValues = () => {
-    console.log("editvalues" , editValues);
     const formData = new FormData()
     formData.append('title' , editValues.title)
     formData.append('description' , editValues.description)
-    updateBannerContent(editValues.bannerId , {title : editValues.title , description : editValues.description})
+    formData.append('url' , editValues.url)
+    updateBannerContent(editValues.bannerId , {title : editValues.title , description : editValues.description , url : editValues.url})
     .then((response) => {
       if(response.data.updated) {
         toast.success("updated banner data")
@@ -98,6 +99,7 @@ function Banners() {
     description: "",
     bannerPhoto: "",
     bannerId: "",
+    url : ""
   });
 
   //update banner status
@@ -129,7 +131,8 @@ function Banners() {
     if (
       formValues.title === "" ||
       formValues.description === "" ||
-      formValues.bannerPhoto === ""
+      formValues.bannerPhoto === "" ||
+      formValues.url === ""
     ) {
       toast.warning("All fields are requried !!");
     } else {
@@ -138,6 +141,7 @@ function Banners() {
       formData.append("title", formValues.title);
       formData.append("description", formValues.description);
       formData.append("bannerPhoto", formValues.bannerPhoto);
+      formData.append('url' , formValues.url)
 
       //call api
       addBanner(formData)
@@ -260,7 +264,8 @@ function Banners() {
                                     banner._id,
                                     banner.title,
                                     banner.description,
-                                    banner.image
+                                    banner.image,
+                                    banner.url
                                   )
                                 }
                                 className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight hover:cursor-pointer"
@@ -285,7 +290,7 @@ function Banners() {
 
       {/*Edit banner*/}
       <Modal isVisible={showEditModal} onClose={() => setShowEditModal(false)}>
-        <div className="p-6">
+        <div className="px-6 py-2">
           <h3 className="text-xl font-semibold text-gray-900 mb-5">
             Edit Banner
           </h3>
@@ -294,8 +299,8 @@ function Banners() {
             className="shadow-[0px_0px_20px_rgba(0,0,0,0.3)] mx-auto"
             encType="multipart/formdata"
           >
-            <div className="flex flex-col items-center justify-center py-3">
-              <div className="w-[350px] p-2  ">
+            <div className="flex flex-col items-center justify-center py-1">
+              <div className="w-[350px] p-1 ">
                 <div className="w-full relative">
                   {editImageLoader ? (
                     <HashLoader
@@ -359,9 +364,22 @@ function Banners() {
                   </label>
                 </div>
                 <div className="w-full mt-3">
+                  <label htmlFor="title" className="border rounded-md">
+                    url
+                    <input
+                      onChange={handleEditChange}
+                      className="w-full rounded-md"
+                      id="url"
+                      name="url"
+                      type="text"
+                      value={editValues.url}
+                    />
+                  </label>
+                </div>
+                <div className="w-full mt-3">
                   <label htmlFor="description" className="border rounded-md">
                     description
-                    <input
+                    <textarea
                       onChange={handleEditChange}
                       className="w-full rounded-md"
                       id="description"
@@ -420,9 +438,21 @@ function Banners() {
                   </label>
                 </div>
                 <div className="w-full mt-3">
+                  <label htmlFor="url" className="border rounded-md">
+                    url
+                    <input
+                      className="w-full rounded-md"
+                      id="url"
+                      name="url"
+                      type="text"
+                      onChange={handleChange}
+                    />
+                  </label>
+                </div>
+                <div className="w-full mt-3">
                   <label htmlFor="description" className="border rounded-md">
                     description
-                    <input
+                    <textarea
                       className="w-full rounded-md"
                       id="description"
                       name="description"

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Banner({ bannerData }) {
   return (
     <div
@@ -15,7 +17,13 @@ function Banner({ bannerData }) {
         </div>
       </div>
       <div className="lg:w-[600px] lg:mx-auto">
-        <img className="rounded-lg w-[100%] h-[100%] " src={bannerData.image} alt="Vortex" />
+        <Link to={bannerData.url ? bannerData.url : ''} target="_blank">
+          <img
+            className="rounded-lg w-[100%] h-[100%] "
+            src={bannerData.image}
+            alt="Vortex"
+          />
+        </Link>
       </div>
     </div>
   );
