@@ -18,6 +18,7 @@ import LenderHistory from "../Pages/Admin/LenderHistory";
 import BannersPage from "../Pages/Admin/BannersPage";
 import EditBookPage from "../Pages/Admin/EditBookPage";
 import ErrorPage from "../Pages/Admin/ErrorPage";
+import ChatPage from "../Pages/Admin/ChatPage";
 
 function AdminRoutes() {
   return (
@@ -39,6 +40,7 @@ function AdminRoutes() {
           <Route path="/lender-history" element={<LenderHistory />} />
           <Route path="/banners" element={<BannersPage />} />
           <Route path="/edit-book/:bookId" element={<EditBookPage />} />
+          <Route path="/chat" element={<ChatPage />} />
         </Route>
       </Route>
     </Routes>
