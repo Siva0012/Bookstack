@@ -38,10 +38,10 @@ function MembersViewTable() {
     blockMember({ memberId: memberId, isBlocked: data })
       .then((response) => {
         if (response.data.isBlocked) {
-          setShowConfirmationModal(false)
+          setShowConfirmationModal(false);
           toast.success(`Blocked "${response.data.memberName}"`);
         } else if (!response.data.isBlocked) {
-          setShowConfirmationModal(false)
+          setShowConfirmationModal(false);
           toast.success(`Unblocked "${response.data.memberName}"`);
         }
       })
@@ -166,11 +166,26 @@ function MembersViewTable() {
                                 >
                                   <div className="mx-auto text-center my-4 w-49 ">
                                     <h3 className="text-lg font-bold text-black">
-                                      Confirm {member.isBlocked ? "Unblock" : "Block" }
+                                      Confirm{" "}
+                                      {member.isBlocked ? "Unblock" : "Block"}
                                     </h3>
                                     <p className="text-sm mt-2 text-black">
-                                      Are you sure you want to {member.isBlocked ? <span className="text-green-700"> Unblock </span> : <span className="text-red-600"> Block </span>}
-                                      <span className="text-lg font-semibold"> "{member.name}"</span>
+                                      Are you sure you want to{" "}
+                                      {member.isBlocked ? (
+                                        <span className="text-green-700">
+                                          {" "}
+                                          Unblock{" "}
+                                        </span>
+                                      ) : (
+                                        <span className="text-red-600">
+                                          {" "}
+                                          Block{" "}
+                                        </span>
+                                      )}
+                                      <span className="text-lg font-semibold">
+                                        {" "}
+                                        "{member.name}"
+                                      </span>
                                     </p>
                                   </div>
                                   <div className="flex justify-evenly text-center">
@@ -181,9 +196,13 @@ function MembersViewTable() {
                                           member.isBlocked
                                         )
                                       }
-                                      className={member.isBlocked ? `bg-green-600 hover:bg-green-700 py-2 px-4 rounded-md text-white`:`bg-red-600 hover:red-700 py-2 px-4 rounded-md text-white`}
+                                      className={
+                                        member.isBlocked
+                                          ? `bg-green-600 hover:bg-green-700 py-2 px-4 rounded-md text-white`
+                                          : `bg-red-600 hover:red-700 py-2 px-4 rounded-md text-white`
+                                      }
                                     >
-                                      {member.isBlocked ? "Unblock" : "Block" }
+                                      {member.isBlocked ? "Unblock" : "Block"}
                                     </button>
                                     <button
                                       onClick={() =>

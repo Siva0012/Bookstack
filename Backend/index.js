@@ -31,8 +31,6 @@ app.use(cors(
     }
 ))
 
-
-
 //mounting routes to the application
 app.use('/' , member_router)
 app.use('/admin' , adimn_router)
