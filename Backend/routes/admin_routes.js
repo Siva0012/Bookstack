@@ -34,6 +34,7 @@ admin_router.get('/get-banners' , verifyAdminToken , adminController.getBanners)
 admin_router.post('/change-banner-status' , verifyAdminToken , adminController.changeBannerStatus)
 admin_router.post('/update-banner-image' , verifyAdminToken , upload.single('bannerPhoto') , adminController.updateBannerImage)
 admin_router.patch('/update-banner-content/:bannerId' , verifyAdminToken , adminController.updateBannerContent)
+admin_router.get('/chat-member/:memberId' , verifyAdminToken , adminController.getChatMember)
 
 
 module.exports = admin_router

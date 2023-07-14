@@ -359,7 +359,7 @@ const removeBook = async (req, res, next) => {
 
 const addBanner = async (req, res, next) => {
     try {
-        const { title, description , url } = req.body
+        const { title, description, url } = req.body
         const bannerImage = req.file.path
         const isExists = await Banners.findOne({ title: title })
         if (!isExists) {
@@ -371,7 +371,7 @@ const addBanner = async (req, res, next) => {
             const banner = new Banners({
                 title: title,
                 description: description,
-                url : url,
+                url: url,
                 image: imageUploaded.url,
                 publicId: imageUploaded.public_id,
             })
@@ -479,8 +479,8 @@ const updateBannerImage = async (req, res, next) => {
 const updateBannerContent = async (req, res, next) => {
     try {
         const bannerId = req.params.bannerId
-        const { title, description , url } = req.body
-        const update = { title: title, description: description , url : url }
+        const { title, description, url } = req.body
+        const update = { title: title, description: description, url: url }
         const bannerUpdate = await Banners.findByIdAndUpdate(bannerId, { $set: update })
         if (bannerUpdate) {
             res.status(200).json({ message: "Updated banner", updated: true })
@@ -527,7 +527,7 @@ const changeCheckoutStatus = async (req, res, next) => {
             //checking for book reservation
             const bookData = await Books.findById(bookId)
             if (bookData.availableStock === 0 && bookData.reservationOrder.length > 0) {
-                
+
                 //finding the first reservation of the book
                 const reservationId = bookData.reservationOrder[0].reservation
                 const reservationData = await Reservations.findById(reservationId)
@@ -541,10 +541,10 @@ const changeCheckoutStatus = async (req, res, next) => {
                 <p>If you have any questions or need further assistance, feel free to contact our library staff.</p>
                 <p>Thank you for using our library services.</p>
                 <p>Best regards,<br>Bookstack</p>`
-                console.log("sending mail to " , member.name);
+                console.log("sending mail to ", member.name);
                 await sendEmail(member.email, "Book reservation", message)
 
-                // //change the nextCheckoutBy to give preference to the next member
+                // change the nextCheckoutBy to give preference to the next member
                 // bookData.nextCheckoutBy = member._id
                 await bookData.save()
 
@@ -588,6 +588,21 @@ const changeCheckoutStatus = async (req, res, next) => {
     }
 }
 
+const getChatMember = async (req, res, next) => {
+    try {
+        const { memberId } = req.params
+        const memberData = await Members.findById(memberId).select('name , profilePicture')
+        if (memberData) {
+            res.status(200).json({ message: "member data", memberData })
+        } else {
+            res.status(404).json({ error: "No member data" })
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
 
 module.exports = {
     login,
@@ -610,5 +625,6 @@ module.exports = {
     updateBannerImage,
     blockOrUnblockMember,
     updateBookImage,
-    updateBannerContent
+    updateBannerContent,
+    getChatMember
 }

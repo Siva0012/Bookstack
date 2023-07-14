@@ -89,6 +89,10 @@ const updateBookImage = (bookId , data) => {
     return adminAxiosInstance.patch(`/update-book-image/${bookId}` , data)
 }
 
+const getChatMember = (memberId) => {
+    return adminAxiosInstance.get(`/chat-member/${memberId}`)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -110,5 +114,6 @@ export {
     updateBannerImage,
     blockMember,
     updateBookImage,
-    updateBannerContent
+    updateBannerContent,
+    getChatMember
 }

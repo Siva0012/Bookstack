@@ -1,12 +1,10 @@
 import { BiSearch } from "react-icons/bi";
-import MemberData from "./MemberData";
 
-//chat APIs
+import AdminData from "./AdminData";
 
-function MemberList({chats , adminId , setCurrentChat}) {
-
+function MemberList() {
   return (
-    <div className="rounded-lg p-2 h-full">
+    <div className="rounded-lg p-2 h-full bg-user-nav shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
       <div
         id="search-div"
         className="rounded-lg flex items-center justify-between"
@@ -22,19 +20,18 @@ function MemberList({chats , adminId , setCurrentChat}) {
         </label> */}
       </div>
       <div id="user-div" className="mt-4">
-        {
-          chats && 
-          chats.map((chat , i) => {
-            return(
-              <div
-              className="cursor-pointer"
-              onClick={() => setCurrentChat(chat) }
-               key={i}>
-                <MemberData data={chat} adminId={adminId} />
+        <div>
+          <AdminData />
+        </div>
+        {/* {
+          chats && chats.map((chat , i) => {
+            return (
+              <div onClick={() => setCurrentChat(chat)}>
+                <AdminData data={chat} memberId={memberId} />
               </div>
             )
           })
-        }
+        } */}
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import axios from 'axios'
 
 const memberBaseUrl = import.meta.env.VITE_REACT_APP_MEMBER_BASE_URL
 const adminBaseUrl = import.meta.env.VITE_REACT_APP_ADMIN_BASE_URL
+const chatBaseUrl = import.meta.env.VITE_REACT_APP_CHAT_BASE_URL
+const messageBaseUrl = import.meta.env.VITE_REACT_APP_MESSAGE_BASE_URL
 
 const createAxiosClient = (baseUrl) => {
     const client = axios.create(
@@ -35,5 +37,8 @@ adminAxiosInstance.interceptors.request.use(async (req) => {
     return modifiedReq
 })
 
+const chatAxiosInstance = createAxiosClient(chatBaseUrl)
+const messageAxiosInstance = createAxiosClient(messageBaseUrl)
 
-export {memberAxiosInstance , adminAxiosInstance}
+
+export {memberAxiosInstance , adminAxiosInstance , chatAxiosInstance , messageAxiosInstance}

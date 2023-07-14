@@ -112,6 +112,14 @@ const cancelReservation = (reservationId) => {
     return memberAxiosInstance.patch(`/cancel-reservation/${reservationId}`)
 }
 
+const getChatMember = (memberId) => {
+    return memberAxiosInstance.get(`/chat-member/${memberId}`)
+}
+
+const getAdmin = () => {
+    return memberAxiosInstance.get('/get-admin')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -140,5 +148,7 @@ export {
     verifyEmail,
     getSingleBook,
     searchBooks,
-    cancelReservation
+    cancelReservation,
+    getChatMember,
+    getAdmin
 }
