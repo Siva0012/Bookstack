@@ -4,6 +4,7 @@ const getChats = (id) => {
       return chatAxiosInstance.get(`/get-chat/${id}`)
 }
 
+
 export {
-      getChats
+      getChats,
 }

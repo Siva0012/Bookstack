@@ -1,69 +1,96 @@
-function ChatContainer() {
+import { useEffect, useState } from "react";
+import { getMessages } from "../../../Utils/MessageApis";
+import { getChatMember } from "../../../Utils/AdminApis";
+import moment from "moment/moment";
+import InputEmoji from 'react-input-emoji'
+
+function ChatContainer({ currentChat, adminId }) {
+  const [memberData, setMemberData] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+
+  const handleChange = (newMessage) => {
+    setNewMessage(newMessage)
+  }
+
+  useEffect(() => {
+    const memberId = currentChat?.members.find((id) => id !== adminId);
+    getChatMember(memberId).then((response) => {
+      if (response.data.memberData) {
+        setMemberData(response.data.memberData);
+      }
+    });
+  }, [currentChat]);
+
+  useEffect(() => {
+    getMessages(currentChat?._id).then((response) => {
+      if (response.data.messageData) {
+        setMessages(response.data.messageData);
+      }
+    });
+  }, [currentChat]);
+
+
   return (
     <div className="rounded-2xl h-full px-3 py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.8)]">
-      <div className="flex flex-col h-full justify-between">
+      {
+        currentChat ? (
+<div className="flex flex-col h-full justify-between">
         <div id="content">
           <div id="user-div" className="">
             <div className="flex items-center py-2 px-3 bg-black text-white shadow-[0px_0px_3px_rgba(255,255,255,0.8)] rounded-lg">
-              <div className="lg:w-10 lg:h-10">
+              <div className="lg:w-14 lg:h-14">
                 <img
-                  className="h-full w-full rounded-full"
-                  src="../../../../public/public-images/image.jpg"
+                  className="h-full w-full rounded-full object-contain"
+                  src={
+                    memberData.profilePicture
+                      ? memberData.profilePicture
+                      : "../../../../public/public-images/image.jpg"
+                  }
                   alt=""
                 />
               </div>
               <div className="lg:ms-4">
-                <h2>User name</h2>
+                <h2>{memberData.name}</h2>
               </div>
             </div>
           </div>
-          <div id="content-div" className="mt-4 p-1 overflow-auto lg:max-h-[350px] ">
-            <div className="lg:max-w-[300px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2">
-              <p className="break-words">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem
-                expedita 
-              </p>
-              <p className="text-[#F2E5C7] mt-1">time</p>
-            </div>
-            <div className="ms-auto lg:max-w-[300px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2">
-              <p className="break-words">
-                Lorem ipsum dolor sit uae iusto. Sit.
-              </p>
-              <p className="text-[#F2E5C7] mt-1">time</p>
-            </div>
-            <div className="lg:max-w-[300px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2">
-              <p className="break-words">
-                Lorem ipsum dolor sit amet consectetur.
-              </p>
-              <p className="text-[#F2E5C7] mt-1">time</p>
-            </div>
-            <div className="lg:max-w-[300px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2">
-              <p className="break-words">
-                Lorem ipsum dolor sit amet consectetur.
-              </p>
-              <p className="text-[#F2E5C7] mt-1">time</p>
-            </div>
-            <div className="ms-auto lg:max-w-[300px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2">
-              <p className="break-words">
-                Lorem ipsum dolor sit uae iusto. Sit.
-              </p>
-              <p className="text-[#F2E5C7] mt-1">time</p>
-            </div>
-            <div className="lg:max-w-[300px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2">
-              <p className="break-words">
-                Lorem ipsum dolor sit amet consectetur.
-              </p>
-              <p className="text-[#F2E5C7] mt-1">time</p>
-            </div>
+          <div
+            id="content-div"
+            className="mt-4 p-1 overflow-auto lg:max-h-[350px] "
+          >
+            {messages &&
+              messages.map((message) => {
+                return (
+                  <div
+                    className={`${
+                      message.senderId === adminId
+                    } ? 'ms-auto lg:max-w-[320px] mb-2' : "lg:max-w-[350px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"`}
+                  >
+                    <p className="break-words">{message.text}</p>
+                    <p className="lg:text-[11px] text-end italic text-[#F2E5C7] mt-1">
+                      {moment(message.createdAt).startOf("hour").fromNow()} ago
+                    </p>
+                  </div>
+                );
+              })}
           </div>
         </div>
         <div id="input-section">
           <div className="flex">
-            <input className="w-full rounded-md" type="text" />
-            <button className="px-4 hover:bg-blue-600 bg-blue-500 rounded-md ms-2">Send</button>
+            {/* <input className="w-full rounded-md" type="text" /> */}
+            <InputEmoji value={newMessage} onChange={handleChange}  />
+            <button className="px-4 hover:bg-blue-600 bg-blue-500 rounded-md">
+              Send
+            </button>
           </div>
         </div>
       </div>
+        ) : (
+          <h2 className="ms-6 mt-3 italic text-lg">Please select a chat from the chat list !!</h2>
+        )
+      }
+      
     </div>
   );
 }

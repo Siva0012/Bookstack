@@ -24,9 +24,10 @@ const addMessage = async (req , res , next) => {
 const getMessages = async (req , res , next) => {
       try{
             const {chatId} = req.params
-            const result = await Messages.find({chatId : chatId})
-            if(result) {
-                  res.status(200).json({message : "Messages" , result : result})
+            const messageData = await Messages.find({chatId : chatId})
+            console.log(messageData , "dlsafsdf");
+            if(messageData) {
+                  res.status(200).json({message : "Messages" , messageData : messageData})
             } else {
                   res.status(404).json({error : "Failed to fetch messages"})
             }

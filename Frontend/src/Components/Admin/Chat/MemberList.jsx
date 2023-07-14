@@ -1,24 +1,9 @@
 import { BiSearch } from "react-icons/bi";
 import MemberData from "./MemberData";
-import {useState , useEffect} from 'react'
 
 //chat APIs
-import { getChats } from "../../../Utils/ChatApis";
 
-function MemberList() {
-
-  const [chats, setChats] = useState([]);
-  const adminId = "647dc525dccb0c01b947eef4"
-  useEffect(() => {
-    getChats(adminId)
-    .then((response) => {
-      if(response.data.chat) {
-        console.log(response.data.chat);
-        setChats(response.data.chat)
-      }
-    })
-  } , [])
-  
+function MemberList({chats , adminId , setCurrentChat}) {
 
   return (
     <div className="rounded-lg p-2 h-full">
@@ -41,7 +26,12 @@ function MemberList() {
           chats && 
           chats.map((chat , i) => {
             return(
-              <MemberData key={i} data={chat} adminId={adminId} />
+              <div
+              className="cursor-pointer"
+              onClick={() => setCurrentChat(chat) }
+               key={i}>
+                <MemberData data={chat} adminId={adminId} />
+              </div>
             )
           })
         }

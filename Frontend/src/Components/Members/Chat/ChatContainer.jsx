@@ -21,7 +21,7 @@ function ChatContainer() {
             <div className="lg:max-w-[300px] bg-user-nav rounded-lg shadow-[0px_0px_3px_rgba(0,0,0,0.8)] p-2 mb-2">
               <p className="break-words">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem
-                expedita 
+                expedita sdfasdfasd aqerrsafa
               </p>
               <p className="text-[#F2E5C7] mt-1">time</p>
             </div>
