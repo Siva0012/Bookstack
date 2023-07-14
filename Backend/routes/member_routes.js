@@ -35,5 +35,7 @@ member_router.get('/book/:bookId' , verifyMemberToken , memberController.getSing
 member_router.get('/search-books/:searchKey' , verifyMemberToken , memberController.searchBooks)
 member_router.patch('/cancel-reservation/:reservationId' , verifyMemberToken , memberController.cancelReservation)
 member_router.get('/get-fines' , verifyMemberToken , memberController.getFineHistory)
+member_router.get('/chat-member/:memberId' , verifyMemberToken , memberController.getChatMember)
+member_router.get('/get-admin' , verifyMemberToken , memberController.getAdmin)
 
 module.exports = member_router

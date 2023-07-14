@@ -1,6 +1,27 @@
 import { BiSearch } from "react-icons/bi";
 
+import {useState , useEffect} from "react"
+import { useSelector } from "react-redux";
+
+import { getChats } from "../../../Utils/ChatApis";
+
+import AdminData from "./AdminData";
+
 function MemberList() {
+
+  const memberId = useSelector((state) => state.memberData.value._id)
+  const [chats, setChats] = useState([]);
+
+  useEffect(() => {
+    getChats(memberId)
+    .then((response) => {
+      if(response.data.chat) {
+        setChats(response.data.chat)
+      }
+    })
+  } , [])
+
+
   return (
     <div className="rounded-lg p-2 h-full bg-user-nav shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
       <div
@@ -18,18 +39,13 @@ function MemberList() {
         </label> */}
       </div>
       <div id="user-div" className="mt-4">
-        <div className="flex items-center mb-2 py-2 px-3 bg-user-nav text-black shadow-[0px_0px_3px_rgba(0,0,0,0.5)] rounded-xl">
-          <div className="lg:w-10 lg:h-10">
-            <img
-              className="h-full w-full rounded-full"
-              src="../../../../public/public-images/image.jpg"
-              alt=""
-            />
-          </div>
-          <div className="lg:ms-4">
-            <h2>User name</h2>
-          </div>
-        </div>
+        {
+          chats && chats.map((chat , i) => {
+            return (
+              <AdminData data={chat} memberId={memberId} />
+            )
+          })
+        }
       </div>
     </div>
   );

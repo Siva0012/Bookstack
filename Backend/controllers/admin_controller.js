@@ -588,6 +588,21 @@ const changeCheckoutStatus = async (req, res, next) => {
     }
 }
 
+const getChatMember = async (req , res , next) => {
+    try{
+        const {memberId} = req.params
+        const memberData = await Members.findById(memberId).select('name , profilePicture')
+        if(memberData) {
+            res.status(200).json({message : "member data" , memberData})
+        } else {
+            res.status(404).json({error : "No member data"})
+        }
+    }catch (err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 
 module.exports = {
     login,
@@ -610,5 +625,6 @@ module.exports = {
     updateBannerImage,
     blockOrUnblockMember,
     updateBookImage,
-    updateBannerContent
+    updateBannerContent,
+    getChatMember
 }
