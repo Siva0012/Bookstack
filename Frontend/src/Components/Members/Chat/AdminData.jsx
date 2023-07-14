@@ -1,12 +1,11 @@
 import { useState , useEffect } from "react";
 import { getAdmin } from "../../../Utils/MemberApis";
 
-function AdminData({data , memberId}) {
+function AdminData() {
 
   const [admin, setAdmin] = useState({});
 
   useEffect(() => {
-    const adminId = data.members.find((id) => id !== memberId)
     getAdmin()
     .then((response) => {
       if(response.data.admin) {
