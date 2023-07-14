@@ -21,6 +21,7 @@ import ReservedBooksPage from "../Pages/Members/ReservedBooksPage";
 import EmailVerification from "../Pages/Members/EmailVerification";
 import SingleBookPage from "../Pages/Members/SingleBookPage";
 import ErrorPage from "../Pages/Members/ErrorPage";
+import ChatPage from "../Pages/Members/ChatPage";
 
 function UserRoutes() {
   return (
@@ -44,7 +45,9 @@ function UserRoutes() {
           <Route path="/fine-payment" element={<FinePaymentPage />} />
           <Route path="/reserved-books" element={<ReservedBooksPage />} />
           <Route path="/book/:bookId" element={<SingleBookPage />} />
+          <Route path='/chat' element={<ChatPage />} />
         </Route>
+        {/* chats */}
       </Route>
     </Routes>
   );
