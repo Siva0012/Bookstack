@@ -85,9 +85,10 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
               className="mt-4 p-1 overflow-auto lg:max-h-[350px] "
             >
               {messages &&
-                messages.map((message) => {
+                messages.map((message , i) => {
                   return (
                     <div
+                    key={i}
                       className={`${
                         message.senderId === adminId
                           ? "ms-auto lg:max-w-[320px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
