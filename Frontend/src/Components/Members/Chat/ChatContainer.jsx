@@ -59,7 +59,7 @@ function ChatContainer({ currentChat, memberId }) {
                   >
                     <div
                       className={`${
-                        message.senderId === memberId ? "ms-auto " : ""
+                        message.senderId === memberId ? "ms-auto" : ""
                       }lg:max-w-[300px] bg-user-nav rounded-lg shadow-[0px_0px_3px_rgba(0,0,0,0.8)] p-2 mb-2`}
                     >
                       <p className="break-words">{message.text}</p>

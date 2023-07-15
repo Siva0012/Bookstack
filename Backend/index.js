@@ -5,6 +5,11 @@ const app = express()
 const {updateExpiredCheckoutStatus} = require('./utils/checkout_status_updator')
 const {updateFines} = require('./utils/fine_updator')
 const {preferenceUpdater} = require('./utils/preference_updater')
+const server = require('http').createServer(app)
+const configureSocket = require('./config/socket')
+
+//socket setup
+configureSocket(server)
 
 //connect to database
 connectToDatabase()
@@ -27,7 +32,7 @@ app.use(express.urlencoded({extended : true}))
 //cors
 app.use(cors(
     {
-        origin : ['http://localhost:5173'], //env
+        origin : [process.env.FRONT_END_URL], //env
         methods : ["GET" , "POST" , "PATCH"],
         credentials : true
     }
@@ -39,6 +44,6 @@ app.use('/admin' , adimn_router)
 app.use('/chat' , chat_router)
 app.use('/message' , message_router)
 
-app.listen(3000 , () =>{
+server.listen(3000 , () =>{
     console.log("server has started at port 3000");
 })
