@@ -7,14 +7,14 @@ function MemberData({data , adminId}) {
 
   useEffect(() => {
     const memberId = data.members.find((id) => id !== adminId)
-    getChatMember(memberId)
-    .then((response) => {
-      if(response.data.memberData) {
-        setMemberData(response.data.memberData)
-      }
-    })
-
+      getChatMember(memberId)
+      .then((response) => {
+        if(response.data.memberData) {
+          setMemberData(response.data.memberData)
+        }
+      })
   } , [])
+
 
   return (
       <div

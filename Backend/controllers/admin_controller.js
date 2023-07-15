@@ -12,6 +12,7 @@ const sendEmail = require('../utils/send_email')
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
 const { adminTokenGenerator } = require('../utils/jwt-generator')
+const mongoose = require('mongoose')
 
 const verifyAdmin = async (req, res, next) => {
     try {

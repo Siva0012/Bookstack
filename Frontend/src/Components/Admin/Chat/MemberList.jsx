@@ -3,7 +3,7 @@ import MemberData from "./MemberData";
 
 //chat APIs
 
-function MemberList({chats , adminId , setCurrentChat}) {
+function MemberList({chats , adminId , setCurrentChat }) {
 
   return (
     <div className="rounded-lg p-2 h-full">

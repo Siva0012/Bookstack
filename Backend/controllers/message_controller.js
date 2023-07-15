@@ -25,7 +25,6 @@ const getMessages = async (req , res , next) => {
       try{
             const {chatId} = req.params
             const messageData = await Messages.find({chatId : chatId})
-            console.log(messageData , "dlsafsdf");
             if(messageData) {
                   res.status(200).json({message : "Messages" , messageData : messageData})
             } else {
