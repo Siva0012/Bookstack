@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { getMessages } from "../../../Utils/MessageApis";
+import { getMessages, addMessage } from "../../../Utils/MessageApis";
 import { getChatMember } from "../../../Utils/AdminApis";
 import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
 
-function ChatContainer({ currentChat, adminId }) {
+function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessages }) {
   const [memberData, setMemberData] = useState({});
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -29,6 +29,33 @@ function ChatContainer({ currentChat, adminId }) {
       }
     });
   }, [currentChat]);
+
+  useEffect(() => {
+    if(receivedMessages !== null && receivedMessages.chatId === currentChat._id) {
+      setMessages([...messages , receivedMessages])
+    }
+  } , [receivedMessages])
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    const message = {
+      chatId: currentChat._id,
+      senderId: adminId,
+      text: newMessage,
+    };
+
+    //save the message to database
+    addMessage(message).then((response) => {
+      if (response.data.result) {
+        setMessages([...messages, response.data.result]);
+        setNewMessage("");
+      }
+    });
+
+    //send message to the socket server
+    const receiverId = currentChat.members.find((id) => id !== adminId)
+    setSendMessage({...message , receiverId})
+  };
 
   return (
     <div className="rounded-2xl h-full px-3 py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.8)]">
@@ -63,8 +90,8 @@ function ChatContainer({ currentChat, adminId }) {
                     <div
                       className={`${
                         message.senderId === adminId
-                          ? "ms-auto"
-                          : "lg:max-w-[350px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
+                          ? "ms-auto lg:max-w-[320px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
+                          : "lg:max-w-[320px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
                       }`}
                     >
                       <p className="break-words">{message.text}</p>
@@ -80,7 +107,10 @@ function ChatContainer({ currentChat, adminId }) {
             <div className="flex">
               {/* <input className="w-full rounded-md" type="text" /> */}
               <InputEmoji value={newMessage} onChange={handleChange} />
-              <button className="px-4 hover:bg-blue-600 bg-blue-500 rounded-md">
+              <button
+                onClick={handleSend}
+                className="px-4 hover:bg-blue-600 bg-blue-500 rounded-md"
+              >
                 Send
               </button>
             </div>
