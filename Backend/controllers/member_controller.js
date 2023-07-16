@@ -970,7 +970,8 @@ const getAdmin = async (req , res , next) => {
     try{
         const adminData = await Admins.find({})
         const admin = {
-            name : adminData[0].name
+            name : adminData[0].name,
+            id : adminData[0]._id
         }
         if(adminData) {
             res.status(200).json({message : "Admin data" , admin})

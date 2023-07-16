@@ -30,7 +30,6 @@ function ChatPage() {
 
   } , [adminId])
 
-
   useEffect(() => {
     getChats(adminId)
     .then((response) => {
@@ -38,7 +37,7 @@ function ChatPage() {
         setChats(response.data.chat)
       }
     })
-  } , [])
+  } , [onlineUsers , receivedMessages])
 
   //sending message to socket server
   useEffect(() => {
@@ -56,7 +55,7 @@ function ChatPage() {
 
   //check online users
   const checkOnlineStatus = (chat) => {
-    const chatMember = chat.members.find((member) => member !== memberId)
+    const chatMember = chat.members.find((member) => member !== adminId)
     const online = onlineUsers.find((user) => user.userId === chatMember)
     return online ? true : false
   }
@@ -65,7 +64,7 @@ function ChatPage() {
     <div className="text-white px-14 mt-6 font-nunito">
       <div className="flex lg:h-[500px]">
         <div className="lg:w-[30%]">
-          <MemberList setCurrentChat={setCurrentChat} chats={chats} adminId={adminId} />
+          <MemberList setCurrentChat={setCurrentChat} chats={chats} adminId={adminId} checkOnlineStatus={checkOnlineStatus} />
         </div>
         <div className="lg:w-[67%] lg:ms-auto ">
           <ChatContainer currentChat={currentChat} adminId={adminId} setSendMessage={setSendMessage} receivedMessages={receivedMessages} />

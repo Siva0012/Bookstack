@@ -23,11 +23,9 @@ function ChatPage() {
 
   //creating a new chat
   const handleCreateChat = useCallback(() => {
-    console.log("handle chat called" , memberId);
     createChat({senderId : memberId})
     .then((response) => {
       if(response.data.result) {
-        console.log(response.data.result , "chat created");
         const newChatId = response.data.result._id
         setchatId(newChatId)
       }
@@ -43,7 +41,6 @@ function ChatPage() {
   }, [memberId]);
 
   useEffect(() => {
-    console.log("get chats called");
     getChats(memberId).then((response) => {
       if (response.data.chat.length) {
         setChats(response.data.chat);
@@ -66,15 +63,18 @@ function ChatPage() {
     });
   }, []);
 
-  console.log("chats" , chats);
-  console.log("chatId" , chatId);
-
+  //check online users
+  const checkOnlineStatus = (adminId) => {
+    const online = onlineUsers.find((user) => user.userId === adminId)
+    return online ? true : false
+  }
+  console.log(onlineUsers , "onlineusers");
 
   return (
     <div className="text-white font-nunito">
       <div className="flex lg:h-[500px]">
         <div className="lg:w-[30%]">
-          <MemberList chatId={chatId} handleCreateChat={handleCreateChat} />
+          <MemberList chatId={chatId} handleCreateChat={handleCreateChat} checkOnlineStatus={checkOnlineStatus} />
         </div>
         <div className="lg:w-[67%] lg:ms-auto ">
           <ChatContainer

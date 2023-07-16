@@ -3,7 +3,7 @@ import {AiOutlinePlusCircle} from 'react-icons/ai'
 
 import AdminData from "./AdminData";
 
-function MemberList({chatId , handleCreateChat}) {
+function MemberList({chatId , handleCreateChat , checkOnlineStatus}) {
   return (
     <div className="rounded-lg p-2 h-full bg-user-nav shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
       <div
@@ -24,7 +24,7 @@ function MemberList({chatId , handleCreateChat}) {
         {
           chatId ? 
           <div>
-            <AdminData />
+            <AdminData checkOnlineStatus={checkOnlineStatus} />
           </div> : 
           <div 
           onClick={handleCreateChat}

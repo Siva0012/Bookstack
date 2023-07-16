@@ -32,7 +32,7 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
   }, [currentChat]);
 
   useEffect(() => {
-    if(receivedMessages !== null && receivedMessages.chatId === currentChat._id) {
+    if(receivedMessages !== null && receivedMessages.chatId === currentChat?._id) {
       setMessages([...messages , receivedMessages])
     }
   } , [receivedMessages])
