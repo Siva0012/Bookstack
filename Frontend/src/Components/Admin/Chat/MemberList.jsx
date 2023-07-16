@@ -3,7 +3,7 @@ import MemberData from "./MemberData";
 
 //chat APIs
 
-function MemberList({chats , adminId , setCurrentChat }) {
+function MemberList({chats , adminId , setCurrentChat  , checkOnlineStatus}) {
 
   return (
     <div className="rounded-lg p-2 h-full">
@@ -30,7 +30,7 @@ function MemberList({chats , adminId , setCurrentChat }) {
               className="cursor-pointer"
               onClick={() => setCurrentChat(chat) }
                key={i}>
-                <MemberData data={chat} adminId={adminId} />
+                <MemberData data={chat} adminId={adminId} checkOnlineStatus={checkOnlineStatus} />
               </div>
             )
           })

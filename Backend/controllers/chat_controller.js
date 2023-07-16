@@ -1,7 +1,11 @@
 const Chats  = require('../models/chat_model')
+const Admins = require('../models/admin_model')
 
 const createChat = async (req , res , next) => {
-      const {senderId , receiverId} = req.body
+      // const {senderId , receiverId} = req.body
+      const {senderId} = req.body
+      const adminData = await Admins.find({})
+      const receiverId = adminData[0]._id.toString()
       const newChat = new Chats(
             {
                   members : [senderId , receiverId]
@@ -30,6 +34,8 @@ const getChat = async (req , res , next) => {
             )
             if(chat) {
                   res.status(200).json({message : "user chat" , chat : chat} )
+            } else {
+                  res.status(404).json({error : "No chat history" , chat : false})
             }
       }catch(error) {
             res.status(500).json({error : "Internal server Error"})

@@ -59,7 +59,7 @@ function Profile() {
   //image validator
   const validate = (image) => {
     const fileExtension = image.name.split(".").pop().toLowerCase()
-    const acceptedFormats = ['jpg' , 'jpeg' , 'png' , 'gif']
+    const acceptedFormats = ['jpg' , 'jpeg' , 'png']
     if(!acceptedFormats.includes(fileExtension)) {
       return false
     } else {
