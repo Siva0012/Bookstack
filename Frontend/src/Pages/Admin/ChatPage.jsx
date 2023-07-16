@@ -54,6 +54,13 @@ function ChatPage() {
     })
   } , [])
 
+  //check online users
+  const checkOnlineStatus = (chat) => {
+    const chatMember = chat.members.find((member) => member !== memberId)
+    const online = onlineUsers.find((user) => user.userId === chatMember)
+    return online ? true : false
+  }
+
   return (
     <div className="text-white px-14 mt-6 font-nunito">
       <div className="flex lg:h-[500px]">

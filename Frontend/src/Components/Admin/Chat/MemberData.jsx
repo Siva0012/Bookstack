@@ -20,6 +20,9 @@ function MemberData({data , adminId}) {
       <div
        className="flex items-center mb-2 py-2 px-3 bg-black text-white shadow-[0px_0px_3px_rgba(255,255,255,0.8)] rounded-xl">
         <div className="lg:w-12 lg:h-12">
+          <div className="w-2 h-2 rounded-full bg-green-500 fixed z-[2]">
+
+          </div>
           <img
             className="h-full w-full rounded-full object-contain"
             src={memberData ? memberData.profilePicture : '../../../../public/public-images/image.jpg'}

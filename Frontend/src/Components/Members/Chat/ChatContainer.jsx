@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addMessage, getMessages } from "../../../Utils/MessageApis";
 import { getAdmin } from "../../../Utils/MemberApis";
 import moment from "moment/moment";
@@ -10,9 +10,11 @@ function ChatContainer({
   setSendMessage,
   receivedMessages,
 }) {
+  const scroll = useRef();
+
   const [adminData, setAdminData] = useState({});
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
 
   const handleChange = (newMessage) => {
     setNewMessage(newMessage);
@@ -64,6 +66,12 @@ function ChatContainer({
     setSendMessage({ ...message, receiverId });
   };
 
+  useEffect(() => {
+    if(scroll.current) {
+      scroll.current.scrollTop = scroll.current.scrollHeight
+    }
+  }, [messages]);
+
   return (
     <div className="rounded-2xl h-full px-3 bg-user-nav py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
       {currentChat ? (
@@ -84,8 +92,9 @@ function ChatContainer({
               </div>
             </div>
             <div
+              ref={scroll}
               id="content-div"
-              className="mt-4 p-1 overflow-auto lg:max-h-[350px] text-black "
+              className="mt-4 p-1 overflow-y-auto lg:max-h-[350px] text-black "
             >
               {messages &&
                 messages.map((message, i) => {
@@ -120,7 +129,7 @@ function ChatContainer({
           </div>
         </div>
       ) : (
-        <h2>"there is not chat history"</h2>
+        <h2>"there is no chat history"</h2>
       )}
     </div>
   );

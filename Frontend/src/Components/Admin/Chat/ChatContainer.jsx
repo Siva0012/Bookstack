@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getMessages, addMessage } from "../../../Utils/MessageApis";
 import { getChatMember } from "../../../Utils/AdminApis";
 import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
 
 function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessages }) {
+  const scroll = useRef()
   const [memberData, setMemberData] = useState({});
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -57,6 +58,10 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
     setSendMessage({...message , receiverId})
   };
 
+  useEffect(() => {
+    scroll.current?.scrollIntoView({behavior : "smooth"})
+  } , [messages])
+
   return (
     <div className="rounded-2xl h-full px-3 py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.8)]">
       {currentChat ? (
@@ -88,6 +93,7 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
                 messages.map((message , i) => {
                   return (
                     <div
+                    ref={scroll}
                     key={i}
                       className={`${
                         message.senderId === adminId
