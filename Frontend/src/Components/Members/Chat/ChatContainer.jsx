@@ -73,12 +73,12 @@ function ChatContainer({
   }, [messages]);
 
   return (
-    <div className="rounded-2xl h-full px-3 bg-user-nav py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
+    <div className="rounded-2xl h-full px-3 bg-gradient-to-br from-[#af6c42] to-[#7e3000] py-4">
       {currentChat ? (
         <div className="flex flex-col h-full justify-between">
           <div id="content">
             <div id="user-div" className="">
-              <div className="flex items-center py-2 px-3 bg-user-nav text-black shadow-[0px_0px_3px_rgba(0,0,0,0.5)] rounded-lg">
+              <div className="flex items-center py-2 px-3 bg-[#471b00]/30 text-white rounded-lg">
                 <div className="lg:w-10 lg:h-10">
                   <img
                     className="h-full w-full rounded-full"
@@ -103,12 +103,12 @@ function ChatContainer({
                       key={i}
                       className={`${
                         message.senderId === memberId
-                          ? "ms-auto lg:max-w-[320px] bg-gray-200 rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
-                          : "lg:max-w-[320px] bg-gray-200 rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
+                          ? "ms-auto lg:max-w-[320px] bg-[#471b00]/20 ring-1 ring-white text-white rounded-lg p-2 mb-2"
+                          : "lg:max-w-[320px] bg-[#471b00]/20 ring-1 ring-white text-white rounded-lg p-2 mb-2"
                       }`}
                     >
                       <p className="break-words">{message.text}</p>
-                      <p className="lg:text-[11px] text-end italic text-[#F2E5C7] mt-1">
+                      <p className="lg:text-[11px] text-end italic text-white mt-1">
                         {moment(message.createdAt).startOf("hour").fromNow()}
                       </p>
                     </div>

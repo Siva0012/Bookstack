@@ -72,8 +72,8 @@ function ChatPage() {
 
   return (
     <div className="text-white font-nunito">
-      <div className="flex lg:h-[500px]">
-        <div className="lg:w-[30%]">
+      <div className="flex lg:h-[500px] ">
+        <div className="lg:w-[30%] ">
           <MemberList chatId={chatId} handleCreateChat={handleCreateChat} checkOnlineStatus={checkOnlineStatus} />
         </div>
         <div className="lg:w-[67%] lg:ms-auto ">

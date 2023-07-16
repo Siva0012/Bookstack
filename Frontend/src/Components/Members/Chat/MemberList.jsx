@@ -5,8 +5,8 @@ import AdminData from "./AdminData";
 
 function MemberList({chatId , handleCreateChat , checkOnlineStatus}) {
   return (
-    <div className="rounded-lg p-2 h-full bg-user-nav shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
-      <div
+    <div className="rounded-lg px-3 py-4 h-full bg-gradient-to-bl from-[#af6c42] to-[#7e3000] shadow-[0px_0px_3px_rgba(255,255,255,0.2)]">
+      {/* <div
         id="search-div"
         className="rounded-lg flex items-center justify-between"
       >
@@ -16,11 +16,11 @@ function MemberList({chatId , handleCreateChat , checkOnlineStatus}) {
           name="members"
           placeholder="Members"
         />
-        {/* <label className="ms-2" htmlFor="members">
+        <label className="ms-2" htmlFor="members">
           <BiSearch size={28} />
-        </label> */}
-      </div>
-      <div id="user-div" className="mt-4">
+        </label>
+      </div> */}
+      <div id="user-div" className="">
         {
           chatId ? 
           <div>
