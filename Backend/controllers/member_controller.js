@@ -952,9 +952,9 @@ const getFineHistory = async (req, res, next) => {
         const memberId = req.memberId
         const fineData = await LenderHistory.find(
             {
-                member: memberId, hasFinePaid: true
+                member: memberId, hasFinePaid: true, fineAmount : {$gt : 0} , $or : [{status : 'Returned'} , {status : "Borrowed"}]
             }
-        )
+        ).populate('book')
         if (fineData) {
             res.status(200).json({ message: "Fine histories", fineData: fineData })
         } else {

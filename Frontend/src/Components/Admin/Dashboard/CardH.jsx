@@ -16,4 +16,26 @@ function CardH({count , data , icon}) {
   );
 }
 
+   // <div>
+    //   <div>
+    //     <h1>Active fines</h1>
+    //     <div className="flex items-center">
+    //       <div className="lg:w-[150px] lg:h-[120px]">
+    //         <img
+    //           className="object-contain w-full h-full"
+    //           src="../../../public/public-images/image.jpg"
+    //           alt=""
+    //         />
+    //       </div>
+    //       <div className="">
+    //         <h2>Book title</h2>
+    //         <h2>Book author</h2>
+    //         <h2>Book category</h2>
+    //         <h2>Book checkout date</h2>
+    //         <h2>Book due date</h2>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+
 export default CardH;
