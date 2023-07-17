@@ -105,6 +105,10 @@ const getBmc = () => {
     return adminAxiosInstance.get('/get-bmc')
 }
 
+const totalFines = () => {
+    return adminAxiosInstance.get('/total-fine-amount')
+}
+
 export {
     adminLogin , 
     addBook,
@@ -130,5 +134,6 @@ export {
     getChatMember,
     getCheckoutData,
     getMembershipData,
-    getBmc
+    getBmc,
+    totalFines
 }

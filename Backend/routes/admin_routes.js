@@ -38,5 +38,6 @@ admin_router.get('/chat-member/:memberId' , verifyAdminToken , adminController.g
 admin_router.get('/get-checkout-data' , verifyAdminToken , adminController.getCheckoutData)
 admin_router.get('/get-membership-data' , verifyAdminToken , adminController.getMembershipData)
 admin_router.get('/get-bmc' , verifyAdminToken , adminController.getBmc)
+admin_router.get('/total-fine-amount' , verifyAdminToken , adminController.totalFineAmount)
 
 module.exports = admin_router
