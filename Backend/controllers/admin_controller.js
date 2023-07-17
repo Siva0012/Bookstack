@@ -568,7 +568,7 @@ const changeCheckoutStatus = async (req, res, next) => {
             const returnDate = new Date()
             const updateReturnDate = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
-                { $set: { returnDate: returnDate } }
+                { $set: { returnDate: returnDate , hasFinePaid : true } }
             )
 
             // return res.status(200).json({ message: 'reservationsssssssss' })
@@ -604,6 +604,101 @@ const getChatMember = async (req, res, next) => {
     }
 }
 
+const getCheckoutData = async (req , res , next) => {
+    try{
+
+        const returnedBooks = await LenderHistory.find({status : "Returned"}).select('book')
+        const categoryCounts = await LenderHistory.aggregate(
+            [
+                {$match : {status : "Returned"}},
+                {
+                    $lookup : {  //lookup for getting book details
+                        from : 'books',
+                        localField : 'book',
+                        foreignField : '_id',
+                        as : 'book'
+                    }
+                },
+                {
+                    $unwind : '$book' //unwind for make it object
+                },
+                {
+                    $lookup : {
+                        from : 'categories',
+                        localField : 'book.category',
+                        foreignField : '_id',
+                        as : 'category'
+                    }
+                },
+                {
+                    $unwind : '$category'
+                },
+                {
+                    $group : {  //group by category and find count
+                        _id : '$category.name',
+                        count : {$sum : 1}
+                    }
+                }
+            ]
+        )
+
+        if(categoryCounts) {
+            res.status(200).json({message : "checkout data" , data : categoryCounts})
+        } else {
+            res.status(404).json({error : "No data"})
+        }
+    }catch(err) {
+        console.log(err);
+        res.statu(500).json({error : "Internal server Error"})
+    }
+}
+
+const getMembershipData = async (req , res, next) => {
+    try{
+        const memberShipData = await Members.aggregate(
+            [
+                // {$match : {isMember : true}},
+                {
+                    $group : {
+                        _id : '$membershipType',
+                        count : {$sum : 1}
+                    }
+                }
+            ]
+        )
+        if(memberShipData) {
+            res.status(200).json({message : "member data" , memberShipData})
+        } else {
+            res.status(404).json({error : "No data found"})
+        }
+    }catch(error) {
+        console.log(error);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
+const getBmc = async (req , res , next) => {
+    try{
+        const books = await Books.find().count()
+        const members = await Members.find().count()
+        const categories = await Categories.find().count()
+        const data = {
+            books : books,
+            members : members,
+            categories : categories
+        }
+        if(data) {
+            res.status(200).json({message : "data sent" , data : data})
+        } else {
+            res.status(404).json({error : "No data found"})
+        }
+
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 
 module.exports = {
     login,
@@ -627,5 +722,8 @@ module.exports = {
     blockOrUnblockMember,
     updateBookImage,
     updateBannerContent,
-    getChatMember
+    getChatMember,
+    getCheckoutData,
+    getMembershipData,
+    getBmc
 }

@@ -93,6 +93,18 @@ const getChatMember = (memberId) => {
     return adminAxiosInstance.get(`/chat-member/${memberId}`)
 }
 
+const getCheckoutData = () => {
+    return adminAxiosInstance.get('/get-checkout-data')
+}
+
+const getMembershipData = () => {
+    return adminAxiosInstance.get('/get-membership-data')
+}
+
+const getBmc = () => {
+    return adminAxiosInstance.get('/get-bmc')
+}
+
 export {
     adminLogin , 
     addBook,
@@ -115,5 +127,8 @@ export {
     blockMember,
     updateBookImage,
     updateBannerContent,
-    getChatMember
+    getChatMember,
+    getCheckoutData,
+    getMembershipData,
+    getBmc
 }

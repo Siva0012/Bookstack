@@ -32,6 +32,7 @@ const memberSchema = new mongoose.Schema({
     },
     membershipType: {
         type: String,
+        default : 'Not a member'
     },
     memberSince: {
         type: Date
