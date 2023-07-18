@@ -8,6 +8,7 @@ const Banners = require('../models/banner_model')
 const LenderHistory = require('../models/lender_history')
 const Reservations = require('../models/reservation_model')
 const sendEmail = require('../utils/send_email')
+const {sendNotificationToUser} = require('../config/socket')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
@@ -66,6 +67,7 @@ const blockOrUnblockMember = async (req, res, next) => {
 
         const { memberId, isBlocked } = req.body
         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isBlocked: !isBlocked } })
+        sendNotificationToUser(memberId , "You are blocked by the admin")
         if (memberUpdate) {
             res.status(200).json({ isBlocked: memberUpdate.isBlocked, memberName: memberUpdate.name })
         }
@@ -513,10 +515,11 @@ const changeCheckoutStatus = async (req, res, next) => {
         const status = req.params.status
         const lenderData = await LenderHistory.findById(lenderId).populate('book')
         const bookId = lenderData.book
-
+        const memberId = lenderData.member
         if (status === 'Approved') {
             //After approval, change the duedate for the checkout
             const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            sendNotificationToUser(memberId , "Your checkout has approved")
             const udpateDue = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
                 {
@@ -544,6 +547,9 @@ const changeCheckoutStatus = async (req, res, next) => {
                 <p>Best regards,<br>Bookstack</p>`
                 console.log("sending mail to ", member.name);
                 await sendEmail(member.email, "Book reservation", message)
+
+                //send notification to the member
+                sendNotificationToUser(member._id , "Your book is available")
 
                 // change the nextCheckoutBy to give preference to the next member
                 // bookData.nextCheckoutBy = member._id

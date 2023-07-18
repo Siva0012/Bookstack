@@ -1,16 +1,17 @@
 const socket = require('socket.io')
 
+let io
+let activeUsers = []
+
 const configureSocket = (server) => {
 
-      const io = socket(server, {
+      io = socket(server, {
             cors: {
                   origin: process.env.FRONT_END_URL,
                   methods: ['GET', 'POST', 'PATCH'],
                   credentials: true
             }
       })
-
-      let activeUsers = []
 
       io.on("connection", (socket) => {
 
@@ -53,4 +54,18 @@ const configureSocket = (server) => {
 
 }
 
-module.exports = configureSocket
+const getSocketInstance = () => {
+      return io
+}
+
+const sendNotificationToUser = (userId , notificationData) => {
+      console.log("send notification");
+      const user = activeUsers.find((user) => user.userId === userId)
+      if(user) {
+            const {socketId} = user
+            console.log("notification" , notificationData);
+            io.to(socketId).emit('receive-notification' , notificationData)
+      }
+}
+
+module.exports = {configureSocket , getSocketInstance , sendNotificationToUser}

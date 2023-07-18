@@ -39,10 +39,10 @@ function MembersViewTable() {
       .then((response) => {
         if (response.data.isBlocked) {
           setShowConfirmationModal(false);
-          toast.success(`Blocked "${response.data.memberName}"`);
+          toast.success(`Unblocked "${response.data.memberName}"`);
         } else if (!response.data.isBlocked) {
           setShowConfirmationModal(false);
-          toast.success(`Unblocked "${response.data.memberName}"`);
+          toast.success(`Blocked "${response.data.memberName}"`);
         }
       })
       .catch((err) => console.log(err));

@@ -6,7 +6,7 @@ const {updateExpiredCheckoutStatus} = require('./utils/checkout_status_updator')
 const {updateFines} = require('./utils/fine_updator')
 const {preferenceUpdater} = require('./utils/preference_updater')
 const server = require('http').createServer(app)
-const configureSocket = require('./config/socket')
+const {configureSocket} = require('./config/socket')
 
 //socket setup
 configureSocket(server)
