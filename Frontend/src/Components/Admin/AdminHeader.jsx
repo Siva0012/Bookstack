@@ -23,7 +23,7 @@ function AdminHeader() {
     <div className='sm:px-14 flex justify-between sm:justify-between align-middle text-white'>
         <div className=''>
             <div>
-                <h1 className='font-mono text-2xl'>Admin name</h1>
+                <h1 className='text-2xl'>Admin</h1>
                 <p className='text-red-600'>{moment(date).format("MMMM Do YYYY, h:mm:ss a")}</p>
             </div>
         </div>

@@ -5,6 +5,7 @@ const Categories = require('../models/category_model')
 const LenderHistory = require('../models/lender_history')
 const Banners = require('../models/banner_model')
 const Reservations = require('../models/reservation_model')
+const Notifications = require('../models/notification_model')
 const Tokens = require('../models/token')
 const sendEmail = require('../utils/send_email')
 const escapeRegExp = require('lodash.escaperegexp')
@@ -602,7 +603,6 @@ const checkoutBooks = async (req, res, next) => {
                             $or: [{ status: 'Pending' }, { status: 'Approved' }, { status: 'Borrowed' }]
                         }
                     )
-                    console.log("existing checkoutss" , existingBookCheckouts);
                     if (existingBookCheckouts.length > 0) {
                         bookAlreadyCheckedout = true
                         existBook = data.book.title
@@ -648,7 +648,7 @@ const checkoutBooks = async (req, res, next) => {
                     const checkoutDate = new Date()
                     const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
                     const currentTime = new Date();
-                    const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
+                    const tenMinutesLater = new Date(currentTime.getTime() + 1 * 60 * 1000); // one minute expiration time
                     const lenderHistory = new LenderHistory({
                         member: memberId,
                         book: data.book._id,
@@ -722,7 +722,7 @@ const getCheckouts = async (req, res, next) => {
         const memberId = req.memberId
         const checkoutData = await LenderHistory.find(
             { member: memberId }
-        ).populate('book')
+        ).populate('book').sort({checkoutDate : -1})
 
         if (checkoutData) {
             res.status(200).json({ message: "Checkout history", checkoutData: checkoutData })
@@ -984,6 +984,21 @@ const getAdmin = async (req , res , next) => {
     }
 }
 
+const getNotifications = async (req , res , next) => {
+    try{
+        const memberId = req.memberId
+        const notifications = await Notifications.find({member : memberId}).sort({notificationDate : -1})
+        console.log("called function");
+        if(notifications) {
+            res.status(200).json({message : "Notifications" , notifications})
+        }else {
+            res.status(404).json({error : "No notificaitons found"})
+        }
+    }catch(err) {
+        res.status(500).json({error : "Internal server Error"})
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -1015,5 +1030,6 @@ module.exports = {
     cancelReservation,
     getFineHistory,
     getChatMember,
-    getAdmin
+    getAdmin,
+    getNotifications
 }

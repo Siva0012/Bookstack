@@ -59,8 +59,9 @@ const getSocketInstance = () => {
 }
 
 const sendNotificationToUser = (userId , notificationData) => {
-      console.log("send notification");
+      console.log("active users" , activeUsers);
       const user = activeUsers.find((user) => user.userId === userId)
+      console.log("user" , user);
       if(user) {
             const {socketId} = user
             console.log("notification" , notificationData);

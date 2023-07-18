@@ -124,6 +124,10 @@ const getFineHistory = () => {
     return memberAxiosInstance.get('/get-fines')
 }
 
+const getNotifications = () => {
+    return memberAxiosInstance.get('/get-notifications')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -155,5 +159,6 @@ export {
     cancelReservation,
     getChatMember,
     getAdmin,
-    getFineHistory
+    getFineHistory,
+    getNotifications
 }

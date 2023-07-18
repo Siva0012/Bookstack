@@ -37,5 +37,6 @@ member_router.patch('/cancel-reservation/:reservationId' , verifyMemberToken , m
 member_router.get('/get-fines' , verifyMemberToken , memberController.getFineHistory)
 member_router.get('/chat-member/:memberId' , verifyMemberToken , memberController.getChatMember)
 member_router.get('/get-admin' , verifyMemberToken , memberController.getAdmin)
+member_router.get('/get-notifications' , verifyMemberToken , memberController.getNotifications)
 
 module.exports = member_router

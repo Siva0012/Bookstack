@@ -115,11 +115,20 @@ function LenderTable() {
                                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                   <p className="text-gray-900 whitespace-no-wrap">
                                     {moment(data.checkoutDate).format(
-                                      "MMM Do YY"
+                                      "MMM Do YY hh:mm:ss"
                                     )}
                                   </p>
                                   <p className="text-gray-600 whitespace-no-wrap">
-                                    Due in 6 days
+                                    {data.status === "Pending" ? (
+                                      <div>
+                                        <span>Expires in</span>
+                                        {moment(data.expiresIn).format(
+                                          "MMM Do YY hh:mm:ss"
+                                        )}
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
                                   </p>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">

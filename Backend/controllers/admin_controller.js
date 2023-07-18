@@ -7,8 +7,9 @@ const Categories = require('../models/category_model')
 const Banners = require('../models/banner_model')
 const LenderHistory = require('../models/lender_history')
 const Reservations = require('../models/reservation_model')
+const Notifications = require('../models/notification_model')
 const sendEmail = require('../utils/send_email')
-const {sendNotificationToUser} = require('../config/socket')
+const { sendNotificationToUser } = require('../config/socket')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
@@ -67,7 +68,22 @@ const blockOrUnblockMember = async (req, res, next) => {
 
         const { memberId, isBlocked } = req.body
         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isBlocked: !isBlocked } })
-        sendNotificationToUser(memberId , "You are blocked by the admin")
+        let message = ''
+        if (memberUpdate.isBlocked) {
+            message = "You have blocked by the admin"
+        } else if (!memberUpdate.isBlocked) {
+            message = "You have unblocked by the admin"
+        }
+        const today = new Date()
+        const notification = {
+            notificationType: 'Block',
+            notificationDate: today,
+            message: message,
+            member: memberId
+        }
+        const not = new Notifications(notification)
+        await not.save()
+        sendNotificationToUser(memberId, notification)
         if (memberUpdate) {
             res.status(200).json({ isBlocked: memberUpdate.isBlocked, memberName: memberUpdate.name })
         }
@@ -519,7 +535,7 @@ const changeCheckoutStatus = async (req, res, next) => {
         if (status === 'Approved') {
             //After approval, change the duedate for the checkout
             const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-            sendNotificationToUser(memberId , "Your checkout has approved")
+            sendNotificationToUser(memberId, "Your checkout has approved")
             const udpateDue = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
                 {
@@ -548,8 +564,18 @@ const changeCheckoutStatus = async (req, res, next) => {
                 console.log("sending mail to ", member.name);
                 await sendEmail(member.email, "Book reservation", message)
 
-                //send notification to the member
-                sendNotificationToUser(member._id , "Your book is available")
+                const notMessage = `The book "${bookData.title}" is available for checkout.`
+                //create notification
+                const notification = {
+                    notificationType : "Reservation",
+                    notificationDate : new Date(),
+                    message : notMessage,
+                    member : member._id
+                }
+                const not = new Notifications(notification)
+                await not.save()
+                //send notification to the member via socket
+                sendNotificationToUser(member._id, notification)
 
                 // change the nextCheckoutBy to give preference to the next member
                 // bookData.nextCheckoutBy = member._id
@@ -559,9 +585,7 @@ const changeCheckoutStatus = async (req, res, next) => {
                 reservationData.notification.hasNotified = true
                 reservationData.notification.notifiedOn = new Date()
                 await reservationData.save()
-
             }
-
             //update the available stock of the book
             const updateStock = await Books.findOneAndUpdate(
                 { _id: bookId },
@@ -574,11 +598,8 @@ const changeCheckoutStatus = async (req, res, next) => {
             const returnDate = new Date()
             const updateReturnDate = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
-                { $set: { returnDate: returnDate , hasFinePaid : true } }
+                { $set: { returnDate: returnDate, hasFinePaid: true } }
             )
-
-            // return res.status(200).json({ message: 'reservationsssssssss' })
-
         }
         const lenderUpdate = await LenderHistory.findOneAndUpdate(
             { _id: lenderId },
@@ -610,129 +631,129 @@ const getChatMember = async (req, res, next) => {
     }
 }
 
-const getCheckoutData = async (req , res , next) => {
-    try{
+const getCheckoutData = async (req, res, next) => {
+    try {
 
-        const returnedBooks = await LenderHistory.find({status : "Returned"}).select('book')
+        const returnedBooks = await LenderHistory.find({ status: "Returned" }).select('book')
         const categoryCounts = await LenderHistory.aggregate(
             [
-                {$match : {status : "Returned"}},
+                { $match: { status: "Returned" } },
                 {
-                    $lookup : {  //lookup for getting book details
-                        from : 'books',
-                        localField : 'book',
-                        foreignField : '_id',
-                        as : 'book'
+                    $lookup: {  //lookup for getting book details
+                        from: 'books',
+                        localField: 'book',
+                        foreignField: '_id',
+                        as: 'book'
                     }
                 },
                 {
-                    $unwind : '$book' //unwind for make it object
+                    $unwind: '$book' //unwind for make it object
                 },
                 {
-                    $lookup : {
-                        from : 'categories',
-                        localField : 'book.category',
-                        foreignField : '_id',
-                        as : 'category'
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'book.category',
+                        foreignField: '_id',
+                        as: 'category'
                     }
                 },
                 {
-                    $unwind : '$category'
+                    $unwind: '$category'
                 },
                 {
-                    $group : {  //group by category and find count
-                        _id : '$category.name',
-                        count : {$sum : 1}
+                    $group: {  //group by category and find count
+                        _id: '$category.name',
+                        count: { $sum: 1 }
                     }
                 }
             ]
         )
 
-        if(categoryCounts) {
-            res.status(200).json({message : "checkout data" , data : categoryCounts})
+        if (categoryCounts) {
+            res.status(200).json({ message: "checkout data", data: categoryCounts })
         } else {
-            res.status(404).json({error : "No data"})
+            res.status(404).json({ error: "No data" })
         }
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.statu(500).json({error : "Internal server Error"})
+        res.statu(500).json({ error: "Internal server Error" })
     }
 }
 
-const getMembershipData = async (req , res, next) => {
-    try{
+const getMembershipData = async (req, res, next) => {
+    try {
         const memberShipData = await Members.aggregate(
             [
                 // {$match : {isMember : true}},
                 {
-                    $group : {
-                        _id : '$membershipType',
-                        count : {$sum : 1}
+                    $group: {
+                        _id: '$membershipType',
+                        count: { $sum: 1 }
                     }
                 }
             ]
         )
-        if(memberShipData) {
-            res.status(200).json({message : "member data" , memberShipData})
+        if (memberShipData) {
+            res.status(200).json({ message: "member data", memberShipData })
         } else {
-            res.status(404).json({error : "No data found"})
+            res.status(404).json({ error: "No data found" })
         }
-    }catch(error) {
+    } catch (error) {
         console.log(error);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const getBmc = async (req , res , next) => {
-    try{
+const getBmc = async (req, res, next) => {
+    try {
         const books = await Books.find().count()
         const members = await Members.find().count()
         const categories = await Categories.find().count()
         const data = {
-            books : books,
-            members : members,
-            categories : categories
+            books: books,
+            members: members,
+            categories: categories
         }
-        if(data) {
-            res.status(200).json({message : "data sent" , data : data})
+        if (data) {
+            res.status(200).json({ message: "data sent", data: data })
         } else {
-            res.status(404).json({error : "No data found"})
+            res.status(404).json({ error: "No data found" })
         }
 
-    }catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const totalFineAmount = async (req , res , next) => {
-    try{
+const totalFineAmount = async (req, res, next) => {
+    try {
         const totalFine = await LenderHistory.aggregate(
             [
-                {$match : {hasFinePaid : true , fineAmount : {$gt : 0}}},
+                { $match: { hasFinePaid: true, fineAmount: { $gt: 0 } } },
                 {
-                    $group : {
-                        _id : null,
-                        totalFinePaid : {$sum : '$fineAmount'}
+                    $group: {
+                        _id: null,
+                        totalFinePaid: { $sum: '$fineAmount' }
                     }
                 },
                 {
-                    $project : {
-                        _id : 0,
-                        totalFineAmount : '$totalFinePaid'
+                    $project: {
+                        _id: 0,
+                        totalFineAmount: '$totalFinePaid'
                     }
                 },
-                
+
             ]
         )
-        if(totalFine) {
+        if (totalFine) {
             const totalFineAmount = totalFine[0].totalFineAmount
-            res.status(200).json({message : "fine amount" , totalFineAmount})
+            res.status(200).json({ message: "fine amount", totalFineAmount })
         } else {
-            res.status(404).json({error : "No fine data found"})
+            res.status(404).json({ error: "No fine data found" })
         }
-    }catch(err) {
-        res.status(500).json({error : "Internal server Error"})
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
