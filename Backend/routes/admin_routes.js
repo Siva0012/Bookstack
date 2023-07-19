@@ -15,7 +15,7 @@ admin_router.post('/login', adminController.login)
 
 admin_router.get('/members', verifyAdminToken, adminController.getMembers)
 admin_router.post('/add-book', verifyAdminToken, upload.single('coverPhoto'), adminController.addBook)
-admin_router.post('/add-googleBook', verifyAdminToken, adminController.addGoogleBook)
+// admin_router.post('/add-googleBook', verifyAdminToken, adminController.addGoogleBook)
 admin_router.patch('/block-member' , verifyAdminToken , adminController.blockOrUnblockMember)
 admin_router.get('/view-member/:memberId', verifyAdminToken, adminController.getSingleMember)
 admin_router.post('/add-category', verifyAdminToken, adminController.addCategory)

@@ -33,13 +33,13 @@ function Nav() {
   const [newNotification, setNewNotification] = useState(null);
 
   useEffect(() => {
-    socket.current = io(baseUrl);
-    socket.current.emit("add-new-user", memberId);
-    socket.current.on("receive-notification", (notificationData) => {
-      console.log("notification data", notificationData);
-      setNewNotification(true);
-      // setNotificationData(notificationData);
-    });
+    // socket.current = io(baseUrl);
+    // socket.current.emit("add-new-user", memberId);
+    // socket.current.on("receive-notification", (notificationData) => {
+    //   console.log("notification data", notificationData);
+    //   setNewNotification(true);
+    //   // setNotificationData(notificationData);
+    // });
   }, []);
 
   const handleNotificationClick = async () => {

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function ProfileSidebar() {
   const [selection, setSelection] = useState("");
   const handleSelection = (selection) => {
-    setSelection(selection)
+    setSelection(selection);
   };
 
   return (
@@ -14,9 +14,9 @@ function ProfileSidebar() {
           <div
             onClick={() => handleSelection("profile")}
             id="personal-info"
-            className={`${
-              selection === "profile" ? "border-r-8" : ""
-            } bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold hover:text-white active:text-white`}
+            className={`bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold hover:text-white active:text-white ${
+              selection === "profile" ? `bg-white` : ``
+            }`}
           >
             Personal info
           </div>
@@ -34,7 +34,9 @@ function ProfileSidebar() {
         <Link to="/reserved-books">
           <div
             onClick={() => handleSelection("reserved-books")}
-            className={` ${selection === 'reserved-books' ? 'border-r-8' : ''} bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
+            className={` ${
+              selection === "reserved-books" ? "border-r-8" : ""
+            } bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
           >
             Reserved Books
           </div>
@@ -42,7 +44,9 @@ function ProfileSidebar() {
         <Link to="/membership">
           <div
             onClick={() => handleSelection("membership")}
-            className={`${selection === 'membership' ? 'border-r-8' : ''} bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
+            className={`${
+              selection === "membership" ? "border-r-8" : ""
+            } bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
           >
             Membership
           </div>
@@ -50,7 +54,9 @@ function ProfileSidebar() {
         <Link to="/book-bag">
           <div
             onClick={() => handleSelection("book-bag")}
-            className={`${selection === 'book-bag' ? 'border-r-8' : ''} bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
+            className={`${
+              selection === "book-bag" ? "border-r-8" : ""
+            } bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
           >
             Book Bag
           </div>
@@ -58,7 +64,9 @@ function ProfileSidebar() {
         <Link to="/fines">
           <div
             onClick={() => handleSelection("fines")}
-            className={`${selection === 'fines' ? 'border-r-8' : ''} bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
+            className={`${
+              selection === "fines" ? "border-r-8" : ""
+            } bg-user-sidebar-menu bg-opacity-50 rounded-md py-3 text-sm px-4 font-semibold text-gray-950 hover:text-white`}
           >
             Fines
           </div>

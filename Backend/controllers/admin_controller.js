@@ -26,7 +26,7 @@ const verifyAdmin = async (req, res, next) => {
             res.status(401).json({ message: "Failed admin authentication at server" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -37,15 +37,20 @@ const login = async (req, res, next) => {
         if (isExist) {
             if (password === isExist.password) {
                 const token = adminTokenGenerator({ adminId: isExist._id })
-                res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: isExist })
+                const admin = {
+                    _id : isExist._id,
+                    email : isExist.email,
+                    name : isExist.name
+                }
+                res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: admin })
             } else {
-                res.status(401).json({ message: "Password is not matching", error: "Invalid Password" })
+                res.status(401).json({ error: "Invalid Password" })
             }
         } else {
-            res.status(400).json({ message: "No such admin exists", error: "Invalid Email" })
+            res.status(400).json({ error: "Invalid Email" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -59,7 +64,7 @@ const getMembers = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -89,7 +94,6 @@ const blockOrUnblockMember = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -132,25 +136,22 @@ const addBook = async (req, res, next) => {
 
 
     } catch (err) {
-        console.log(err);
-        next()
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const addGoogleBook = async (req, res, next) => {
-    try {
-        console.log("request in add google book", req.body);
-        res.status(201).json({ message: 'book created' })
-    } catch (err) {
-        console.log(err);
-    }
-}
+// const addGoogleBook = async (req, res, next) => {
+//     try {
+//         res.status(201).json({ message: 'book created' })
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
 
 const getSingleMember = async (req, res, next) => {
     try {
 
         const memberId = req.params.memberId
-        console.log("memberdidddd", memberId);
         const memberData = await Members.findOne({ _id: memberId })
         if (memberData) {
             res.status(200).json({ message: "Member details", memberData: memberData })
@@ -158,7 +159,7 @@ const getSingleMember = async (req, res, next) => {
             res.status(404).json({ message: "No member exists" })
         }
     } catch (err) {
-        console.log("error in getsinglemember", err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -183,12 +184,12 @@ const addCategory = async (req, res, next) => {
                     }
                 })
         } else {
-            console.log("eorsfjiosdfuasdufosdfasdfsdhfiosdufoij");
             res.status(404).json({ error: `"${name}" is already exists !!` })
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -199,7 +200,8 @@ const getCategories = async (req, res, next) => {
             res.status(200).json({ message: "Categories sent", catData: catData })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -212,7 +214,8 @@ const getBooks = async (req, res, next) => {
             res.status(404).json({ message: "No books found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -226,7 +229,8 @@ const getSingleBook = async (req, res, next) => {
             res.status(404).json({ message: "No book found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -305,7 +309,6 @@ const updateBook = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server error" })
     }
 }
@@ -321,7 +324,6 @@ const updateBookImage = async (req, res, next) => {
         //upload new image to cloudinary
         const data = await uploadToCloudinary(coverPhoto, 'book-cover-images')
         if (data) {
-            console.log(data);
             const bookUpdate = await Books.findByIdAndUpdate(bookId, { $set: { coverPhoto: data.url, publicId: data.public_id } })
             if (bookUpdate) {
                 res.status(200).json({ message: "Book updated successfully", updated: true })
@@ -330,7 +332,6 @@ const updateBookImage = async (req, res, next) => {
             }
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -362,7 +363,6 @@ const removeBook = async (req, res, next) => {
                 { $set: { listed: true } }
             )
         if (response) {
-            console.log(response);
             if (isListed) {
                 res.status(200).json({ message: "Book unlisted successfully" })
             } else {
@@ -372,7 +372,8 @@ const removeBook = async (req, res, next) => {
             res.status(404).json({ error: "Error in deleting book" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -406,7 +407,6 @@ const addBanner = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
@@ -420,14 +420,12 @@ const getBanners = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't find banner data" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server error" })
     }
 }
 
 const editBanner = async (req, res, next) => {
     try {
-        console.log("edit banner called");
         const bannerId = req.params.bannerId
         const { title, description } = req.body
         const update = {}
@@ -445,7 +443,6 @@ const editBanner = async (req, res, next) => {
             res.status(404).json({ error: "Could'nt update banner" })
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
@@ -464,7 +461,6 @@ const changeBannerStatus = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -474,7 +470,6 @@ const updateBannerImage = async (req, res, next) => {
 
         const bannerId = req.params.bannerId
         const bannerPhoto = req.file.path
-        console.log(bannerId, bannerPhoto);
         const bannerData = await Banners.findById(bannerId)
         const existingPublicId = bannerData.publicId
         //remove from cloudinary
@@ -491,7 +486,8 @@ const updateBannerImage = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -507,7 +503,6 @@ const updateBannerContent = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't update the banner", updated: false })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).jsone({ error: "Internal servre error" })
     }
 }
@@ -520,7 +515,6 @@ const getLenderHistory = async (req, res, next) => {
             res.status(404).json({ error: "no lender data" })
 
     } catch (err) {
-        console.log(err);
         res.status(500).jso({ error: err.message })
     }
 }
@@ -554,14 +548,12 @@ const changeCheckoutStatus = async (req, res, next) => {
                 //finding the member data
                 const member = await Members.findById(reservationData.memberId)
                 //sending notification to the member
-                console.log("member", member.name, member.email);
                 const message = `<p>Dear ${member.name},</p>
                 <p>We are pleased to inform you that the book you reserved, "${bookData.title}", is now available for checkout at our library. You can proceed to the library and collect the book at your convenience.</p>
                 <p>Please note that the book will be held for you for a limited time, and if you fail to collect it within 8 hours from now, your reservation will be canceled.</p>
                 <p>If you have any questions or need further assistance, feel free to contact our library staff.</p>
                 <p>Thank you for using our library services.</p>
                 <p>Best regards,<br>Bookstack</p>`
-                console.log("sending mail to ", member.name);
                 await sendEmail(member.email, "Book reservation", message)
 
                 const notMessage = `The book "${bookData.title}" is available for checkout.`
@@ -611,7 +603,6 @@ const changeCheckoutStatus = async (req, res, next) => {
             res.status(200).json({ message: `Changed status to "${status}" ` })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
@@ -626,7 +617,6 @@ const getChatMember = async (req, res, next) => {
             res.status(404).json({ error: "No member data" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -675,7 +665,6 @@ const getCheckoutData = async (req, res, next) => {
             res.status(404).json({ error: "No data" })
         }
     } catch (err) {
-        console.log(err);
         res.statu(500).json({ error: "Internal server Error" })
     }
 }
@@ -699,7 +688,6 @@ const getMembershipData = async (req, res, next) => {
             res.status(404).json({ error: "No data found" })
         }
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -721,7 +709,6 @@ const getBmc = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -762,7 +749,7 @@ module.exports = {
     login,
     getMembers,
     addBook,
-    addGoogleBook,
+    // addGoogleBook,
     verifyAdmin,
     getSingleMember,
     addCategory,

@@ -3,6 +3,7 @@ import memberReducer from '../Redux/Admin/MemberSlice'
 import singleMemberReducer from '../Redux/Admin/SingleMemberSlice'
 import memberShipReducer from './Member/MembershipPlanSlice'
 import memberDataReducer from './Member/MemberDataSlice'
+import adminDataReducer from './Admin/AdminDataSlice'
 
 //persist
 import storage from 'redux-persist/lib/storage';
@@ -18,6 +19,7 @@ const persistConfig = {
   const persistedSinglememberReducer = persistReducer(persistConfig , singleMemberReducer)
   const persistedMemberdataReducer = persistReducer(persistConfig , memberDataReducer )
   const persistedMembershipReducer = persistReducer(persistConfig , memberShipReducer)
+  const persistedAdminDataReducer = persistReducer(persistConfig , adminDataReducer)
 
 export const store = configureStore(
     {
@@ -25,7 +27,8 @@ export const store = configureStore(
             members : persistedMemberReducer,
             singleMember : persistedSinglememberReducer,
             memberShipType : persistedMembershipReducer,
-            memberData : persistedMemberdataReducer
+            memberData : persistedMemberdataReducer,
+            adminData : persistedAdminDataReducer
         },
         middleware : [thunk]
     }
