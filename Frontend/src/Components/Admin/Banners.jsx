@@ -17,6 +17,7 @@ import {
   updateBannerContent,
 } from "../../Utils/AdminApis";
 import { toast } from "react-toastify";
+import { useCallback } from "react";
 
 function Banners() {
   const override = {
@@ -57,6 +58,17 @@ function Banners() {
   //for bannerdata
   const [banners, setBanners] = useState([]);
 
+  const fetchBannerData = useCallback(async () => {
+    try {
+      const response = await getBanners();
+      if (response.data.bannerData) {
+        setBanners(response.data.bannerData);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   //edit banner
   const handleEditBanner = (bannerId, title, description, image, url) => {
     setShowEditModal(true);
@@ -87,6 +99,7 @@ function Banners() {
       url: editValues.url,
     }).then((response) => {
       if (response.data.updated) {
+        fetchBannerData()
         toast.success("updated banner data");
         setShowEditModal(false);
       }
@@ -127,12 +140,14 @@ function Banners() {
   });
 
   //update banner status
+
   const handleBanner = (bannerId, status) => {
     //call api
     const data = { bannerId: bannerId, status: status };
     changeBannerStatus(data)
       .then((response) => {
         if (response.data) {
+          fetchBannerData()
           toast.success(response.data.message);
           setShowConfirmationModal(false);
         }
@@ -181,6 +196,7 @@ function Banners() {
         .then((response) => {
           if (response.data.message) {
             setimageLoader(false);
+            fetchBannerData()
             setshowModal(false);
             toast.success(response.data.message);
           }
@@ -190,12 +206,8 @@ function Banners() {
   };
 
   useEffect(() => {
-    getBanners().then((response) => {
-      if (response.data) {
-        setBanners(response.data.bannerData);
-      }
-    });
-  }, [showEditModal, showModal, handleBanner]);
+    fetchBannerData()
+  }, [fetchBannerData]);
 
   return (
     <>
@@ -377,8 +389,8 @@ function Banners() {
 
       {/*Edit banner*/}
       <Modal isVisible={showEditModal} onClose={() => setShowEditModal(false)}>
-        <div className="px-6 py-2">
-          <h3 className="text-xl font-semibold text-gray-900 mb-5">
+        <div className="px-6 py-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">
             Edit Banner
           </h3>
           <form
@@ -386,8 +398,8 @@ function Banners() {
             className="shadow-[0px_0px_20px_rgba(0,0,0,0.3)] mx-auto"
             encType="multipart/formdata"
           >
-            <div className="flex flex-col items-center justify-center py-1">
-              <div className="w-[350px] p-1 ">
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-[350px] p-1">
                 <div className="w-full relative">
                   {editImageLoader ? (
                     <HashLoader

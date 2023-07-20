@@ -120,6 +120,14 @@ const getAdmin = () => {
     return memberAxiosInstance.get('/get-admin')
 }
 
+const getFineHistory = () => {
+    return memberAxiosInstance.get('/get-fines')
+}
+
+const getNotifications = () => {
+    return memberAxiosInstance.get('/get-notifications')
+}
+
 export {
     memberRegister,
     memberLogin,
@@ -150,5 +158,7 @@ export {
     searchBooks,
     cancelReservation,
     getChatMember,
-    getAdmin
+    getAdmin,
+    getFineHistory,
+    getNotifications
 }

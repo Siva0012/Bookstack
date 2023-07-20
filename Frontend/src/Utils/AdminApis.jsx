@@ -53,8 +53,8 @@ const listOrUnlist = (id , data) => {
     return adminAxiosInstance.get(`/remove-book/${id}/${data}`)
 }
 
-const getLenderHistory = () => {
-    return adminAxiosInstance.get('/lender-history')
+const getLenderHistory = (page , limit) => {
+    return adminAxiosInstance.get(`/lender-history/${page}/${limit}`)
 }
 
 const changeCheckoutStatus = (lenderId , status) => {
@@ -105,6 +105,10 @@ const getBmc = () => {
     return adminAxiosInstance.get('/get-bmc')
 }
 
+const totalFines = () => {
+    return adminAxiosInstance.get('/total-fine-amount')
+}
+
 export {
     adminLogin , 
     addBook,
@@ -130,5 +134,6 @@ export {
     getChatMember,
     getCheckoutData,
     getMembershipData,
-    getBmc
+    getBmc,
+    totalFines
 }

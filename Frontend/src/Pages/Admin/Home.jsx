@@ -1,46 +1,57 @@
-import { useEffect , useState } from "react";
+import { useEffect, useState } from "react";
 import CardH from "../../Components/Admin/Dashboard/CardH";
 import Graph from "../../Components/Admin/Dashboard/Graph";
 import MembershipGraph from "../../Components/Admin/Dashboard/MembershipGraph";
 import { getBmc } from "../../Utils/AdminApis";
 import { ImBooks } from "react-icons/im";
-import {FaUsers} from 'react-icons/fa'
-import {MdCategory} from 'react-icons/md'
-
+import { FaUsers } from "react-icons/fa";
+import { MdCategory } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 function Home() {
-
   const [bmc, setBmc] = useState(null);
 
   useEffect(() => {
-    getBmc()
-    .then((response) => {
-      if(response.data.data) {
-        setBmc(response.data.data)
+    getBmc().then((response) => {
+      if (response.data.data) {
+        setBmc(response.data.data);
       }
-
-    })
-  } , [])
+    });
+  }, []);
 
   return (
     <>
       <div className="px-14 text-white">
         <div className="mt-5">
           <div id="bmc" className="flex flex-wrap justify-evenly">
-            {
-              bmc &&
+            {bmc && (
               <>
-              <CardH count={bmc.members} data={"Members"} icon={<FaUsers color="#191970" size={75} />}  />
-              <CardH count={bmc.books} data={"Books"} icon={<ImBooks color="white" size={75} />}/>
-              <CardH count={bmc.categories} data={"Categories"} icon={<MdCategory color="#228B22" size={75} />}/>
-              </> 
-            }
-
+                <Link to="/admin/members">
+                  <CardH
+                    count={bmc.members}
+                    data={"Members"}
+                    icon={<FaUsers color="#191970" size={75} />}
+                  />
+                </Link>
+                <Link to='/admin/books'>
+                  <CardH
+                    count={bmc.books}
+                    data={"Books"}
+                    icon={<ImBooks color="white" size={75} />}
+                  />
+                </Link>
+                <Link to='/admin/categories'>
+                  <CardH
+                    count={bmc.categories}
+                    data={"Categories"}
+                    icon={<MdCategory color="#228B22" size={75} />}
+                  />
+                </Link>
+              </>
+            )}
           </div>
 
-          <div>
-            
-          </div>
+          <div></div>
 
           <div
             className="mt-20 flex justify-around items-center pb-4"

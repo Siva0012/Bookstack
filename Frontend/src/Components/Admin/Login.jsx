@@ -1,6 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-
+import {useDispatch} from 'react-redux'
 import { useGoogleLogin } from "@react-oauth/google";
 
 //toaster
@@ -12,6 +11,7 @@ import { adminLogin } from "../../Utils/AdminApis";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updateAdminData } from "../../Redux/Admin/AdminDataSlice";
 
 
 const notify = (message) => {
@@ -21,8 +21,12 @@ const toastError = (message) => {
   return toast.error(message);
 };
 
+
+
+
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (localStorage.getItem("adminJwt")) {
@@ -48,6 +52,7 @@ export default function Login() {
       .then((response) => {
         if (response.status === 200) {
           localStorage.setItem("adminJwt", response.data.token);
+          dispatch(updateAdminData(response.data.admin))
           navigate("/admin");
           notify(response.data.message);
         }

@@ -19,13 +19,16 @@ function BooksTable() {
     navigate("/admin/add-book");
   };
 
-  const booksData = async () => {
-    getBooks().then((response) => {
-      if (response.data.books) {
-        setBooks(response.data.books);
+  const fetchBookData = async () => {
+    try{
+      const response = await getBooks()
+      if(response.data.books) {
+        setBooks(response.data.books)
       }
-    });
-  };
+    }catch(err) {
+      console.log(err);
+    }
+  }
 
   const handleViewBook = (id) => {
     navigate(`/admin/view-book/${id}`);
@@ -33,13 +36,16 @@ function BooksTable() {
 
   const handleRemove = (id, data) => {
     listOrUnlist(id, data).then((response) => {
-      toast.warn(response.data.message, { autoClose: 2000, theme: "dark" });
+      if(response.data.message) {
+        fetchBookData()
+        toast.warn(response.data.message, { autoClose: 2000, theme: "dark" });
+      }
     });
   };
 
   useEffect(() => {
-    booksData();
-  }, [handleRemove]);
+    fetchBookData()
+  }, []);
 
   return (
     <div className="flex-col">

@@ -18,7 +18,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //state
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 //formik initialvalues
 const initialValues = {
@@ -46,43 +46,48 @@ export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState({});
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: (error) =>
-      console.log("Google login failed in useGoogleLogin =", error),
+      toastError(error),
   });
 
-  if (user) {
-    axios
-      .get(
-        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            Accept: "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        console.log("google user dat", res.data);
-        setUser(res.data);
-      })
-      .catch((err) => console.log(err));
-
-    //calling googleLogin server side function for member registration.
-    googleLogin(user)
-      .then((response) => {
-        localStorage.setItem("userJwt", response.data.token);
-        dispatch(updateMemberData(response.data.member))
-        notify(response.data.message);
-        navigate("/");
-      })
-      .catch((err) => {
-        toastError(err.response.data.error);
-      });
-  }
+  useEffect(() => {
+    if (user?.access_token) {
+      axios
+        .get(
+          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          setUserData(res.data)
+        })
+        .catch((err) => {
+          toastError(err.response.data.error);
+        });
+    }
+    
+  }, [user]);
+  
+  useEffect(() => {
+    if(userData?.id) {
+        googleLogin(userData)
+          .then((response) => {
+            localStorage.setItem("userJwt", response.data.token);
+            dispatch(updateMemberData(response.data.member));
+            notify(response.data.message);
+            navigate("/");
+          })
+      }
+  },[userData])
 
   //formik on submit
   const onSubmit = async (values) => {
@@ -96,9 +101,8 @@ export default function Login() {
         }
       })
       .catch((response) => {
-        console.log(response);
         if (response.response.data.error) {
-          toastError(response.response.data.error);
+          toastError(response.response.data.error, "user error");
         }
       });
   };

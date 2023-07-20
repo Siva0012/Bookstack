@@ -38,7 +38,19 @@ const updateFines = async () => {
                }
 
                //finding active checkouts
-               const activeCheckouts = await lenderHistory.find({$or : [{status : "Borrowed"} , {status : "Approved"}]})
+               // const activeCheckouts = await lenderHistory.find({$or : [{status : "Borrowed"} , {status : "Approved"}]})
+               const activeCheckouts = await lenderHistory.find(
+                    {
+                         $and : [
+                              {
+                                   hasFinePaid : false
+                              },
+                              {
+                                   $or : [{status : 'Borrowed'} , {status : 'Approved'}]
+                              }
+                         ]
+                    }
+               )
 
                //cumulative fine for the member
                const members = await Members.find({})

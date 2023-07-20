@@ -2,15 +2,12 @@ import React from 'react'
 
 function Test() {
     return (
-
         <>
             <div id='color-div' className='py-4 px-3 bg-[#7E7C73]'>
-
                 <div className='flex justify-between items-center md:justify-around'>
                     <p className='uppercase text-md font-semibold font-roboto'>bookstack</p>
                     <p className='text-sm font-semibold'>Dashboard</p>
                 </div>
-
                 {/* <div id='flex-div' className='flex align-middle w-full h-full'>
                     <div id='first-div' className='flex justify-between align-middle w-1/2'>
                         <div className='text-white font-roboto text-xl sm:text-logo  '>

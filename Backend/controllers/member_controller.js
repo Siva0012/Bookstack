@@ -5,6 +5,7 @@ const Categories = require('../models/category_model')
 const LenderHistory = require('../models/lender_history')
 const Banners = require('../models/banner_model')
 const Reservations = require('../models/reservation_model')
+const Notifications = require('../models/notification_model')
 const Tokens = require('../models/token')
 const sendEmail = require('../utils/send_email')
 const escapeRegExp = require('lodash.escaperegexp')
@@ -39,7 +40,7 @@ const verifyMember = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err)
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -64,7 +65,6 @@ const register = async (req, res, next) => {
             })
             const member = await members.save()
             if (member) {
-                console.log("member data", member);
                 const verificationToken = await new Tokens(
                     {
                         memberId: member._id,
@@ -82,14 +82,12 @@ const register = async (req, res, next) => {
                     const sendMail = await sendEmail(member.email, "Verify Email", message)
                     res.status(200).json({ message: "Created member successfully", memberCreated: true })
                 }
-            } else {
-                console.log("member not saved");
             }
 
         }
 
     } catch (err) {
-        console.log(err, 'on member registration');
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -111,7 +109,6 @@ const verifyEmail = async (req, res, next) => {
         await verificationToken.deleteOne()
         res.status(200).json({ message: "Successfully verified Member", verified: true })
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -125,7 +122,6 @@ const login = async (req, res, next) => {
         if (memberExists) {
             if (!memberExists.verified) {
                 const verificationToken = await Tokens.findOne({ memberId: memberExists._id })
-                // console.log("verification tokennnnnnnnn" , verificationToken);
                 if (!verificationToken) {
                     const verificationToken = await new Tokens(
                         {
@@ -157,14 +153,14 @@ const login = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
-        next()
+        res.status(500).json({ error: "Internal server Error from user login" })
     }
 }
 
 const googleLogin = async (req, res, next) => {
     try {
         const { email, id, name } = req.body
+        console.log(email , id , name , "req body");
         const isExists = await Members.findOne({ email: email })
         if (isExists) {
             const payLoad = {
@@ -201,7 +197,9 @@ const googleLogin = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        console.log(err , "dsafdsafdsf");
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -214,7 +212,8 @@ const getCategories = async (req, res, next) => {
             res.status(404).json({ message: "No data found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -227,7 +226,8 @@ const getBooks = async (req, res, next) => {
             res.status(404).json({ message: "No data found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -241,7 +241,8 @@ const getBooksByCat = async (req, res, next) => {
             res.status(404).json({ message: "No data found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -259,22 +260,22 @@ const getMember = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
-const getChatMember = async (req , res , next) => {
-    try{
-        const {memberId} = req.params
+const getChatMember = async (req, res, next) => {
+    try {
+        const { memberId } = req.params
         const memberData = await Members.findById(memberId).select('-password')
-        if(memberData) {
-            res.status(200).json({message : "member data" , memberData : memberData})
+        if (memberData) {
+            res.status(200).json({ message: "member data", memberData: memberData })
         } else {
-            res.status(404).json({error : "Failed to fetch member data"})
+            res.status(404).json({ error: "Failed to fetch member data" })
         }
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -315,28 +316,23 @@ const updateImage = async (req, res, next) => {
                         }
                     )
                     if (updateResponse) {
-                        console.log("updateresponse");
                         res.status(200).json({ message: "Updated your profile picture !!.", image: data.url })
                     } else {
-                        console.log("no updater response");
                         res.status(404).json({ error: "Failed to update image !!." })
                     }
                 } else {
-                    console.log("cloudinary error");
                     res.status(404).json({ error: "Failed to upload image !!." })
                 }
 
             }
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
 const updateProfileFields = async (req, res, next) => {
     try {
-
-        console.log("this is req. body at edit profile", req.body);
         const { fieldName, fieldValue } = req.body
         const memberId = req.memberId
         if (fieldValue === "") {
@@ -358,7 +354,7 @@ const updateProfileFields = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -389,7 +385,8 @@ const createPaymentIntent = async (req, res, next) => {
             clientSecret: paymentIntent.client_secret
         })
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 
 }
@@ -421,13 +418,13 @@ const addMembership = async (req, res, next) => {
             res.status(404).json({ error: "Failed to udpate the membership" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
 const createFinePaymentIntent = async (req, res, next) => {
     try {
-        console.log("called payfines");
         const memberId = req.memberId
         const memberData = await Members.findById(memberId)
         const fineAmount = memberData.totalFineAmount * 100
@@ -439,13 +436,9 @@ const createFinePaymentIntent = async (req, res, next) => {
                 enabled: true,
             },
         });
-        // res.send({
-        //     clientSecret: paymentIntent.client_secret
-        // })
         res.status(200).json({ message: "Payment successfull", clientSecret: paymentIntent.client_secret, fineAmount: fineAmount })
 
     } catch (err) {
-        console.log(err.message);
         res.status(500).json({ error: "Internal server errro" })
     }
 }
@@ -482,7 +475,6 @@ const changeFineStatus = async (req, res, next) => {
             })
 
     } catch (err) {
-        console.log(err.message);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -533,7 +525,6 @@ const addToBookBag = async (req, res, next) => {
 
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err })
     }
 }
@@ -558,7 +549,7 @@ const removeFromBookBag = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -572,7 +563,8 @@ const getBookBag = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't find the member" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -591,8 +583,8 @@ const checkoutBooks = async (req, res, next) => {
                 return res.status(404).json({ error: "You have already reached you checkout limits !!" })
             } else {
                 const bookIds = await Members.findOne({ _id: memberId }).populate('bookBag.book').select('-_id bookBag.book')
-                //check whether the book is already checked out by the member
-                let bookAlreadyCheckedout = false
+
+                let bookAlreadyCheckedout = false //check whether the book is already checked out by the member
                 let existBook
                 for (const data of bookIds.bookBag) {
                     const existingBookCheckouts = await LenderHistory.find(
@@ -602,53 +594,35 @@ const checkoutBooks = async (req, res, next) => {
                             $or: [{ status: 'Pending' }, { status: 'Approved' }, { status: 'Borrowed' }]
                         }
                     )
-                    console.log("existing checkoutss" , existingBookCheckouts);
                     if (existingBookCheckouts.length > 0) {
                         bookAlreadyCheckedout = true
                         existBook = data.book.title
                         break
-                        // return res.status(404).json({ error: `The book "${data.book.title}" has already checked out or requested by you !!` })
                     }
-
-                    //check for book reservation
-                    const bookId = data.book._id
+                    const bookId = data.book._id //check for book reservation
                     const bookData = await Books.findById(bookId)
-                    //checking whether the book is a reserved book or not and update the reservation preference
-                    if (bookData.availableStock === 1 && bookData.reservationOrder.length > 0) {
-                        //finding the second reservation of the book
-                        if (bookData.reservationOrder.length > 1) {
+                    if (bookData.availableStock === 1 && bookData.reservationOrder.length > 0) { //checking whether the book is a reserved book or not and update the reservation preference
+                        if (bookData.reservationOrder.length > 1) { //finding the second reservation of the book
                             const reservationId = bookData.reservationOrder[1].reservation
                             const reservationData = await Reservations.findById(reservationId)
-                            //finding the member data
-                            const member = await Members.findById(reservationData.memberId)
-                            console.log("Next member is", member.name);
-                            //change the nextCheckoutBy to next member
-                            bookData.nextCheckoutBy = member._id
-                            //set the reservation status to expire
+                            const member = await Members.findById(reservationData.memberId) //finding the member data
+                            bookData.nextCheckoutBy = member._id  //change the nextCheckoutBy to next member
+                            const currentReservationId = bookData.reservationOrder[0].reservation  //set the reservation status to expire
+                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId, { $set: { status: "Completed" } })
+                            bookData.reservationOrder.shift() //removing the current reservation from the reservation order array
+                        } else { //set the reservation status to expire
                             const currentReservationId = bookData.reservationOrder[0].reservation
                             const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId, { $set: { status: "Completed" } })
-                            //removing the current reservation from the reservation order array
-                            bookData.reservationOrder.shift()
-
-                        } else {
-                            //set the reservation status to expire
-                            const currentReservationId = bookData.reservationOrder[0].reservation
-                            const updateReservation = await Reservations.findByIdAndUpdate(currentReservationId, { $set: { status: "Completed" } })
-                            //removing the current reservation from the reservation order array
-                            bookData.reservationOrder.shift()
+                            bookData.reservationOrder.shift() //removing the current reservation from the reservation order array
                             bookData.nextCheckoutBy = null
                         }
                         await bookData.save()
                     }
-
-                    //updating available stock
-                    await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } })
-
-                    // creating lender history for the book
-                    const checkoutDate = new Date()
+                    await Books.findOneAndUpdate({ _id: data.book._id }, { $inc: { availableStock: -1 } }) //updating available stock
+                    const checkoutDate = new Date()  // creating lender history for the book
                     const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
                     const currentTime = new Date();
-                    const tenMinutesLater = new Date(currentTime.getTime() + 5 * 60 * 1000);
+                    const tenMinutesLater = new Date(currentTime.getTime() + 1 * 60 * 1000); // one minute expiration time
                     const lenderHistory = new LenderHistory({
                         member: memberId,
                         book: data.book._id,
@@ -696,7 +670,6 @@ const getBanners = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't fetch banner data" })
         }
     } catch (err) {
-        console.log(err.message);
         res.status(500).json({ error: "Internal sever error" })
     }
 }
@@ -722,13 +695,12 @@ const getCheckouts = async (req, res, next) => {
         const memberId = req.memberId
         const checkoutData = await LenderHistory.find(
             { member: memberId }
-        ).populate('book')
+        ).populate('book').sort({ checkoutDate: -1 })
 
         if (checkoutData) {
             res.status(200).json({ message: "Checkout history", checkoutData: checkoutData })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server error" })
     }
 }
@@ -750,7 +722,6 @@ const getActiveCheckouts = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -842,7 +813,6 @@ const reserveBook = async (req, res, next) => {
         res.status(200).json({ message: `Book reservation for "${bookData.title}" has been processed !!` })
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -867,7 +837,6 @@ const getReservedBooks = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -882,7 +851,6 @@ const getSingleBook = async (req, res, next) => {
             res.status(404).json({ error: "No data found" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -900,7 +868,6 @@ const searchBooks = async (req, res, next) => {
             res.status(404).json({ error: "No books found" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -942,7 +909,6 @@ const cancelReservation = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't cancel reservation" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -952,35 +918,47 @@ const getFineHistory = async (req, res, next) => {
         const memberId = req.memberId
         const fineData = await LenderHistory.find(
             {
-                member: memberId, hasFinePaid: true
+                member: memberId, hasFinePaid: true, fineAmount: { $gt: 0 }, $or: [{ status: 'Returned' }, { status: "Borrowed" }]
             }
-        )
+        ).populate('book')
         if (fineData) {
             res.status(200).json({ message: "Fine histories", fineData: fineData })
         } else {
             res.status(404).json({ error: "No fine data found" })
         }
     } catch (err) {
-        console.log(err)
         res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const getAdmin = async (req , res , next) => {
-    try{
+const getAdmin = async (req, res, next) => {
+    try {
         const adminData = await Admins.find({})
         const admin = {
-            name : adminData[0].name,
-            id : adminData[0]._id
+            name: adminData[0].name,
+            id: adminData[0]._id
         }
-        if(adminData) {
-            res.status(200).json({message : "Admin data" , admin})
+        if (adminData) {
+            res.status(200).json({ message: "Admin data", admin })
         } else {
-            res.status(404).json({error : "No admin data"})
+            res.status(404).json({ error: "No admin data" })
         }
-    }catch(err) {
-        console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const getNotifications = async (req, res, next) => {
+    try {
+        const memberId = req.memberId
+        const notifications = await Notifications.find({ member: memberId }).sort({ notificationDate: -1 })
+        if (notifications) {
+            res.status(200).json({ message: "Notifications", notifications })
+        } else {
+            res.status(404).json({ error: "No notificaitons found" })
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -1015,5 +993,6 @@ module.exports = {
     cancelReservation,
     getFineHistory,
     getChatMember,
-    getAdmin
+    getAdmin,
+    getNotifications
 }

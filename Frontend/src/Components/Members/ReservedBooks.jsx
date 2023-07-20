@@ -31,7 +31,7 @@ function ReservedBooks() {
   }, []);
   return (
     <div className="">
-      <h1 className="text-2xl tracking-wide mb-3 uppercase font-semibold text-white">
+      <h1 className="text-2xl tracking-wide mb-3 capitalize font-semibold text-white">
         book reservations
       </h1>
       {reservedBooks.length > 0 ? (
@@ -48,7 +48,7 @@ function ReservedBooks() {
           );
         })
       ) : (
-        <h1 className="text-2xl tracking-wide mb-3 font-semibold text-white">
+        <h1 className="text-lg text-center tracking-wide mt-20 font-semibold text-white">
           You don't have any reservations !!
         </h1>
       )}

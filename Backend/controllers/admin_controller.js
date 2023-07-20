@@ -7,7 +7,9 @@ const Categories = require('../models/category_model')
 const Banners = require('../models/banner_model')
 const LenderHistory = require('../models/lender_history')
 const Reservations = require('../models/reservation_model')
+const Notifications = require('../models/notification_model')
 const sendEmail = require('../utils/send_email')
+const { sendNotificationToUser } = require('../config/socket')
 
 const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
@@ -24,7 +26,7 @@ const verifyAdmin = async (req, res, next) => {
             res.status(401).json({ message: "Failed admin authentication at server" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -35,15 +37,20 @@ const login = async (req, res, next) => {
         if (isExist) {
             if (password === isExist.password) {
                 const token = adminTokenGenerator({ adminId: isExist._id })
-                res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: isExist })
+                const admin = {
+                    _id : isExist._id,
+                    email : isExist.email,
+                    name : isExist.name
+                }
+                res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: admin })
             } else {
-                res.status(401).json({ message: "Password is not matching", error: "Invalid Password" })
+                res.status(401).json({ error: "Invalid Password" })
             }
         } else {
-            res.status(400).json({ message: "No such admin exists", error: "Invalid Email" })
+            res.status(400).json({ error: "Invalid Email" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -57,7 +64,7 @@ const getMembers = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({error : "Internal server Error"})
     }
 }
 
@@ -66,12 +73,27 @@ const blockOrUnblockMember = async (req, res, next) => {
 
         const { memberId, isBlocked } = req.body
         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isBlocked: !isBlocked } })
+        let message = ''
+        if (memberUpdate.isBlocked) {
+            message = "You have blocked by the admin"
+        } else if (!memberUpdate.isBlocked) {
+            message = "You have unblocked by the admin"
+        }
+        const today = new Date()
+        const notification = {
+            notificationType: 'Block',
+            notificationDate: today,
+            message: message,
+            member: memberId
+        }
+        const not = new Notifications(notification)
+        await not.save()
+        sendNotificationToUser(memberId, notification)
         if (memberUpdate) {
             res.status(200).json({ isBlocked: memberUpdate.isBlocked, memberName: memberUpdate.name })
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -114,25 +136,22 @@ const addBook = async (req, res, next) => {
 
 
     } catch (err) {
-        console.log(err);
-        next()
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const addGoogleBook = async (req, res, next) => {
-    try {
-        console.log("request in add google book", req.body);
-        res.status(201).json({ message: 'book created' })
-    } catch (err) {
-        console.log(err);
-    }
-}
+// const addGoogleBook = async (req, res, next) => {
+//     try {
+//         res.status(201).json({ message: 'book created' })
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
 
 const getSingleMember = async (req, res, next) => {
     try {
 
         const memberId = req.params.memberId
-        console.log("memberdidddd", memberId);
         const memberData = await Members.findOne({ _id: memberId })
         if (memberData) {
             res.status(200).json({ message: "Member details", memberData: memberData })
@@ -140,7 +159,7 @@ const getSingleMember = async (req, res, next) => {
             res.status(404).json({ message: "No member exists" })
         }
     } catch (err) {
-        console.log("error in getsinglemember", err);
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -165,12 +184,12 @@ const addCategory = async (req, res, next) => {
                     }
                 })
         } else {
-            console.log("eorsfjiosdfuasdufosdfasdfsdhfiosdufoij");
             res.status(404).json({ error: `"${name}" is already exists !!` })
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -181,7 +200,8 @@ const getCategories = async (req, res, next) => {
             res.status(200).json({ message: "Categories sent", catData: catData })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -194,7 +214,8 @@ const getBooks = async (req, res, next) => {
             res.status(404).json({ message: "No books found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -208,7 +229,8 @@ const getSingleBook = async (req, res, next) => {
             res.status(404).json({ message: "No book found" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -287,7 +309,6 @@ const updateBook = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server error" })
     }
 }
@@ -303,7 +324,6 @@ const updateBookImage = async (req, res, next) => {
         //upload new image to cloudinary
         const data = await uploadToCloudinary(coverPhoto, 'book-cover-images')
         if (data) {
-            console.log(data);
             const bookUpdate = await Books.findByIdAndUpdate(bookId, { $set: { coverPhoto: data.url, publicId: data.public_id } })
             if (bookUpdate) {
                 res.status(200).json({ message: "Book updated successfully", updated: true })
@@ -312,7 +332,6 @@ const updateBookImage = async (req, res, next) => {
             }
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -344,7 +363,6 @@ const removeBook = async (req, res, next) => {
                 { $set: { listed: true } }
             )
         if (response) {
-            console.log(response);
             if (isListed) {
                 res.status(200).json({ message: "Book unlisted successfully" })
             } else {
@@ -354,7 +372,8 @@ const removeBook = async (req, res, next) => {
             res.status(404).json({ error: "Error in deleting book" })
         }
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -388,7 +407,6 @@ const addBanner = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
@@ -402,14 +420,12 @@ const getBanners = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't find banner data" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server error" })
     }
 }
 
 const editBanner = async (req, res, next) => {
     try {
-        console.log("edit banner called");
         const bannerId = req.params.bannerId
         const { title, description } = req.body
         const update = {}
@@ -427,7 +443,6 @@ const editBanner = async (req, res, next) => {
             res.status(404).json({ error: "Could'nt update banner" })
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
@@ -446,7 +461,6 @@ const changeBannerStatus = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
@@ -456,7 +470,6 @@ const updateBannerImage = async (req, res, next) => {
 
         const bannerId = req.params.bannerId
         const bannerPhoto = req.file.path
-        console.log(bannerId, bannerPhoto);
         const bannerData = await Banners.findById(bannerId)
         const existingPublicId = bannerData.publicId
         //remove from cloudinary
@@ -473,7 +486,8 @@ const updateBannerImage = async (req, res, next) => {
         }
 
     } catch (err) {
-        console.log(err);
+        res.status(500).json({ error: "Internal server Error" })
+
     }
 }
 
@@ -489,21 +503,24 @@ const updateBannerContent = async (req, res, next) => {
             res.status(404).json({ error: "Couldn't update the banner", updated: false })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).jsone({ error: "Internal servre error" })
     }
 }
 
 const getLenderHistory = async (req, res, next) => {
     try {
+        console.log("lender");
+        const page = req.params.page ? parseInt(req.params.page) : 1
+        const limit = req.params.limit ? parseInt(req.params.limit) : 10
 
-        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({ checkoutDate: -1 })
-        lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData }) :
+        const skip = (page - 1) * limit
+        const lenderCount = await LenderHistory.countDocuments()
+        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({ checkoutDate: -1 }).skip(skip).limit(limit)
+        lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData , lenderCount }) :
             res.status(404).json({ error: "no lender data" })
 
     } catch (err) {
-        console.log(err);
-        res.status(500).jso({ error: err.message })
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -513,10 +530,11 @@ const changeCheckoutStatus = async (req, res, next) => {
         const status = req.params.status
         const lenderData = await LenderHistory.findById(lenderId).populate('book')
         const bookId = lenderData.book
-
+        const memberId = lenderData.member
         if (status === 'Approved') {
             //After approval, change the duedate for the checkout
             const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            sendNotificationToUser(memberId, "Your checkout has approved")
             const udpateDue = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
                 {
@@ -535,15 +553,26 @@ const changeCheckoutStatus = async (req, res, next) => {
                 //finding the member data
                 const member = await Members.findById(reservationData.memberId)
                 //sending notification to the member
-                console.log("member", member.name, member.email);
                 const message = `<p>Dear ${member.name},</p>
                 <p>We are pleased to inform you that the book you reserved, "${bookData.title}", is now available for checkout at our library. You can proceed to the library and collect the book at your convenience.</p>
                 <p>Please note that the book will be held for you for a limited time, and if you fail to collect it within 8 hours from now, your reservation will be canceled.</p>
                 <p>If you have any questions or need further assistance, feel free to contact our library staff.</p>
                 <p>Thank you for using our library services.</p>
                 <p>Best regards,<br>Bookstack</p>`
-                console.log("sending mail to ", member.name);
                 await sendEmail(member.email, "Book reservation", message)
+
+                const notMessage = `The book "${bookData.title}" is available for checkout.`
+                //create notification
+                const notification = {
+                    notificationType : "Reservation",
+                    notificationDate : new Date(),
+                    message : notMessage,
+                    member : member._id
+                }
+                const not = new Notifications(notification)
+                await not.save()
+                //send notification to the member via socket
+                sendNotificationToUser(member._id, notification)
 
                 // change the nextCheckoutBy to give preference to the next member
                 // bookData.nextCheckoutBy = member._id
@@ -553,9 +582,7 @@ const changeCheckoutStatus = async (req, res, next) => {
                 reservationData.notification.hasNotified = true
                 reservationData.notification.notifiedOn = new Date()
                 await reservationData.save()
-
             }
-
             //update the available stock of the book
             const updateStock = await Books.findOneAndUpdate(
                 { _id: bookId },
@@ -568,11 +595,8 @@ const changeCheckoutStatus = async (req, res, next) => {
             const returnDate = new Date()
             const updateReturnDate = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
-                { $set: { returnDate: returnDate , hasFinePaid : true } }
+                { $set: { returnDate: returnDate, hasFinePaid: true } }
             )
-
-            // return res.status(200).json({ message: 'reservationsssssssss' })
-
         }
         const lenderUpdate = await LenderHistory.findOneAndUpdate(
             { _id: lenderId },
@@ -584,7 +608,6 @@ const changeCheckoutStatus = async (req, res, next) => {
             res.status(200).json({ message: `Changed status to "${status}" ` })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
@@ -599,103 +622,130 @@ const getChatMember = async (req, res, next) => {
             res.status(404).json({ error: "No member data" })
         }
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const getCheckoutData = async (req , res , next) => {
-    try{
+const getCheckoutData = async (req, res, next) => {
+    try {
 
-        const returnedBooks = await LenderHistory.find({status : "Returned"}).select('book')
+        const returnedBooks = await LenderHistory.find({ status: "Returned" }).select('book')
         const categoryCounts = await LenderHistory.aggregate(
             [
-                {$match : {status : "Returned"}},
+                { $match: { status: "Returned" } },
                 {
-                    $lookup : {  //lookup for getting book details
-                        from : 'books',
-                        localField : 'book',
-                        foreignField : '_id',
-                        as : 'book'
+                    $lookup: {  //lookup for getting book details
+                        from: 'books',
+                        localField: 'book',
+                        foreignField: '_id',
+                        as: 'book'
                     }
                 },
                 {
-                    $unwind : '$book' //unwind for make it object
+                    $unwind: '$book' //unwind for make it object
                 },
                 {
-                    $lookup : {
-                        from : 'categories',
-                        localField : 'book.category',
-                        foreignField : '_id',
-                        as : 'category'
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'book.category',
+                        foreignField: '_id',
+                        as: 'category'
                     }
                 },
                 {
-                    $unwind : '$category'
+                    $unwind: '$category'
                 },
                 {
-                    $group : {  //group by category and find count
-                        _id : '$category.name',
-                        count : {$sum : 1}
+                    $group: {  //group by category and find count
+                        _id: '$category.name',
+                        count: { $sum: 1 }
                     }
                 }
             ]
         )
 
-        if(categoryCounts) {
-            res.status(200).json({message : "checkout data" , data : categoryCounts})
+        if (categoryCounts) {
+            res.status(200).json({ message: "checkout data", data: categoryCounts })
         } else {
-            res.status(404).json({error : "No data"})
+            res.status(404).json({ error: "No data" })
         }
-    }catch(err) {
-        console.log(err);
-        res.statu(500).json({error : "Internal server Error"})
+    } catch (err) {
+        res.statu(500).json({ error: "Internal server Error" })
     }
 }
 
-const getMembershipData = async (req , res, next) => {
-    try{
+const getMembershipData = async (req, res, next) => {
+    try {
         const memberShipData = await Members.aggregate(
             [
                 // {$match : {isMember : true}},
                 {
-                    $group : {
-                        _id : '$membershipType',
-                        count : {$sum : 1}
+                    $group: {
+                        _id: '$membershipType',
+                        count: { $sum: 1 }
                     }
                 }
             ]
         )
-        if(memberShipData) {
-            res.status(200).json({message : "member data" , memberShipData})
+        if (memberShipData) {
+            res.status(200).json({ message: "member data", memberShipData })
         } else {
-            res.status(404).json({error : "No data found"})
+            res.status(404).json({ error: "No data found" })
         }
-    }catch(error) {
-        console.log(error);
-        res.status(500).json({error : "Internal server Error"})
+    } catch (error) {
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
-const getBmc = async (req , res , next) => {
-    try{
+const getBmc = async (req, res, next) => {
+    try {
         const books = await Books.find().count()
         const members = await Members.find().count()
         const categories = await Categories.find().count()
         const data = {
-            books : books,
-            members : members,
-            categories : categories
+            books: books,
+            members: members,
+            categories: categories
         }
-        if(data) {
-            res.status(200).json({message : "data sent" , data : data})
+        if (data) {
+            res.status(200).json({ message: "data sent", data: data })
         } else {
-            res.status(404).json({error : "No data found"})
+            res.status(404).json({ error: "No data found" })
         }
 
-    }catch(err) {
-        console.log(err);
-        res.status(500).json({error : "Internal server Error"})
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
+    }
+}
+
+const totalFineAmount = async (req, res, next) => {
+    try {
+        const totalFine = await LenderHistory.aggregate(
+            [
+                { $match: { hasFinePaid: true, fineAmount: { $gt: 0 } } },
+                {
+                    $group: {
+                        _id: null,
+                        totalFinePaid: { $sum: '$fineAmount' }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        totalFineAmount: '$totalFinePaid'
+                    }
+                },
+
+            ]
+        )
+        if (totalFine) {
+            const totalFineAmount = totalFine[0].totalFineAmount
+            res.status(200).json({ message: "fine amount", totalFineAmount })
+        } else {
+            res.status(404).json({ error: "No fine data found" })
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Internal server Error" })
     }
 }
 
@@ -704,7 +754,7 @@ module.exports = {
     login,
     getMembers,
     addBook,
-    addGoogleBook,
+    // addGoogleBook,
     verifyAdmin,
     getSingleMember,
     addCategory,
@@ -725,5 +775,6 @@ module.exports = {
     getChatMember,
     getCheckoutData,
     getMembershipData,
-    getBmc
+    getBmc,
+    totalFineAmount
 }

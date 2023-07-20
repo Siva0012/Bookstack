@@ -1,6 +1,7 @@
 import ChatContainer from "../../Components/Admin/Chat/ChatContainer";
 import MemberList from "../../Components/Admin/Chat/MemberList";
 import {useState , useEffect, useRef} from 'react'
+import {useSelector} from 'react-redux'
 
 //socket 
 import {io} from 'socket.io-client'
@@ -18,6 +19,7 @@ function ChatPage() {
   const [receivedMessages, setReceivedMessages] = useState(null);
 
   const adminId = "647dc525dccb0c01b947eef4" //store in redux
+  // const adminId = useSelector(state => state.adminData.value._id)
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
 

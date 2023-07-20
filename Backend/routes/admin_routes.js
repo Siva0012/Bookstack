@@ -15,7 +15,7 @@ admin_router.post('/login', adminController.login)
 
 admin_router.get('/members', verifyAdminToken, adminController.getMembers)
 admin_router.post('/add-book', verifyAdminToken, upload.single('coverPhoto'), adminController.addBook)
-admin_router.post('/add-googleBook', verifyAdminToken, adminController.addGoogleBook)
+// admin_router.post('/add-googleBook', verifyAdminToken, adminController.addGoogleBook)
 admin_router.patch('/block-member' , verifyAdminToken , adminController.blockOrUnblockMember)
 admin_router.get('/view-member/:memberId', verifyAdminToken, adminController.getSingleMember)
 admin_router.post('/add-category', verifyAdminToken, adminController.addCategory)
@@ -28,7 +28,7 @@ admin_router.patch('/update-book-image/:bookId' , verifyAdminToken , upload.sing
 admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminController.removeBook)
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)
 admin_router.patch('/update-banner-image/:bannerId', verifyAdminToken , upload.single('bannerPhoto') , adminController.updateBannerImage)
-admin_router.get('/lender-history' , verifyAdminToken, adminController.getLenderHistory)
+admin_router.get('/lender-history/:page/:limit' , verifyAdminToken, adminController.getLenderHistory)
 admin_router.get('/change-checkout-status/:lenderId/:status' , verifyAdminToken , adminController.changeCheckoutStatus)
 admin_router.get('/get-banners' , verifyAdminToken , adminController.getBanners)
 admin_router.post('/change-banner-status' , verifyAdminToken , adminController.changeBannerStatus)
@@ -38,5 +38,6 @@ admin_router.get('/chat-member/:memberId' , verifyAdminToken , adminController.g
 admin_router.get('/get-checkout-data' , verifyAdminToken , adminController.getCheckoutData)
 admin_router.get('/get-membership-data' , verifyAdminToken , adminController.getMembershipData)
 admin_router.get('/get-bmc' , verifyAdminToken , adminController.getBmc)
+admin_router.get('/total-fine-amount' , verifyAdminToken , adminController.totalFineAmount)
 
 module.exports = admin_router

@@ -7,7 +7,7 @@ function ReservedBooksPage() {
      <div id="sidebar" className="">
          <ProfileSidebar />
      </div>
-     <div id='content' className='ms-10'>
+     <div id='content' className='ms-10 w-full'>
          <ReservedBooks />
      </div>
  </div>
