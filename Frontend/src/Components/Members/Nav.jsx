@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import NavDropdown from "./NavDropdown";
 import { FaRegUser } from "react-icons/fa";
 import { CiChat1 } from "react-icons/ci";
@@ -8,8 +9,8 @@ import { IoIosNotifications, IoIosNotificationsOutline } from "react-icons/io";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { BiSearch } from "react-icons/bi";
 import MobileNavDropdown from "./MobileNavDropdown";
-import { useSelector } from "react-redux";
 import moment from "moment";
+import {updateMemberData} from '../../Redux/Member/MemberDataSlice'
 
 //member API
 import { searchBooks, getNotifications } from "../../Utils/MemberApis";
@@ -20,6 +21,7 @@ import { io } from "socket.io-client";
 const baseUrl = import.meta.env.VITE_REACT_APP_BASE_URL;
 
 function Nav() {
+  const dispatch = useDispatch()
   const memberName = useSelector((state) => state.memberData.value.name);
   const isMember = useSelector((state) => state.memberData.value.isMember);
   const [searchBookData, setSearchBookData] = useState([]);
@@ -40,7 +42,7 @@ function Nav() {
     //   setNewNotification(true);
     //   // setNotificationData(notificationData);
     // });
-  }, []);
+  }, [memberId]);
 
   const handleNotificationClick = async () => {
     setNewNotification(false);
@@ -61,6 +63,7 @@ function Nav() {
   };
 
   const logout = () => {
+    dispatch(updateMemberData({}))
     localStorage.removeItem("userJwt");
     navigate("/login");
   };
