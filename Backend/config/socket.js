@@ -40,6 +40,7 @@ const configureSocket = (server) => {
                   console.log("data" , data);
                   //sending message to the particular user using the socketid 
                   if(user) {
+                        console.log("receiver user details" , user);
                         io.to(user.socketId).emit("receive-message" , data)
                   }
             })
@@ -59,8 +60,9 @@ const getSocketInstance = () => {
 }
 
 const sendNotificationToUser = (userId , notificationData) => {
-      console.log("active users" , activeUsers);
-      const user = activeUsers.find((user) => user.userId === userId)
+      const memberId = userId.toString()
+      console.log("active users , memberId" , activeUsers , memberId);
+      const user = activeUsers.find((user) => user.userId === memberId)
       console.log("user" , user);
       if(user) {
             const {socketId} = user

@@ -2,6 +2,7 @@ import ChatContainer from "../../Components/Members/Chat/ChatContainer";
 import MemberList from "../../Components/Members/Chat/MemberList.jsx";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
+import socketInstance from "../../Socket/socket";
 
 //socket
 import { io } from "socket.io-client";
@@ -33,7 +34,8 @@ function ChatPage() {
   } , [memberId])
 
   useEffect(() => {
-    socket.current = io(baseUrl);
+    // socket.current = io(baseUrl);
+    socket.current = socketInstance
     socket.current.emit("add-new-user", memberId);
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);

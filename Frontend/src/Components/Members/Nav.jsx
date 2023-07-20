@@ -19,6 +19,7 @@ import SearchCard from "../Cards/SearchCard";
 //socket
 import { io } from "socket.io-client";
 const baseUrl = import.meta.env.VITE_REACT_APP_BASE_URL;
+import socketInstance from "../../Socket/socket";
 
 function Nav() {
   const dispatch = useDispatch()
@@ -35,14 +36,16 @@ function Nav() {
   const [newNotification, setNewNotification] = useState(null);
 
   useEffect(() => {
+    console.log("nav effect");
     // socket.current = io(baseUrl);
-    // socket.current.emit("add-new-user", memberId);
-    // socket.current.on("receive-notification", (notificationData) => {
-    //   console.log("notification data", notificationData);
-    //   setNewNotification(true);
-    //   // setNotificationData(notificationData);
-    // });
-  }, [memberId]);
+    socket.current = socketInstance
+    socket.current.emit("add-new-user", memberId);
+    socket.current.on("receive-notification", (notificationData) => {
+      console.log("notification data", notificationData);
+      setNewNotification(true);
+      setNotificationData(notificationData);
+    });
+  }, [memberId , newNotification]);
 
   const handleNotificationClick = async () => {
     setNewNotification(false);

@@ -187,6 +187,7 @@ function LenderTable() {
                         {lenderData &&
                           lenderData.map((data, i) => {
                             return (
+                              data.member &&
                               <tr key={data._id}>
                                 <td className="px-5 py-5 border-b text-black border-gray-200 bg-white text-sm">
                                   <span>{i + 1}</span>
@@ -197,8 +198,8 @@ function LenderTable() {
                                       <img
                                         className="w-full h-full rounded-full"
                                         src={
-                                          data.member.profilePicture
-                                            ? data.member.profilePicture
+                                          data.member?.profilePicture
+                                            ? data.member?.profilePicture
                                             : "../../../public/public-images/image.jpg"
                                         }
                                         // src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
