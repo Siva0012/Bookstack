@@ -28,7 +28,7 @@ function MemberData({data , adminId , checkOnlineStatus}) {
           }
           <img
             className="h-full w-full rounded-full object-contain"
-            src={memberData ? memberData.profilePicture : '../../../../public/public-images/image.jpg'}
+            src={memberData.profilePicture ? memberData.profilePicture : '../../../../public/public-images/image.jpg'}
             alt=""
           />
         </div>

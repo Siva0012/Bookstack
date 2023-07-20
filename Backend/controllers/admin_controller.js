@@ -80,6 +80,7 @@ const blockOrUnblockMember = async (req, res, next) => {
             message = "You have unblocked by the admin"
         }
         const today = new Date()
+        console.log("member id at block or unblock" , memberId);
         const notification = {
             notificationType: 'Block',
             notificationDate: today,
@@ -509,13 +510,14 @@ const updateBannerContent = async (req, res, next) => {
 
 const getLenderHistory = async (req, res, next) => {
     try {
-        console.log("lender");
+        // console.log("lenderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrriiiiiiiiiiiiiiirrrrrrrrrrrrrrrrrrrrr");
         const page = req.params.page ? parseInt(req.params.page) : 1
         const limit = req.params.limit ? parseInt(req.params.limit) : 10
-
+        console.log("page and limit" , page , limit);
         const skip = (page - 1) * limit
         const lenderCount = await LenderHistory.countDocuments()
         const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({ checkoutDate: -1 }).skip(skip).limit(limit)
+        // console.log("lenderdata" , lenderData);
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData , lenderCount }) :
             res.status(404).json({ error: "no lender data" })
 
@@ -530,11 +532,35 @@ const changeCheckoutStatus = async (req, res, next) => {
         const status = req.params.status
         const lenderData = await LenderHistory.findById(lenderId).populate('book')
         const bookId = lenderData.book
+        const bookData = await Books.findById(bookId)
         const memberId = lenderData.member
+        // const mem = memberId.toString()
+        // const notification = {
+        //     notificationType: 'Block',
+        //     notificationDate: new Date(),
+        //     message: `Your checkout notification`,
+        //     member: mem
+        // }
+        // sendNotificationToUser(memberId, notification)
+
+        const sendNotification = async(type , message , memberId) => {
+            const userId = memberId.toString()
+            const notification = {
+                notificationType : type,
+                notificationDate : new Date(),
+                message : message,
+                member : userId
+            }
+            const not = new Notifications(notification)
+            await not.save()
+            sendNotificationToUser(memberId , notification)
+        }
+
         if (status === 'Approved') {
             //After approval, change the duedate for the checkout
             const dueDate = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
-            sendNotificationToUser(memberId, "Your checkout has approved")
+            const message = `Your checkout for ${bookData.title} has Approved by the admin`
+            await sendNotification("Checkout" , message , memberId )
             const udpateDue = await LenderHistory.findOneAndUpdate(
                 { _id: lenderId },
                 {
@@ -553,13 +579,13 @@ const changeCheckoutStatus = async (req, res, next) => {
                 //finding the member data
                 const member = await Members.findById(reservationData.memberId)
                 //sending notification to the member
-                const message = `<p>Dear ${member.name},</p>
+                const mailNotification = `<p>Dear ${member.name},</p>
                 <p>We are pleased to inform you that the book you reserved, "${bookData.title}", is now available for checkout at our library. You can proceed to the library and collect the book at your convenience.</p>
                 <p>Please note that the book will be held for you for a limited time, and if you fail to collect it within 8 hours from now, your reservation will be canceled.</p>
                 <p>If you have any questions or need further assistance, feel free to contact our library staff.</p>
                 <p>Thank you for using our library services.</p>
                 <p>Best regards,<br>Bookstack</p>`
-                await sendEmail(member.email, "Book reservation", message)
+                await sendEmail(member.email, "Book reservation", mailNotification)
 
                 const notMessage = `The book "${bookData.title}" is available for checkout.`
                 //create notification
@@ -598,6 +624,7 @@ const changeCheckoutStatus = async (req, res, next) => {
                 { $set: { returnDate: returnDate, hasFinePaid: true } }
             )
         }
+
         const lenderUpdate = await LenderHistory.findOneAndUpdate(
             { _id: lenderId },
             {
@@ -608,6 +635,7 @@ const changeCheckoutStatus = async (req, res, next) => {
             res.status(200).json({ message: `Changed status to "${status}" ` })
         }
     } catch (err) {
+        console.log(err);
         res.status(500).json({ error: err.message })
     }
 }
