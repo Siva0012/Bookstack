@@ -2,11 +2,27 @@ const cron = require('node-cron')
 
 const lenderHistory = require('../models/lender_history')
 const Members = require('../models/member_model');
+const Notifications = require('../models/notification_model')
 const { findById } = require('../models/admin_model');
+const { sendNotificationToUser } = require('../config/socket');
 
 const updateFines = async () => {
 
      try {
+
+          const sendNotification = async (type , message , memberId) => {
+               const userId = memberId.toString()
+               const notification = {
+                    notificationType : type,
+                    notificationDate : new Date(),
+                    message : message,
+                    member : userId
+               }
+               const not = new Notifications(notification)
+               await not.save()
+               sendNotificationToUser(memberId , notification)
+          }
+          
           // console.log("update fine function //////////////");
           const allCheckouts = await lenderHistory.find({}).populate('member').populate('book')
           if (allCheckouts) {
@@ -60,6 +76,11 @@ const updateFines = async () => {
                          .filter((checkout) => checkout.member._id.toString() === memberId.toString())
                          .reduce((total, checkout) => total + checkout.fineAmount, 0)
                     await Members.findOneAndUpdate(memberId, { totalFineAmount })
+                    //sending notification
+                    // if(totalFineAmount > 0) {
+                    //      const message = `Your updated fine amount is Rs.${totalFineAmount}`
+                    //      await sendNotification('Fine update' , message , memberId)
+                    // }
                }
 
           }

@@ -75,9 +75,9 @@ const blockOrUnblockMember = async (req, res, next) => {
         const memberUpdate = await Members.findByIdAndUpdate(memberId, { $set: { isBlocked: !isBlocked } })
         let message = ''
         if (memberUpdate.isBlocked) {
-            message = "You have blocked by the admin"
+            message = "You are Unblocked by the admin"
         } else if (!memberUpdate.isBlocked) {
-            message = "You have unblocked by the admin"
+            message = "You are Blocked by the admin"
         }
         const today = new Date()
         console.log("member id at block or unblock" , memberId);
