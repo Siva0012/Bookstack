@@ -1,10 +1,11 @@
 import { useState , useEffect } from "react";
 import { getChatMember } from "../../../Utils/AdminApis";
+import { useSelector } from "react-redux";
 
 function MemberData({data , adminId , checkOnlineStatus}) {
 
   const [memberData, setMemberData] = useState({});
-
+  const adminID = useSelector(state => state.adminData.value._id)
   useEffect(() => {
     const memberId = data.members.find((id) => id !== adminId)
       getChatMember(memberId)

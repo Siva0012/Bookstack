@@ -153,13 +153,14 @@ const login = async (req, res, next) => {
         }
 
     } catch (err) {
-        res.status(500).json({ error: "Internal server Error" })
+        res.status(500).json({ error: "Internal server Error from user login" })
     }
 }
 
 const googleLogin = async (req, res, next) => {
     try {
         const { email, id, name } = req.body
+        console.log(email , id , name , "req body");
         const isExists = await Members.findOne({ email: email })
         if (isExists) {
             const payLoad = {
@@ -196,6 +197,7 @@ const googleLogin = async (req, res, next) => {
         }
 
     } catch (err) {
+        console.log(err , "dsafdsafdsf");
         res.status(500).json({ error: "Internal server Error" })
 
     }

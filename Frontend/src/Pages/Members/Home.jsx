@@ -29,24 +29,26 @@ function Home() {
 style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
 */}
       <div
-        className="py-28 bg-cover bg-no-repeat bg-fixed rounded-xl border-2"
+        className="lg:h-[450px] bg-cover bg-no-repeat bg-fixed rounded-xl border-2"
         style={{
           backgroundImage:
             // "url(https://media.vanityfair.com/photos/5ce426151c0b0773cacd1121/master/pass/star-wars-feature-vf-2019-summer-embed-05.jpg)",
             "url(https://images.unsplash.com/photo-1577985051167-0d49eec21977?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1189&q=80)",
         }}
       >
-        <div className="container m-auto text-center px-6 opacity-100">
-          <h2 className="text-5xl font-bold mb-2 font-nunito text-[#ffff]">
-            "Discover the Magic of Books."
-          </h2>
-          <h3 className="text-2xl mb-8 text-[#ffff]">
-            "Dive into a world of imagination and knowledge. Explore our vast
-            collection today."
-          </h3>
-          <button className="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider hover:border-transparent hover:text-blue-500 hover:bg-gray-800 transition-all">
-            "Start your reading adventure now!"
-          </button>
+        <div className="bg-white/30">
+          <div className="container m-auto text-center px-6">
+            <h2 className="text-5xl font-bold mb-2 font-nunito text-[#ffff]">
+              "Discover the Magic of Books."
+            </h2>
+            <h3 className="text-2xl mb-8 text-[#ffff]">
+              "Dive into a world of imagination and knowledge. Explore our vast
+              collection today."
+            </h3>
+            <button className="bg-white font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider hover:border-transparent hover:text-blue-500 hover:bg-gray-800 transition-all">
+              "Start your reading adventure now!"
+            </button>
+          </div>
         </div>
       </div>
       {/* Banners */}
@@ -67,7 +69,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
           </h2>
           <div className="mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 md:gap-x-0 gap-y-6">
             {recentBooks &&
-              recentBooks.map((book , i) => {
+              recentBooks.map((book, i) => {
                 return <RecentBooksCard key={i} bookData={book} />;
               })}
           </div>

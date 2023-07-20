@@ -53,8 +53,8 @@ const listOrUnlist = (id , data) => {
     return adminAxiosInstance.get(`/remove-book/${id}/${data}`)
 }
 
-const getLenderHistory = () => {
-    return adminAxiosInstance.get('/lender-history')
+const getLenderHistory = (page , limit) => {
+    return adminAxiosInstance.get(`/lender-history/${page}/${limit}`)
 }
 
 const changeCheckoutStatus = (lenderId , status) => {
