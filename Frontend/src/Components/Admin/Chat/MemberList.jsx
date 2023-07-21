@@ -1,9 +1,12 @@
 import { BiSearch } from "react-icons/bi";
 import MemberData from "./MemberData";
+import { useEffect } from "react";
 
 //chat APIs
 
-function MemberList({chats , adminId , setCurrentChat  , checkOnlineStatus}) {
+function MemberList({chats , adminId , setCurrentChat  , checkOnlineStatus , sendMessage , receivedMessages}) {
+
+ 
 
   return (
     <div className="rounded-lg p-2 h-full">
@@ -30,7 +33,7 @@ function MemberList({chats , adminId , setCurrentChat  , checkOnlineStatus}) {
               className="cursor-pointer"
               onClick={() => setCurrentChat(chat) }
                key={i}>
-                <MemberData data={chat} adminId={adminId} checkOnlineStatus={checkOnlineStatus} />
+                <MemberData data={chat} adminId={adminId} checkOnlineStatus={checkOnlineStatus} sendMessage={sendMessage} receivedMessages={receivedMessages} />
               </div>
             )
           })

@@ -16,11 +16,13 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
 
   useEffect(() => {
     const memberId = currentChat?.members.find((id) => id !== adminId);
-    getChatMember(memberId).then((response) => {
-      if (response.data.memberData) {
-        setMemberData(response.data.memberData);
-      }
-    });
+    if(memberId) {
+      getChatMember(memberId).then((response) => {
+        if (response.data.memberData) {
+          setMemberData(response.data.memberData);
+        }
+      });
+    }
   }, [currentChat]);
 
   useEffect(() => {

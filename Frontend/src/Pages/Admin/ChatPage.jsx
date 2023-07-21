@@ -24,7 +24,6 @@ function ChatPage() {
   const [currentChat, setCurrentChat] = useState(null);
 
   useEffect(() => {
-    // socket.current = io(baseUrl)
     socket.current = socketInstance;
     socket.current.emit("add-new-user", adminId);
     socket.current.on("get-users", (users) => {
@@ -33,12 +32,13 @@ function ChatPage() {
   }, [adminId]);
 
   useEffect(() => {
+    console.log("use effect");
     getChats(adminId).then((response) => {
       if (response.data.chat) {
         setChats(response.data.chat);
       }
     });
-  }, [onlineUsers, receivedMessages]);
+  }, [onlineUsers, receivedMessages , sendMessage]);
 
   //sending message to socket server
   useEffect(() => {
@@ -50,7 +50,7 @@ function ChatPage() {
   //receive message from the socket server
   useEffect(() => {
     socket.current.on("receive-message", (data) => {
-      console.log("meesage received at chatpage", data.text);
+      console.log("meesage received at chatpage", data);
       setReceivedMessages(data);
     });
   }, []);
@@ -71,6 +71,8 @@ function ChatPage() {
             chats={chats}
             adminId={adminId}
             checkOnlineStatus={checkOnlineStatus}
+            sendMessage={sendMessage}
+            receivedMessages={receivedMessages}
           />
         </div>
         <div className="lg:w-[67%] lg:ms-auto ">

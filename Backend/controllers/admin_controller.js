@@ -650,6 +650,7 @@ const getChatMember = async (req, res, next) => {
             res.status(404).json({ error: "No member data" })
         }
     } catch (err) {
+        console.log("chat member error" , err);
         res.status(500).json({ error: "Internal server Error" })
     }
 }

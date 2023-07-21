@@ -4,9 +4,10 @@ const Reservations = require('../models/reservation_model')
 
 const preferenceUpdater = async () => {
       try{
+            console.log("preference /// updater");
             const reservedBooks = await Books.aggregate([
                   { $match: { reservationOrder: { $exists: true } } },
-                  { $match: { $expr: { $gte: [{ $size: '$reservationOrder' }, '$maxReservations'] } } }
+                  { $match: { $expr: { $gte: [{ $size: '$reservationOrder' }, '$maxReservations'] } } } //finding docs having reservation order gte max reservation
                 ])
             // const reservedBooks = await Books.find({ $expr: { $gte: [{ $size: '$reservationOrder' }, '$maxReservations'] } })
             // console.log("reservedBookss" , reservedBooks);
@@ -25,5 +26,5 @@ const preferenceUpdater = async () => {
       }
 }
 
-cron.schedule('*/30 * * * * *' , preferenceUpdater)
+cron.schedule('* * * * *' , preferenceUpdater)
 module.exports = {preferenceUpdater}

@@ -1,4 +1,5 @@
 const Messages = require('../models/message_model')
+const Chats = require('../models/chat_model')
 
 const addMessage = async (req , res , next) => {
       try{
@@ -11,6 +12,7 @@ const addMessage = async (req , res , next) => {
                   }
             )
             const result = await message.save()
+            const chatUpdate = await Chats.findByIdAndUpdate(chatId , {$set : {updatedAt : new Date()}})
             if(result) {
                   res.status(200).json({message : "Added Message" , result : result})
             } else {

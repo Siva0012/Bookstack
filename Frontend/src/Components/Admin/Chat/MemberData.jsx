@@ -2,20 +2,21 @@ import { useState , useEffect } from "react";
 import { getChatMember } from "../../../Utils/AdminApis";
 import { useSelector } from "react-redux";
 
-function MemberData({data , adminId , checkOnlineStatus}) {
+function MemberData({data , adminId , checkOnlineStatus , sendMessage , receivedMessages}) {
 
   const [memberData, setMemberData] = useState({});
   const adminID = useSelector(state => state.adminData.value._id)
+  const memberId = data.members.find((id) => id !== adminId)
   useEffect(() => {
-    const memberId = data.members.find((id) => id !== adminId)
+    if(memberId) {
       getChatMember(memberId)
       .then((response) => {
         if(response.data.memberData) {
           setMemberData(response.data.memberData)
         }
       })
-  } , [])
-
+    }
+  } , [memberId , sendMessage , receivedMessages])
 
   return (
       <div

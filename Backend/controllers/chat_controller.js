@@ -31,7 +31,7 @@ const getChat = async (req , res , next) => {
                   {
                         members : {$in : [userId]}
                   }
-            )
+            ).sort({updatedAt : -1})
             if(chat) {
                   res.status(200).json({message : "user chat" , chat : chat} )
             } else {

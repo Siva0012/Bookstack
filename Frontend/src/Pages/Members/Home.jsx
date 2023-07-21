@@ -36,7 +36,7 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
             "url(https://images.unsplash.com/photo-1577985051167-0d49eec21977?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1189&q=80)",
         }}
       >
-        <div className="bg-white/30">
+        <div className="bg-black/40 h-full flex rounded-xl ">
           <div className="container m-auto text-center px-6">
             <h2 className="text-5xl font-bold mb-2 font-nunito text-[#ffff]">
               "Discover the Magic of Books."
