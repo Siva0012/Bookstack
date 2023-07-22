@@ -2,7 +2,7 @@ import { useState , useEffect } from "react";
 import { getChatMember } from "../../../Utils/AdminApis";
 import { useSelector } from "react-redux";
 
-function MemberData({data , adminId , checkOnlineStatus , sendMessage , receivedMessages}) {
+function MemberData({data , adminId , checkOnlineStatus , sendMessage , receivedMessages , order , unreadCount}) {
 
   const [memberData, setMemberData] = useState({});
   const adminID = useSelector(state => state.adminData.value._id)
@@ -40,7 +40,11 @@ function MemberData({data , adminId , checkOnlineStatus , sendMessage , received
               checkOnlineStatus(data) ? <span className="text-green-600">Online</span> : <span className="text-gray-600 italic">Offline</span>
             }
           </span>
+          {
+            unreadCount > 0 && <div className="bg-gray-600 ring-[1px] flex items-center justify-center ring-white rounded-full w-4 h-4"><span className="text-[10px] font-semibold text-white">{unreadCount}</span></div>
+          }
         </div>
+
       </div>
   );
 }

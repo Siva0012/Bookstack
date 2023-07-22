@@ -22,6 +22,7 @@ function ChatPage() {
   // const adminId = useSelector(state => state.adminData.value._id)
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState({});
 
   useEffect(() => {
     socket.current = socketInstance;
@@ -29,10 +30,14 @@ function ChatPage() {
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);
     });
-  }, [adminId]);
+        socket.current.on("receive-message", (data) => {
+        console.log("meesage received at chatpage", data);
+        setReceivedMessages(data);
+        handleReceivedMessages(data , currentChat)
+      });
+  }, [adminId , currentChat]);
 
   useEffect(() => {
-    console.log("use effect");
     getChats(adminId).then((response) => {
       if (response.data.chat) {
         setChats(response.data.chat);
@@ -47,13 +52,44 @@ function ChatPage() {
     }
   }, [sendMessage]);
 
-  //receive message from the socket server
-  useEffect(() => {
-    socket.current.on("receive-message", (data) => {
-      console.log("meesage received at chatpage", data);
-      setReceivedMessages(data);
-    });
-  }, []);
+    //receive message from the socket server
+    // useEffect(() => {
+    //   socket.current.on("receive-message", (data) => {
+    //     console.log("meesage received at chatpage", data);
+    //     setReceivedMessages(data);
+    //     handleReceivedMessages(data)
+    //   });
+    // }, [currentChat]);
+
+
+  //handle received messages
+  const handleReceivedMessages = async (data , currentChat) => {
+    setReceivedMessages(data)
+    const {chatId} = data
+    setUnreadMessages( (prevState) => {
+      const currentChatId = currentChat?._id.toString()
+      console.log("current on functon" , currentChatId);
+      if(prevState[chatId]) {
+        if(prevState[chatId] && currentChatId !== chatId.toString()) {
+          console.log("firssttttsttttttttttttt" , currentChatId);
+          return {
+            ...prevState,
+            [chatId] : prevState[chatId] + 1
+          }
+        } else if (currentChatId === chatId.toString()) {
+          return {
+            ...prevState,
+            [chatId] : 0
+          }
+        }
+      } else if(!prevState[chatId]) {
+        return {
+          ...prevState,
+          [chatId] : 1
+        }
+      }
+    })
+  }
 
   //check online users
   const checkOnlineStatus = (chat) => {
@@ -73,6 +109,7 @@ function ChatPage() {
             checkOnlineStatus={checkOnlineStatus}
             sendMessage={sendMessage}
             receivedMessages={receivedMessages}
+            unreadMessages={unreadMessages}
           />
         </div>
         <div className="lg:w-[67%] lg:ms-auto ">

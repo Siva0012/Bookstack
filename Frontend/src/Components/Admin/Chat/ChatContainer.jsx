@@ -4,8 +4,14 @@ import { getChatMember } from "../../../Utils/AdminApis";
 import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
 
-function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessages }) {
-  const scroll = useRef()
+function ChatContainer({
+  currentChat,
+  adminId,
+  setSendMessage,
+  receivedMessages,
+  unreadCount,
+}) {
+  const scroll = useRef();
   const [memberData, setMemberData] = useState({});
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -16,7 +22,7 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
 
   useEffect(() => {
     const memberId = currentChat?.members.find((id) => id !== adminId);
-    if(memberId) {
+    if (memberId) {
       getChatMember(memberId).then((response) => {
         if (response.data.memberData) {
           setMemberData(response.data.memberData);
@@ -34,10 +40,13 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
   }, [currentChat]);
 
   useEffect(() => {
-    if(receivedMessages !== null && receivedMessages.chatId === currentChat?._id) {
-      setMessages([...messages , receivedMessages])
+    if (
+      receivedMessages !== null &&
+      receivedMessages.chatId === currentChat?._id
+    ) {
+      setMessages([...messages, receivedMessages]);
     }
-  } , [receivedMessages])
+  }, [receivedMessages]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -56,13 +65,13 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
     });
 
     //send message to the socket server
-    const receiverId = currentChat.members.find((id) => id !== adminId)
-    setSendMessage({...message , receiverId})
+    const receiverId = currentChat.members.find((id) => id !== adminId);
+    setSendMessage({ ...message, receiverId });
   };
 
   useEffect(() => {
-    scroll.current?.scrollIntoView({behavior : "smooth"})
-  } , [messages])
+    scroll.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="rounded-2xl h-full px-3 py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.8)]">
@@ -92,11 +101,11 @@ function ChatContainer({ currentChat, adminId , setSendMessage , receivedMessage
               className="mt-4 p-1 overflow-auto lg:max-h-[350px] "
             >
               {messages &&
-                messages.map((message , i) => {
+                messages.map((message, i) => {
                   return (
                     <div
-                    ref={scroll}
-                    key={i}
+                      ref={scroll}
+                      key={i}
                       className={`${
                         message.senderId === adminId
                           ? "ms-auto lg:max-w-[320px] bg-black rounded-lg shadow-[0px_0px_3px_rgba(255,255,255,0.8)] p-2 mb-2"
