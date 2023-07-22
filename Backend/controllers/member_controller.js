@@ -73,9 +73,9 @@ const register = async (req, res, next) => {
                 ).save()
                 if (verificationToken) {
                     const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
-                    const message = `  <p>Dear ${member.name},</p>
+                    const message = ` <p>Dear ${member.name},</p>
                     <p>Thank you for registering with our website. To verify your email address, please click on the following link:</p>
-                    <p><a href="${url}</a></p>
+                    <p><a href="${url}"</a></p>
                     <p>If you did not register with our website, please disregard this email.</p>
                     <p>Best regards,</p>
                     <p>Bookstack</p>`
