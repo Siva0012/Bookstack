@@ -7,6 +7,7 @@ const {updateFines} = require('./utils/fine_updator')
 const {preferenceUpdater} = require('./utils/preference_updater')
 const server = require('http').createServer(app)
 const {configureSocket} = require('./config/socket')
+const erroHandler = require('./middlewares/ErrorHandler')
 
 //socket setup
 configureSocket(server)
@@ -43,6 +44,9 @@ app.use('/' , member_router)
 app.use('/admin' , adimn_router)
 app.use('/chat' , chat_router)
 app.use('/message' , message_router)
+
+//error handler
+app.use(erroHandler)
 
 server.listen(3000 , () =>{
     console.log("server has started at port 3000");

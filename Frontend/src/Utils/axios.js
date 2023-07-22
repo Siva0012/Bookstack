@@ -13,6 +13,20 @@ const createAxiosClient = (baseUrl) => {
             timeoutErrorMessage : "Request timeout... Please try again"
         }
     )
+
+    client.interceptors.response.use(
+        (response) => {
+            return response
+        },
+        (error) => {
+            const {response} = error
+            if(response && response.status === 500) {
+                window.location.href = '/error'
+            }
+            return Promise.reject(error)
+        }
+    )
+
     return client
 }
 
