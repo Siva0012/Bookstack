@@ -749,6 +749,43 @@ const totalFineAmount = async (req, res, next) => {
     }
 }
 
+const getLenderData = async (req , res , next) => {
+    try{
+        const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({checkoutDate : -1}).limit(5)
+        if(lenderData) {
+            res.status(200).json({message : "Lenderdata" , lenderData})
+        } else {
+            res.status(404).json({error : "couldn't find lenderdata"})
+        }
+    }catch(err) {
+        console.log(err);
+        next(err)
+    }
+}
+
+const downloadLenderData = async (req , res, next) => {
+    try{
+        const from = new Date(req.params.from)
+        const to = new Date(req.params.to)
+        if(from > to) {
+            return res.status(404).json({error : "Invalid dates provided !!"})
+        }
+        const lenderData = await LenderHistory.find(
+            {
+                checkoutDate : {$gte : from , $lte : to}
+            }
+        ).populate('member').populate('book').select('-password')
+        if(lenderData) {
+            res.status(200).json({message : 'Dowload data' , lenderData})
+        } else {
+            res.status(404).json({error : "Couldn't find lender data"})
+        }
+    }catch(err) {
+        console.log(err);
+        next(err)
+    }
+}
+
 
 module.exports = {
     login,
@@ -776,5 +813,7 @@ module.exports = {
     getCheckoutData,
     getMembershipData,
     getBmc,
-    totalFineAmount
+    totalFineAmount,
+    getLenderData,
+    downloadLenderData
 }

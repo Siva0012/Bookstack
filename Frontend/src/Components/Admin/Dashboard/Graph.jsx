@@ -35,7 +35,7 @@ function Graph() {
       labels: categoryCount.map(data => data._id),
       datasets: [
         {
-          label: "Category",
+          label: "No.of checkouts",
           data: categoryCount.map(data => data.count),
           backgroundColor: generateColors(categoryCount.length),
           borderColor: 'rgba(256,256,256,.5)',
@@ -45,7 +45,7 @@ function Graph() {
     };
 
   return (
-      <div className="lg:w-[350px] lg:h-[350px]">
+      <div className="lg:w-[320px] lg:h-[320px]">
         {categoryCount && <Doughnut data={catData} />}
       </div>
   );

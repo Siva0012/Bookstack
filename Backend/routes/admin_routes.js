@@ -39,5 +39,7 @@ admin_router.get('/get-checkout-data' , verifyAdminToken , adminController.getCh
 admin_router.get('/get-membership-data' , verifyAdminToken , adminController.getMembershipData)
 admin_router.get('/get-bmc' , verifyAdminToken , adminController.getBmc)
 admin_router.get('/total-fine-amount' , verifyAdminToken , adminController.totalFineAmount)
+admin_router.get('/lender-data' , verifyAdminToken , adminController.getLenderData)
+admin_router.get('/lender-data/:from/:to' , verifyAdminToken , adminController.downloadLenderData)
 
 module.exports = admin_router

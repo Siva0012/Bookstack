@@ -109,6 +109,15 @@ const totalFines = () => {
     return adminAxiosInstance.get('/total-fine-amount')
 }
 
+const getLenderData = () => {
+    return adminAxiosInstance.get('/lender-data')
+}
+
+const downloadLenderData = (data) => {
+    const {from , to} = data
+    return adminAxiosInstance.get(`/lender-data/${from}/${to}`)
+}
+
 export {
     adminLogin , 
     addBook,
@@ -135,5 +144,7 @@ export {
     getCheckoutData,
     getMembershipData,
     getBmc,
-    totalFines
+    totalFines,
+    getLenderData,
+    downloadLenderData
 }
