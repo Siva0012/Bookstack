@@ -19,12 +19,14 @@ import BannersPage from "../Pages/Admin/BannersPage";
 import EditBookPage from "../Pages/Admin/EditBookPage";
 import ErrorPage from "../Pages/Admin/ErrorPage";
 import ChatPage from "../Pages/Admin/ChatPage";
+import InternalErrorPage from "../Pages/Admin/InternalErrorPage";
 
 function AdminRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<AdminLogin />} />
       <Route path="*" element={<ErrorPage />} />
+      <Route path="/error" element={<InternalErrorPage />} />
       <Route
         element={<ProtectedRoutes role={"admin"} route={"/admin/login"} />}
       >

@@ -1,5 +1,4 @@
 const erroHandler = (err , req , res , next) => {
-//      console.log(err.stack , "al;sdjfpaosdjfoaijfoasijdfosdijfoaijdfasdfsd");
 
      if(res.headerSent) {
       return next(err)

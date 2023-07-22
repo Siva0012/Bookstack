@@ -21,7 +21,11 @@ const createAxiosClient = (baseUrl) => {
         (error) => {
             const {response} = error
             if(response && response.status === 500) {
-                window.location.href = '/error'
+                if(baseUrl === memberBaseUrl) {
+                    window.location.href = '/error'
+                } else {
+                    window.location.href = '/admin/error'
+                }
             }
             return Promise.reject(error)
         }
