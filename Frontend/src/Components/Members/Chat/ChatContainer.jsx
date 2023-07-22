@@ -3,6 +3,7 @@ import { addMessage, getMessages } from "../../../Utils/MessageApis";
 import { getAdmin } from "../../../Utils/MemberApis";
 import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
+import {format} from 'timeago.js'
 
 function ChatContainer({
   currentChat,
@@ -109,7 +110,7 @@ function ChatContainer({
                     >
                       <p className="break-words">{message.text}</p>
                       <p className="lg:text-[11px] text-end italic text-white mt-1">
-                        {moment(message.createdAt).startOf("hour").fromNow()}
+                        {format(message.createdAt)}
                       </p>
                     </div>
                   );

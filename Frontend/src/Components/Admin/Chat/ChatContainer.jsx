@@ -3,6 +3,7 @@ import { getMessages, addMessage } from "../../../Utils/MessageApis";
 import { getChatMember } from "../../../Utils/AdminApis";
 import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
+import {format} from 'timeago.js'
 
 function ChatContainer({
   currentChat,
@@ -73,6 +74,7 @@ function ChatContainer({
     scroll.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+
   return (
     <div className="rounded-2xl h-full px-3 py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.8)]">
       {currentChat ? (
@@ -114,7 +116,7 @@ function ChatContainer({
                     >
                       <p className="break-words">{message.text}</p>
                       <p className="lg:text-[11px] text-end italic text-[#F2E5C7] mt-1">
-                        {moment(message.createdAt).startOf("hour").fromNow()}
+                        {format(message.createdAt)}
                       </p>
                     </div>
                   );
