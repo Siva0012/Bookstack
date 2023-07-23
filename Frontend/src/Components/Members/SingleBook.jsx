@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Modal from "../Modal/Modal";
+import { BiShow } from "react-icons/bi";
 
 //member APIs
 import { getSingleBook } from "../../Utils/MemberApis";
@@ -8,15 +10,21 @@ import GoogleBookViewer from "./GoogleBookViewer";
 
 function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
   const memberId = useSelector((state) => state.memberData.value._id);
+  const [showModal, setShowModal] = useState(true);
+  const [preview, setPreview] = useState(false);
+
+  const handlePreview = () => {
+    setShowModal((prev) => !prev);
+  };
 
   return (
     bookData && (
       <>
         <div className="mx-auto lg:flex lg:flex-row lg:justify-evenly lg:p-8 rounded-md bg-user-nav text-black lg:w-[800px] h-fit">
           <div className="lg:max-w-[1/2] lg:flex lg:flex-col lg:items-center lg:justify-center p-2">
-            <div className=" lg:w-[260px] lg:h-[280px]">
+            {/* <div className=" lg:w-[260px] lg:h-[280px]">
               <img
-                className="w-full h-full object-contain "
+                className="w-full h-full object-contain hover:bg-black/10 "
                 src={
                   bookData.coverPhoto
                     ? bookData.coverPhoto
@@ -24,6 +32,28 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
                 }
                 alt=""
               />
+            </div> */}
+
+            <div
+              onMouseEnter={() => setPreview((prev) => !prev)}
+              onMouseLeave={() => setPreview((prev) => !prev)}
+              className="lg:w-[260px] lg:h-[280px] "
+              style={{
+                backgroundImage: `url(${bookData.coverPhoto})`,
+                backgroundPosition: "center",
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              {preview && (
+                <div
+                  onClick={() => handlePreview()}
+                  className="text-white cursor-pointer bg-black/50 w-full h-full flex flex-col items-center justify-center"
+                >
+                  <h1 className="text-lg">Preview</h1>
+                  <BiShow size={32} />
+                </div>
+              )}
             </div>
           </div>
           <div className="relative lg:max-w-[1/2] lg:p-5 shadow-[0px_0px_5px_rgba(0,0,0,0.1)]">
@@ -81,9 +111,7 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             )}
           </div>
         </div>
-        <div className="w-full bg-black/30 mt-10">
-          <GoogleBookViewer isbn={bookData.isbn} />
-        </div>
+          <GoogleBookViewer isbn={bookData.isbn} showViewer={showModal} />
       </>
     )
   );

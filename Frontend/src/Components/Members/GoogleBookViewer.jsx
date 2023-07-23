@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useState, useEffect } from "react";
 
-function GoogleBookViewer({ isbn }) {
+function GoogleBookViewer({ isbn , showViewer }) {
 
   // Obtain ISBN number of user's current book
   const ISBN_num = isbn;
@@ -27,22 +27,24 @@ function GoogleBookViewer({ isbn }) {
     else {
       if (window.viewer) {
         let viewer = new window.google.books.DefaultViewer(canvasRef.current);
-        viewer.load("ISBN:" + ISBN_num, alertNotFound);
+        console.log("first finished" , viewer);
+        viewer.load("ISBN:" + ISBN_num, alertNotFound); 
       } else {
         window.google.books.load();
         window.google.books.setOnLoadCallback(() => {
           let viewer = new window.google.books.DefaultViewer(canvasRef.current);
           window.viewer = viewer;
+          console.log("loading finished" , viewer);
           viewer.load("ISBN:" + ISBN_num, alertNotFound);
         });
       }
     }
   }, [loaded]);
   return (
-    <div>
+    <div className={`${showViewer ? 'block' : 'hidden'}`}>
       {loaded ? (
         <div
-          className="w-[500px] h-[600px] mx-auto"
+          className="w-[450px] h-[500px] mx-auto"
           ref={canvasRef}
           id="viewerCanvas"
         ></div>
