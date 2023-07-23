@@ -15,6 +15,7 @@ import LenderTable from "../../Components/Admin/Dashboard/LenderTable";
 import { toast } from "react-toastify";
 import PrintableLenderTable from "../../Components/Admin/Dashboard/PrintableLenderTable";
 import { useReactToPrint } from "react-to-print";
+import BookGraph from "../../Components/Admin/Dashboard/BookGraph";
 
 function Home() {
   const [bmc, setBmc] = useState(null);
@@ -111,14 +112,21 @@ function Home() {
             )}
           </div>
 
-          <div></div>
+          <div className="bg-[#1b1b1b] ring-1 ring-white p-4 rounded-3xl mt-20">
+            <h1 className="text-xl ms-4 border-b w-fit tracking-wider font-semibold">
+                Top-checkouts
+              </h1>
+              <div className="mt-4">
+                <BookGraph />
+              </div>
+            </div>
 
           <div
             className="mt-20 flex justify-around items-center pb-4"
             id="graph-section"
           >
             <div className="bg-[#1b1b1b] ring-1 ring-white p-4 rounded-3xl">
-              <h1 className="text-xl tracking-wider font-semibold">
+              <h1 className="text-xl ms-4 border-b w-fit tracking-wider font-semibold">
                 Category vise checkouts
               </h1>
               <div className="mt-4">
@@ -126,7 +134,7 @@ function Home() {
               </div>
             </div>
             <div className="bg-[#1b1b1b] ring-1 ring-white p-4 rounded-3xl">
-              <h1 className="text-xl tracking-wider font-semibold">
+              <h1 className="text-xl ms-4 border-b w-fit tracking-wider font-semibold">
                 Membership types
               </h1>
               <div className="mt-4">
@@ -134,6 +142,7 @@ function Home() {
               </div>
             </div>
           </div>
+
 
           <div className="mt-10 mb-20">
             <h1 className="text-xl font-semibold mb-4">Lender data</h1>

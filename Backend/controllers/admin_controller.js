@@ -789,6 +789,49 @@ const downloadLenderData = async (req , res, next) => {
     }
 }
 
+const getBookWiseCheckoutData = async (req , res , next) => {
+    try{
+        const bookData = await LenderHistory.aggregate(
+            [
+                {
+                    $match : {
+                        status : 'Returned'
+                    }
+                },
+                {
+                    $group : {
+                        _id : '$book',
+                        count : {$sum : 1}
+                    }
+                },
+                {
+                    $lookup : {
+                        from : 'books',
+                        localField : '_id',
+                        foreignField : '_id',
+                        as : 'bookData'
+                    }
+                },
+                {
+                    $unwind : '$bookData'
+                },
+                {
+                    $project : {
+                        _id : 0,
+                        bookTitle : '$bookData.title',
+                        count : 1
+                    }
+                }
+            ]
+        )
+        if(bookData) return res.status(200).json({message : 'book data' , bookData})
+        else return res.status(404).json({error : "no data found"})
+    }catch(err) {
+        console.log(err);
+        next(err)
+    }
+}
+
 
 module.exports = {
     login,
@@ -818,5 +861,6 @@ module.exports = {
     getBmc,
     totalFineAmount,
     getLenderData,
-    downloadLenderData
+    downloadLenderData,
+    getBookWiseCheckoutData
 }

@@ -45,7 +45,7 @@ function Graph() {
     };
 
   return (
-      <div className="lg:w-[320px] lg:h-[320px]">
+      <div className="lg:w-[350px] lg:h-[350px]">
         {categoryCount && <Doughnut data={catData} />}
       </div>
   );
