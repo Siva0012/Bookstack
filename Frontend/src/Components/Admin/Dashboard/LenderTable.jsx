@@ -1,9 +1,9 @@
 import moment from "moment";
 
-function LenderTable({lenderData}) {
+function LenderTable({lenderData }) {
 
   return (
-      <table className="min-w-full leading-normal font-nunito">
+      <table className="min-w-full leading-normal font-nunito rounded-md">
       <thead>
         <tr>
           <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">

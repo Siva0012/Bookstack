@@ -767,6 +767,9 @@ const downloadLenderData = async (req , res, next) => {
     try{
         const from = new Date(req.params.from)
         const to = new Date(req.params.to)
+        if(to > new Date()) {
+            return res.status(404).json({error : "End date should be less than current date !!"})
+        }
         if(from > to) {
             return res.status(404).json({error : "Invalid dates provided !!"})
         }
