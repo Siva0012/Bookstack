@@ -56,12 +56,14 @@ function BookGraph() {
         title: {
           display: true,
           text: "Count of Checkouts",
+          color : 'white'
         },
       },
       x: {
         title: {
           display: true,
-          text: "Book Titles",
+          text: "Book Title",
+          color : 'white'
         },
         ticks: {
           maxRotation: 90, // Set maxRotation to 0 to prevent labels from rotating

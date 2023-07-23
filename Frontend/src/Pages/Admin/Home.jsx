@@ -114,7 +114,7 @@ function Home() {
 
           <div className="bg-[#1b1b1b] ring-1 ring-white p-4 rounded-3xl mt-20">
             <h1 className="text-xl ms-4 border-b w-fit tracking-wider font-semibold">
-                Top-checkouts
+                Top-checkouts (Books)
               </h1>
               <div className="mt-4">
                 <BookGraph />
