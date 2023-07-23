@@ -22,6 +22,7 @@ import EmailVerification from "../Pages/Members/EmailVerification";
 import SingleBookPage from "../Pages/Members/SingleBookPage";
 import ErrorPage from "../Pages/Members/ErrorPage";
 import ChatPage from "../Pages/Members/ChatPage";
+import InternalErrorPage from "../Pages/Members/InternalErrorPage";
 
 function UserRoutes() {
   return (
@@ -30,6 +31,7 @@ function UserRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/:memberId/verify/:token" element={<EmailVerification />} />
       <Route path="*" element={<ErrorPage />} />
+      <Route path="/error" element={<InternalErrorPage />} />
       <Route element={<ProtectedRoutes role={"user"} route={"/login"} />}>
         <Route element={<MemberLayout />}>
           <Route path="/test" element={<Modal />} />

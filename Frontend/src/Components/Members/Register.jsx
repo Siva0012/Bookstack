@@ -32,6 +32,7 @@ export default function Register() {
         .then((res) => {
           if(res.data.memberCreated) {
             toast.success("Please check the Email and verify your Email address")
+            navigate('/login')
             //add modal here!!!
           }
           // localStorage.setItem("userJwt", res.data.token);

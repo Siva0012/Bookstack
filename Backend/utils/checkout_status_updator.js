@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const LenderHistory = require('../models/lender_history');
 const Books = require('../models/book_model')
 const Notifications = require('../models/notification_model')
-const {sendNotificationToUser , getSocketInstance} = require('../config/socket');
+const {sendNotificationToUser} = require('../config/socket');
 const moment = require('moment/moment');
 
 const updateExpiredCheckoutStatus = async () => {
@@ -33,7 +33,7 @@ const updateExpiredCheckoutStatus = async () => {
                     )
                     await request.save();
                     //send notification to user
-                    const memberId = request.member
+                    const memberId = request.member.toString()
                     const notMessage = `You checkout for "${bookData.title}" has expired !!`
                     const time = new Date()
                     const notification = {
@@ -45,8 +45,7 @@ const updateExpiredCheckoutStatus = async () => {
                      //saving notification to db
                      const not = new Notifications(notification)
                      await not.save()
-                     const io = getSocketInstance()
-                     sendNotificationToUser(memberId , notification , io)
+                     sendNotificationToUser(memberId , notification)
                }
           }
           // console.log('Checkout status updater: Updated status for expired requests');

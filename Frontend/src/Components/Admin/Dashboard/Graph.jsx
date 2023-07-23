@@ -35,7 +35,7 @@ function Graph() {
       labels: categoryCount.map(data => data._id),
       datasets: [
         {
-          label: "Category",
+          label: "No.of checkouts",
           data: categoryCount.map(data => data.count),
           backgroundColor: generateColors(categoryCount.length),
           borderColor: 'rgba(256,256,256,.5)',
