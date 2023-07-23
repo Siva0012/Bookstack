@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { ToastContainer } from 'react-toastify'
 import {persistor , store} from './Redux/Store.jsx'
+import GoogleBooksScriptLoader from './Components/Members/GoogleBooksScriptLoader.jsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
