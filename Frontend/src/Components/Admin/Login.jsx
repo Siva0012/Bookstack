@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import {useDispatch} from 'react-redux'
-import { useGoogleLogin } from "@react-oauth/google";
-
+import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import * as yup from "yup";
 //toaster
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateAdminData } from "../../Redux/Admin/AdminDataSlice";
 
-
 const notify = (message) => {
   return toast.success(message);
 };
@@ -21,71 +20,86 @@ const toastError = (message) => {
   return toast.error(message);
 };
 
-
-
-
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (localStorage.getItem("adminJwt")) {
-      navigate("/admin");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("adminJwt")) {
+  //     navigate("/admin");
+  //   }
+  // }, []);
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  // const [formData, setFormData] = useState({
+  //   email: "",
+  //   password: "",
+  // });
+
+  // const handleChange = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   adminLogin(formData)
+  //     .then((response) => {
+  //       if (response.status === 200) {
+  //         localStorage.setItem("adminJwt", response.data.token);
+  //         dispatch(updateAdminData(response.data.admin));
+  //         navigate("/admin");
+  //         notify(response.data.message);
+  //       }
+  //     })
+  //     .catch((response) => {
+  //       if (response.response.data.error) {
+  //         toast.error(response.response.data.error);
+  //       }
+  //     });
+  // };
+
+  const [showPassword, setshowPassword] = useState(false);
+
+  const onSubmit = async (values) => {
+    console.log(values);
+  };
+
+  const validationSchema = yup.object({
+    email: yup.string().email().required("Required Email !!"),
+    password: yup
+      .string()
+      .required("Required Password !!"),
   });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const initialValues = {
+    email: "",
+    password: "",
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    adminLogin(formData)
-      .then((response) => {
-        if (response.status === 200) {
-          localStorage.setItem("adminJwt", response.data.token);
-          dispatch(updateAdminData(response.data.admin))
-          navigate("/admin");
-          notify(response.data.message);
-        }
-      })
-      .catch((response) => {
-        if (response.response.data.error) {
-          toast.error(response.response.data.error);
-        }
-      });
-  };
+  const formik = useFormik({
+    initialValues: initialValues,
+    validateOnBlur: true,
+    onSubmit,
+    validationSchema: validationSchema,
+  });
 
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="mt-10 uppercase text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            bookstack
+          </h2>
+          <h2 className="mt-2 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">
             Admin login
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-6"
-            action="#"
-            method="POST"
-          >
-            <div>
+        <div className="mt-10 sm:mx-auto">
+          <form className="space-y-6" onSubmit={formik.handleSubmit}>
+            <div className="h-[90px]">
               <label
                 htmlFor="email"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -94,18 +108,24 @@ export default function Login() {
               </label>
               <div className="mt-2">
                 <input
-                  onChange={handleChange}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formik.touched.email && formik.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 />
+              </div>
+              <div className="text-red-600 text-[13px] font-nunito">
+                  {
+                    formik.touched.email && formik.errors.email ?
+                    formik.errors.email : ''
+                  }
               </div>
             </div>
 
-            <div>
+            <div className="h-[90px]">
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
@@ -113,25 +133,23 @@ export default function Login() {
                 >
                   Password
                 </label>
-                <div className="text-sm">
-                  <Link
-                    href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
               </div>
               <div className="mt-2">
                 <input
-                  onChange={handleChange}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   id="password"
                   name="password"
-                  type="password"
+                  type={`${showPassword ? 'text' : 'password'}`}
                   autoComplete="current-password"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={`${formik.touched.password && formik.errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 />
+              </div>
+              <div className="text-red-600 text-[13px] font-nunito">
+                  {
+                    formik.touched.password && formik.errors.password ?
+                    formik.errors.password : ''
+                  }
               </div>
             </div>
 
