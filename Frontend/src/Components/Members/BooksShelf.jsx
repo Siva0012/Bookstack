@@ -79,9 +79,9 @@ function BooksShelf() {
           className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-10 gap-x-12 h-auto"
         >
           {bookData &&
-            bookData.map((bookData) => {
+            bookData.map((bookData , i) => {
               return (
-                <BookCard bookData={bookData} handleAddtoBag={handleAddtoBag} handleBookReserve={handleBookReserve} />
+                <BookCard key={i} bookData={bookData} handleAddtoBag={handleAddtoBag} handleBookReserve={handleBookReserve} />
               );
             })}
         </div>

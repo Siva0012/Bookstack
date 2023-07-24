@@ -1,39 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Modal from "../Modal/Modal";
 import { BiShow } from "react-icons/bi";
+import { BiBookReader } from "react-icons/bi";
 
 //member APIs
 import { getSingleBook } from "../../Utils/MemberApis";
 import GoogleBookViewer from "./GoogleBookViewer";
 
 function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
+  const readerRef = useRef()
   const memberId = useSelector((state) => state.memberData.value._id);
   const [showModal, setShowModal] = useState(true);
   const [preview, setPreview] = useState(false);
+  const [bookReader, setBookReader] = useState(false);
 
   const handlePreview = () => {
     setShowModal((prev) => !prev);
   };
+
+  const handleScroll = () => {
+    if(readerRef.current) {
+      readerRef.current.scrollIntoView(
+        {
+          behavior : 'smooth',
+          block : 'start'
+        }
+      )
+    }
+  }
 
   return (
     bookData && (
       <>
         <div className="mx-auto lg:flex lg:flex-row lg:justify-evenly lg:p-8 rounded-md bg-user-nav text-black lg:w-[800px] h-fit">
           <div className="lg:max-w-[1/2] lg:flex lg:flex-col lg:items-center lg:justify-center p-2">
-            {/* <div className=" lg:w-[260px] lg:h-[280px]">
-              <img
-                className="w-full h-full object-contain hover:bg-black/10 "
-                src={
-                  bookData.coverPhoto
-                    ? bookData.coverPhoto
-                    : "../../../public/public-images/image.jpg"
-                }
-                alt=""
-              />
-            </div> */}
-
             <div
               onMouseEnter={() => setPreview((prev) => !prev)}
               onMouseLeave={() => setPreview((prev) => !prev)}
@@ -61,6 +63,11 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
                bookData.availableStock <= 0 && <span className="lg:relative lg:left-[85%] lg:bottom-1">Available for reservation</span>
           } */}
             <h2 className="lg:text-3xl lg:mb-3">{bookData.title}</h2>
+            <span
+            onClick={handleScroll}
+             className="absolute right-4 top-7 text-2xl rounded-md hover:text-green-400 hover:shadow-lg hover:shadow-green-600">
+              <BiBookReader />
+            </span>
             <h2 className="lg:text-xl lg:mb-0.5 font-semibold text-black">
               {bookData.author}
             </h2>
@@ -111,7 +118,9 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             )}
           </div>
         </div>
-          <GoogleBookViewer isbn={bookData.isbn} showViewer={showModal} />
+        <div ref={readerRef} className="mt-10 w-[800px] mx-auto">
+          <GoogleBookViewer isbn={bookData.isbn} showViewer={showModal} hideReader={() => setBookReader(false)} showReader={() => setBookReader(true)} bookReader={bookReader} />
+        </div>
       </>
     )
   );

@@ -43,11 +43,10 @@ function NavDropdown() {
           className="absolute top-10 w-[175px] rounded-lg"
         >
           {catData &&
-            catData.map((catData) => {
+            catData.map((catData , i) => {
               return (
-                <>
                   <div
-                    key={catData._id}
+                    key={i}
                     className="w-full border-t-2 border-t-gray-300 py-1 hover:font-bold bg-user-nav text-user-from hover:bg-white"
                   >
                     <Link
@@ -57,7 +56,6 @@ function NavDropdown() {
                       {catData.name}
                     </Link>
                   </div>
-                </>
               );
             })}
         </div>
