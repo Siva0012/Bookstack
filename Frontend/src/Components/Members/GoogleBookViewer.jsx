@@ -53,9 +53,9 @@ function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookRe
           id="viewerCanvas"
         ></div>
       ) : (
-        <div className="w-[800px] h-[600px]">
+        <div className="w-[800px] h-[600px] bg-black/20">
           <div className="flex h-full justify-center items-center">
-            <h1 className="text-lg font-nunito font-semibold">Book preview is not available</h1>
+            <h1 className="text-xl font-nunito font-semibold">Book preview is not available</h1>
           </div>
         </div>
       )}
