@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
 //toaster
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 //Admin APIs
@@ -13,64 +13,45 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateAdminData } from "../../Redux/Admin/AdminDataSlice";
 
-const notify = (message) => {
-  return toast.success(message);
-};
-const toastError = (message) => {
-  return toast.error(message);
-};
-
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("adminJwt")) {
-  //     navigate("/admin");
-  //   }
-  // }, []);
-
-  // const [formData, setFormData] = useState({
-  //   email: "",
-  //   password: "",
-  // });
-
-  // const handleChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   adminLogin(formData)
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         localStorage.setItem("adminJwt", response.data.token);
-  //         dispatch(updateAdminData(response.data.admin));
-  //         navigate("/admin");
-  //         notify(response.data.message);
-  //       }
-  //     })
-  //     .catch((response) => {
-  //       if (response.response.data.error) {
-  //         toast.error(response.response.data.error);
-  //       }
-  //     });
-  // };
+  useEffect(() => {
+    if (localStorage.getItem("adminJwt")) {
+      navigate("/admin");
+    }
+  }, []);
 
   const [showPassword, setshowPassword] = useState(false);
 
   const onSubmit = async (values) => {
-    console.log(values);
+    try {
+      const response = await adminLogin(values);
+      if (response) {
+        localStorage.setItem("adminJwt", response.data.token);
+        dispatch(updateAdminData(response.data.admin));
+        toast.success(response.data.message)
+        navigate("/admin");
+      }
+    } catch (err) {
+      if (err.response.data.error) {
+        return toast.error(err.response.data.error);
+      }
+      if (err.response) {
+        console.log(err.response.data);
+        const formErrors = {};
+        err.response.data.forEach((error) => {
+          formErrors[error.path] = error.msg;
+        });
+        formik.setErrors(formErrors);
+      }
+    }
   };
 
   const validationSchema = yup.object({
     email: yup.string().email().required("Required Email !!"),
-    password: yup
-      .string()
-      .required("Required Password !!"),
+    password: yup.string().required("Required Password !!"),
   });
 
   const initialValues = {
@@ -114,14 +95,17 @@ export default function Login() {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className={`${formik.touched.email && formik.errors.email ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  className={`${
+                    formik.touched.email && formik.errors.email
+                      ? "ring-red-600"
+                      : ""
+                  } block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 />
               </div>
               <div className="text-red-600 text-[13px] font-nunito">
-                  {
-                    formik.touched.email && formik.errors.email ?
-                    formik.errors.email : ''
-                  }
+                {formik.touched.email && formik.errors.email
+                  ? formik.errors.email
+                  : ""}
               </div>
             </div>
 
@@ -134,22 +118,31 @@ export default function Login() {
                   Password
                 </label>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 relative">
                 <input
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   id="password"
                   name="password"
-                  type={`${showPassword ? 'text' : 'password'}`}
+                  type={`${showPassword ? "text" : "password"}`}
                   autoComplete="current-password"
-                  className={`${formik.touched.password && formik.errors.password ? 'ring-red-600' : ''} block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+                  className={`${
+                    formik.touched.password && formik.errors.password
+                      ? "ring-red-600"
+                      : ""
+                  } block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 />
+                <input 
+                value={showPassword}
+                onChange={() => setshowPassword((prev => !prev))}
+                className="absolute lg:w-[15px] top-[11px] right-1 lg:h-[15px] border-[2px] border-black/20 bg-white focus:ring-0"
+                type="checkbox"
+                 />
               </div>
               <div className="text-red-600 text-[13px] font-nunito">
-                  {
-                    formik.touched.password && formik.errors.password ?
-                    formik.errors.password : ''
-                  }
+                {formik.touched.password && formik.errors.password
+                  ? formik.errors.password
+                  : ""}
               </div>
             </div>
 

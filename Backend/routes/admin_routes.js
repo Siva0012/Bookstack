@@ -4,12 +4,13 @@ const adminController = require('../controllers/admin_controller')
 const path = require('path')
 const { verifyAdminToken } = require('../middlewares/Auth')
 const upload = require('../middlewares/multer')
+const validator = require('../middlewares/validators')
 const { uploadCloudinary, removeFromCloudinary } = require('../config/cloudinary')
 
 
 
 admin_router.get('/is-auth', verifyAdminToken, adminController.verifyAdmin)
-admin_router.post('/login', adminController.login)
+admin_router.post('/login', validator.adminLoginValidator , adminController.login)
 
 //protected routes
 

@@ -15,6 +15,7 @@ const jwt = require('jsonwebtoken')
 const { uploadToCloudinary, removeFromCloudinary } = require('../config/cloudinary')
 const { adminTokenGenerator } = require('../utils/jwt-generator')
 const mongoose = require('mongoose')
+const {validationResult} = require('express-validator')
 
 const verifyAdmin = async (req, res, next) => {
     try {
@@ -33,23 +34,31 @@ const verifyAdmin = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
-        const isExist = await Admin.findOne({ email: email })
-        if (isExist) {
-            if (password === isExist.password) {
-                const token = adminTokenGenerator({ adminId: isExist._id })
-                const admin = {
-                    _id : isExist._id,
-                    email : isExist.email,
-                    name : isExist.name
-                }
-                res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: admin })
-            } else {
-                res.status(401).json({ error: "Invalid Password" })
-            }
+        console.log(email , password);
+        const errors = validationResult(req)
+        console.log(errors);
+        if(!errors.isEmpty()) {
+            return res.status(404).json(errors.array())
         } else {
-            res.status(400).json({ error: "Invalid Email" })
+            const isExist = await Admin.findOne({ email: email })
+            if (isExist) {
+                if (password === isExist.password) {
+                    const token = adminTokenGenerator({ adminId: isExist._id })
+                    const admin = {
+                        _id : isExist._id,
+                        email : isExist.email,
+                        name : isExist.name
+                    }
+                    res.status(200).json({ message: `Admin signed in successfully !!`, token: token, admin: admin })
+                } else {
+                    res.status(401).json({ error: "Invalid Email or password" })
+                }
+            } else {
+                res.status(400).json({ error: "Invalid Email or password" })
+            }
         }
     } catch (err) {
+        console.log(err);
         next(err)
     }
 }

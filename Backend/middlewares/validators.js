@@ -10,3 +10,8 @@ exports.memberRegisterValidator = [
       check('phone').isMobilePhone().withMessage("Invalid Phone number format")
 ]
 
+exports.adminLoginValidator = [
+      check('email').isEmail().withMessage("Please enter a valid email").not().isEmpty(),
+      check('password' , 'Required password !!').not().isEmpty()
+]
+
