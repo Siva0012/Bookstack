@@ -22,18 +22,6 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
       <>
         <div className="mx-auto lg:flex lg:flex-row lg:justify-evenly lg:p-8 rounded-md bg-user-nav text-black lg:w-[800px] h-fit">
           <div className="lg:max-w-[1/2] lg:flex lg:flex-col lg:items-center lg:justify-center p-2">
-            {/* <div className=" lg:w-[260px] lg:h-[280px]">
-              <img
-                className="w-full h-full object-contain hover:bg-black/10 "
-                src={
-                  bookData.coverPhoto
-                    ? bookData.coverPhoto
-                    : "../../../public/public-images/image.jpg"
-                }
-                alt=""
-              />
-            </div> */}
-
             <div
               onMouseEnter={() => setPreview((prev) => !prev)}
               onMouseLeave={() => setPreview((prev) => !prev)}
@@ -57,9 +45,9 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             </div>
           </div>
           <div className="relative lg:max-w-[1/2] lg:p-5 shadow-[0px_0px_5px_rgba(0,0,0,0.1)]">
-            {/* {
+            {
                bookData.availableStock <= 0 && <span className="lg:relative lg:left-[85%] lg:bottom-1">Available for reservation</span>
-          } */}
+          }
             <h2 className="lg:text-3xl lg:mb-3">{bookData.title}</h2>
             <h2 className="lg:text-xl lg:mb-0.5 font-semibold text-black">
               {bookData.author}
@@ -111,7 +99,12 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             )}
           </div>
         </div>
-          <GoogleBookViewer isbn={bookData.isbn} showViewer={showModal} />
+        <div className="mt-10 w-[800px] mx-auto">
+          <GoogleBookViewer
+            isbn={bookData.isbn}
+            showViewer={showModal}
+          />
+        </div>
       </>
     )
   );
