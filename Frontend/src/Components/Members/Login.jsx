@@ -28,8 +28,10 @@ const initialValues = {
 
 //formik validation schema
 const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email format !").required("Requried !"),
-  password: Yup.string().required("Required !"),
+  email: Yup.string()
+    .email("Invalid email format !")
+    .required("Requried email !"),
+  password: Yup.string().required("Required password !"),
 });
 
 //message
@@ -51,8 +53,7 @@ export default function Login() {
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
-    onError: (error) =>
-      toastError(error),
+    onError: (error) => toastError(error),
   });
 
   useEffect(() => {
@@ -68,26 +69,24 @@ export default function Login() {
           }
         )
         .then((res) => {
-          setUserData(res.data)
+          setUserData(res.data);
         })
         .catch((err) => {
           toastError(err.response.data.error);
         });
     }
-    
   }, [user]);
-  
+
   useEffect(() => {
-    if(userData?.id) {
-        googleLogin(userData)
-          .then((response) => {
-            localStorage.setItem("userJwt", response.data.token);
-            dispatch(updateMemberData(response.data.member));
-            notify(response.data.message);
-            navigate("/");
-          })
-      }
-  },[userData])
+    if (userData?.id) {
+      googleLogin(userData).then((response) => {
+        localStorage.setItem("userJwt", response.data.token);
+        dispatch(updateMemberData(response.data.member));
+        notify(response.data.message);
+        navigate("/");
+      });
+    }
+  }, [userData]);
 
   //formik on submit
   const onSubmit = async (values) => {
@@ -117,21 +116,21 @@ export default function Login() {
           Sign in to your account
         </h2>
 
-        <div className="mx-auto mt-2">
+        <div className="flex flex-col items-center justify-center lg:w-[550px] lg:h-[500px] mt-2">
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={onSubmit}
           >
-            <Form className="space-y-6" action="" method="POST">
-              <div>
+            <Form className="" action="" method="POST">
+              <div className="h-[85px]">
                 <label
                   htmlFor="email"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Email address
                 </label>
-                <div className="mt-2">
+                <div className="mt-1">
                   <Field
                     id="email"
                     name="email"
@@ -141,14 +140,13 @@ export default function Login() {
                   />
                   <ErrorMessage name="email">
                     {(errMessage) => (
-                      <div className="text-red-600">{errMessage}</div>
+                      <div className="text-red-600 text-[10px] lg:text-[12px] font-semibold ">{errMessage}</div>
                     )}
                   </ErrorMessage>
                 </div>
               </div>
-
-              <div>
-                <div className="flex items-center justify-between">
+              <div className="h-[85px]">
+                <div className="flex items-center justify-between mt-3">
                   <label
                     htmlFor="password"
                     className="block text-sm font-medium leading-6 text-gray-900"
@@ -156,15 +154,12 @@ export default function Login() {
                     Password
                   </label>
                   <div className="text-sm">
-                    <Link
-                      href="#"
-                      className="font-semibold text-indigo-600 hover:text-indigo-500"
-                    >
+                    <Link className="font-semibold text-indigo-600 hover:text-indigo-500">
                       Forgot password?
                     </Link>
                   </div>
                 </div>
-                <div className="mt-2">
+                <div className="mt-1">
                   <Field
                     id="password"
                     name="password"
@@ -174,14 +169,14 @@ export default function Login() {
                   />
                   <ErrorMessage name="password">
                     {(errMessage) => (
-                      <div className="text-red-600">{errMessage}</div>
+                      <div className="text-red-600 text-[10px] lg:text-[12px] font-semibold ">{errMessage}</div>
                     )}
                   </ErrorMessage>
                 </div>
               </div>
               <button
                 type="submit"
-                className=" w-full rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="mt-3 w-full rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign in
               </button>
