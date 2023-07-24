@@ -10,8 +10,7 @@ import { toast } from "react-toastify";
 
 export default function Register() {
   const navigate = useNavigate();
-  const passwordRegex =
-    `/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/`;
+  const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
   const validationSchema = yup.object({
     userName: yup
       .string()
@@ -35,8 +34,24 @@ export default function Register() {
       .required("Required Phone number !!"),
   });
   const [showPassword, setShowPassword] = useState(false);
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
+    
+    try{
+      const response = await memberRegister(values)
+      if(response.data.memberCreated) {
+        toast.success("Please check and verify your mail !!")
+        navigate('/login')
+      }
+    }catch(err){
+      if(err.response.data) {
+        const formErrors = {}
+        err.response.data.forEach((error) => {
+          formErrors[error.path] = error.msg
+        })
+        console.log(formErrors);
+        formik.setErrors(formErrors)
+      }
+    }
   };
 
   const formik = useFormik({
@@ -50,51 +65,7 @@ export default function Register() {
     validateOnBlur: true,
     onSubmit,
     validationSchema: validationSchema,
-    
   });
-
-  console.log("errors", formik.errors);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      memberRegister(formData)
-        .then((res) => {
-          if (res.data.memberCreated) {
-            toast.success(
-              "Please check the Email and verify your Email address"
-            );
-            navigate("/login");
-            //add modal here!!!
-          }
-          // localStorage.setItem("userJwt", res.data.token);
-          // navigate("/");
-          // toast.success(`Signed in as "${res.data.member}"`);
-        })
-        .catch((err) => {
-          if (err.response.data.error) {
-            toast.error(err.response.data.error);
-          }
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   return (
     <>
@@ -125,9 +96,9 @@ export default function Register() {
                 />
                 {/* Error message */}
                 <div className="text-red-600 font-mono text-[12px] lg:text-[12px] font-semibold">
-                  {
-                    formik.touched.userName && formik.errors.userName ? formik.errors.userName : ''
-                  }
+                  {formik.touched.userName && formik.errors.userName
+                    ? formik.errors.userName
+                    : ""}
                 </div>
               </div>
             </div>
@@ -147,13 +118,12 @@ export default function Register() {
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-
                 />
                 {/* Error message */}
                 <div className="text-red-600 font-mono text-[12px] lg:text-[12px] font-semibold ">
-                  {
-                    formik.touched.email && formik.errors.email ? formik.errors.email : ''
-                  }
+                  {formik.touched.email && formik.errors.email
+                    ? formik.errors.email
+                    : ""}
                 </div>
               </div>
             </div>
@@ -167,19 +137,19 @@ export default function Register() {
               </label>
               <div className="mt-1">
                 <input
-                  type="number"
+                  type="text"
                   name="phone"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={formik.values.phone}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-
+                  pattern="[0-9]"
                 />
                 {/* Error message */}
                 <div className="text-red-600 font-mono text-[12px] lg:text-[12px] font-semibold ">
-                  {
-                    formik.touched.phone && formik.errors.phone ? formik.errors.phone : ''
-                  }
+                  {formik.touched.phone && formik.errors.phone
+                    ? formik.errors.phone
+                    : ""}
                 </div>
               </div>
             </div>
@@ -199,13 +169,12 @@ export default function Register() {
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-
                 />
                 {/* Error message */}
                 <div className="text-red-600 font-mono text-[12px] lg:text-[12px] font-semibold ">
-                  {
-                    formik.touched.password && formik.errors.password ? formik.errors.password : ''
-                  }
+                  {formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : ""}
                 </div>
                 <input
                   value={showPassword}
@@ -231,15 +200,14 @@ export default function Register() {
                   value={formik.values.confirmPassword}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-
                 />
                 {/* Error message */}
                 <div className="text-red-600 font-mono text-[12px] lg:text-[12px] font-semibold ">
-                  {
-                    formik.touched.confirmPassword && formik.errors.confirmPassword ? formik.errors.confirmPassword : ''
-                  }
+                  {formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword
+                    ? formik.errors.confirmPassword
+                    : ""}
                 </div>
-                
               </div>
             </div>
             <div className="w-full flex justify-between items-center">
