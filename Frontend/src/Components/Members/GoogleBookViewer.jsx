@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useState, useEffect } from "react";
 
-function GoogleBookViewer({ isbn , showViewer }) {
+function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookReader }) {
 
   // Obtain ISBN number of user's current book
   const ISBN_num = isbn;
@@ -11,13 +11,17 @@ function GoogleBookViewer({ isbn , showViewer }) {
   const [loaded, setLoaded] = useState(false);
   // Create alert message if book not found in Google Database
   function alertNotFound() {
-    alert("could not embed the book!");
+    hideReader()
+    setNoData(true)
   }
   // Add a Google Books script tag and event listener if the tag has loaded
   useEffect(() => {
     const scriptTag = document.createElement("script");
     scriptTag.src = "https://www.google.com/books/jsapi.js";
-    scriptTag.addEventListener("load", () => setLoaded(true));
+    scriptTag.addEventListener("load", () => {
+      setLoaded(true)
+      showReader()
+    });
     scriptTag.id = "google-script";
     document.body.appendChild(scriptTag);
   }, []);
@@ -42,14 +46,18 @@ function GoogleBookViewer({ isbn , showViewer }) {
   }, [loaded]);
   return (
     <div className={`${showViewer ? 'block' : 'hidden'} bg-black/10`}>
-      {loaded ? (
+      {loaded && bookReader ? (
         <div
           className="w-[800px] h-[600px]"
           ref={canvasRef}
           id="viewerCanvas"
         ></div>
       ) : (
-        "Script not loaded"
+        <div className="w-[800px] h-[600px]">
+          <div className="flex h-full justify-center items-center">
+            <h1 className="text-lg font-nunito font-semibold">Book preview is not available</h1>
+          </div>
+        </div>
       )}
     </div>
   );
