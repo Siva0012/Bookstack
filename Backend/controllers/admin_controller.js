@@ -292,24 +292,31 @@ const getSingleBook = async (req, res, next) => {
 
 const updateBook = async (req, res, next) => {
     try {
-        const { title, author, edition, category, isbn, stock, publisher, maximumReservation, description } = req.body
-        const bookId = req.params.bookId
-        const update = {
-            title: title,
-            author: author,
-            edition: edition,
-            category: category,
-            isbn: isbn,
-            stock: stock,
-            publisher: publisher,
-            maxReservations: maximumReservation,
-            description: description,
-        }
-        const bookUpdate = await Books.findByIdAndUpdate(bookId, update)
-        if (bookUpdate) {
-            res.status(200).json({ message: "book received", updated: true })
+        const errors = validationResult(req)
+        if(!errors.isEmpty()) {
+            console.log("validations" , errors);
+           return res.status(404).json(errors.array())
         } else {
-            res.status(404).json({ error: "Failed to update", updated: false })
+            const { title, author, edition, category, isbn, stock, publisher, maximumReservation, description } = req.body
+            const bookId = req.params.bookId
+            const update = {
+                title: title,
+                author: author,
+                edition: edition,
+                category: category,
+                isbn: isbn,
+                stock: stock,
+                publisher: publisher,
+                maxReservations: maximumReservation,
+                description: description,
+            }
+            const bookUpdate = await Books.findByIdAndUpdate(bookId, update)
+            console.log(bookUpdate);
+            if (bookUpdate) {
+                res.status(200).json({ message: "book received", updated: true })
+            } else {
+                res.status(404).json({ error: "Failed to update", updated: false })
+            }
         }
     } catch (err) {
         next(err)

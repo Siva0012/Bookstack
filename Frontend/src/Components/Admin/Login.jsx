@@ -31,7 +31,7 @@ export default function Login() {
       if (response) {
         localStorage.setItem("adminJwt", response.data.token);
         dispatch(updateAdminData(response.data.admin));
-        toast.success(response.data.message)
+        toast.success(response.data.message);
         navigate("/admin");
       }
     } catch (err) {
@@ -132,12 +132,12 @@ export default function Login() {
                       : ""
                   } block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
                 />
-                <input 
-                value={showPassword}
-                onChange={() => setshowPassword((prev => !prev))}
-                className="absolute lg:w-[15px] top-[11px] right-1 lg:h-[15px] border-[2px] border-black/20 bg-white focus:ring-0"
-                type="checkbox"
-                 />
+                <input
+                  value={showPassword}
+                  onChange={() => setshowPassword((prev) => !prev)}
+                  className="absolute lg:w-[15px] top-[11px] right-1 lg:h-[15px] border-[2px] border-black/20 bg-white focus:ring-0"
+                  type="checkbox"
+                />
               </div>
               <div className="text-red-600 text-[13px] font-nunito">
                 {formik.touched.password && formik.errors.password
