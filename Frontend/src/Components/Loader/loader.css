@@ -1,0 +1,47 @@
+:root {
+  --dark-color: #742100;
+  --light-color: #a3a3a3;
+}
+/* :root {
+  --dark-color: #b400ae;
+  --light-color: #eb7ae7;
+} */
+
+#dark {
+  fill: var(--dark-color);
+}
+
+#light {
+  fill: var(--light-color);
+}
+
+@keyframes slideAnimation {
+  0% {
+    transform: translateX(-100%);
+  }
+  25% {
+    transform: translateX(20%);
+  }
+  50% {
+    transform: translateX(50%);
+  }
+  75% {
+    transform: translateX(75%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+#dark2 {
+  animation: slideAnimation 5s infinite;
+}
+#light2 {
+  animation: slideAnimation 3s infinite;
+}
+#dark1 {
+  animation: slideAnimation 3s infinite;
+}
+#light1 {
+  animation: slideAnimation 4s infinite;
+}
