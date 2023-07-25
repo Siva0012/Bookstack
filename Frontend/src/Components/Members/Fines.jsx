@@ -25,7 +25,6 @@ function Fines() {
           setActiveCheckouts(response.data.activeCheckouts);
         }
       })
-      .catch((err) => console.log(err.response.data.error));
   }, []);
 
   useEffect(() => {

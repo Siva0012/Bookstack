@@ -18,8 +18,6 @@ module.exports.verifyAdminToken = async (req , res , next) => {
             })
         }
     }catch(err) {
-        console.log(err);
-        // res.json({message : "try catch err in verifyadmin token"})
     }
 }
 
@@ -33,7 +31,7 @@ module.exports.verifyMemberToken = async (req , res , next) => {
         } else {
             jwt.verify(token , process.env.JWT_USER_SECRET , (err , decoded) => {
                 if(err) {
-                    console.log("Error in jwt verification" , err);
+                    res.status(401).json({message : "Error in verification of jwt"})
                 } else {
                     req.memberId = decoded.memberId
                     next()
@@ -41,7 +39,5 @@ module.exports.verifyMemberToken = async (req , res , next) => {
             })
         }
     } catch(err) {
-        console.log(err);
-        // res.json({message : "try catch err in verifyuser token"})
     }
 }

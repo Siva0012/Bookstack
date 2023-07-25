@@ -14,12 +14,9 @@ function Form () {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log("calling axios");
         try{
             await axios.post('http://localhost:3000/register' , formData)
-            .catch(err => console.log(err , 'axios catching'))
         }catch(err) {
-            console.log(err);
         }
     }
 

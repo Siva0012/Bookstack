@@ -31,7 +31,6 @@ function ChatPage() {
       setOnlineUsers(users);
     });
         socket.current.on("receive-message", (data) => {
-        console.log("meesage received at chatpage", data);
         setReceivedMessages(data);
         handleReceivedMessages(data , currentChat)
       });
@@ -53,14 +52,6 @@ function ChatPage() {
   }, [sendMessage]);
 
     //receive message from the socket server
-    // useEffect(() => {
-    //   socket.current.on("receive-message", (data) => {
-    //     console.log("meesage received at chatpage", data);
-    //     setReceivedMessages(data);
-    //     handleReceivedMessages(data)
-    //   });
-    // }, [currentChat]);
-
 
   //handle received messages
   const handleReceivedMessages = async (data , currentChat) => {
@@ -68,10 +59,8 @@ function ChatPage() {
     const {chatId} = data
     setUnreadMessages( (prevState) => {
       const currentChatId = currentChat?._id.toString()
-      console.log("current on functon" , currentChatId);
       if(prevState[chatId]) {
         if(prevState[chatId] && currentChatId !== chatId.toString()) {
-          console.log("firssttttsttttttttttttt" , currentChatId);
           return {
             ...prevState,
             [chatId] : prevState[chatId] + 1

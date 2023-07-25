@@ -34,9 +34,7 @@ const verifyAdmin = async (req, res, next) => {
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
-        console.log(email , password);
         const errors = validationResult(req)
-        console.log(errors);
         if(!errors.isEmpty()) {
             return res.status(404).json(errors.array())
         } else {
@@ -58,7 +56,6 @@ const login = async (req, res, next) => {
             }
         }
     } catch (err) {
-        console.log(err);
         next(err)
     }
 }
@@ -89,7 +86,6 @@ const blockOrUnblockMember = async (req, res, next) => {
             message = "You are Blocked by the admin"
         }
         const today = new Date()
-        console.log("member id at block or unblock" , memberId);
         const notification = {
             notificationType: 'Block',
             notificationDate: today,
@@ -147,14 +143,6 @@ const addBook = async (req, res, next) => {
         next(err)
     }
 }
-
-// const addGoogleBook = async (req, res, next) => {
-//     try {
-//         res.status(201).json({ message: 'book created' })
-//     } catch (err) {
-//         console.log(err);
-//     }
-// }
 
 const getSingleMember = async (req, res, next) => {
     try {
@@ -238,63 +226,10 @@ const getSingleBook = async (req, res, next) => {
     }
 }
 
-// const updateBook = async (req, res, next) => {
-//     try {
-//         const bookId = req.params.bookId
-//         const bookData = req.body
-
-//         //destructure inpuit sanitization
-//         const title = req.body.title
-//         const author = req.body.author
-//         const edition = req.body.edition
-//         const category = req.body.category._id || req.body.category
-//         const isbn = req.body.isbn
-//         const stock = req.body.stock
-//         const publisher = req.body.publisher
-//         const description = req.body.description
-//         const coverPhoto = req.file.path
-
-//         // deleting image from cloudinary
-//         const existingBookData = await Books.findOne({ _id: bookId })
-//         console.log("existing book", existingBookData);
-//         const existingPublicId = existingBookData.publicId
-//         const response = await removeFromCloudinary(existingPublicId)
-
-//         // uploading new image to cloudinary
-//         const data = await uploadToCloudinary(coverPhoto, "book-cover-images")
-
-//         // upating database
-//         const update = {
-//             title: title,
-//             author: author,
-//             edition: edition,
-//             category: category,
-//             isbn: isbn,
-//             stock: stock,
-//             publisher: publisher,
-//             description: description,
-//             coverPhoto: data.url,
-//             publicId: data.public_id
-//         }
-//         //micro modules for making code simpel
-//         const updateResponse = await Books.findOneAndUpdate({ _id: bookId }, update, { new: true })
-//         console.log("update response at server", updateResponse)
-//         if (updateResponse) {
-//             res.status(200).json({ message: "Updated book", updateBook: updateResponse })
-//         } else {
-//             res.status(404).json({ message: "Update failed" })
-//         }
-//     } catch (err) {
-//         console.log(err);
-//         next()
-//     }
-// }
-
 const updateBook = async (req, res, next) => {
     try {
         const errors = validationResult(req)
         if(!errors.isEmpty()) {
-            console.log("validations" , errors);
            return res.status(404).json(errors.array())
         } else {
             const { title, author, edition, category, isbn, stock, publisher, maximumReservation, description } = req.body
@@ -311,7 +246,6 @@ const updateBook = async (req, res, next) => {
                 description: description,
             }
             const bookUpdate = await Books.findByIdAndUpdate(bookId, update)
-            console.log(bookUpdate);
             if (bookUpdate) {
                 res.status(200).json({ message: "book received", updated: true })
             } else {
@@ -508,14 +442,11 @@ const updateBannerContent = async (req, res, next) => {
 
 const getLenderHistory = async (req, res, next) => {
     try {
-        // console.log("lenderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrriiiiiiiiiiiiiiirrrrrrrrrrrrrrrrrrrrr");
         const page = req.params.page ? parseInt(req.params.page) : 1
         const limit = req.params.limit ? parseInt(req.params.limit) : 10
-        console.log("page and limit" , page , limit);
         const skip = (page - 1) * limit
         const lenderCount = await LenderHistory.countDocuments()
         const lenderData = await LenderHistory.find({}).populate('member').populate('book').select('-password').sort({ checkoutDate: -1 }).skip(skip).limit(limit)
-        // console.log("lenderdata" , lenderData);
         lenderData ? res.status(200).json({ message: "lender history", lenderData: lenderData , lenderCount }) :
             res.status(404).json({ error: "no lender data" })
 
@@ -774,7 +705,6 @@ const getLenderData = async (req , res , next) => {
             res.status(404).json({error : "couldn't find lenderdata"})
         }
     }catch(err) {
-        console.log(err);
         next(err)
     }
 }
@@ -800,7 +730,6 @@ const downloadLenderData = async (req , res, next) => {
             res.status(404).json({error : "Couldn't find lender data"})
         }
     }catch(err) {
-        console.log(err);
         next(err)
     }
 }
@@ -843,7 +772,6 @@ const getBookWiseCheckoutData = async (req , res , next) => {
         if(bookData) return res.status(200).json({message : 'book data' , bookData})
         else return res.status(404).json({error : "no data found"})
     }catch(err) {
-        console.log(err);
         next(err)
     }
 }

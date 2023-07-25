@@ -26,7 +26,6 @@ function BooksTable() {
         setBooks(response.data.books)
       }
     }catch(err) {
-      console.log(err);
     }
   }
 

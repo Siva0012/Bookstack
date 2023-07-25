@@ -48,7 +48,6 @@ export default function Register() {
         err.response.data.forEach((error) => {
           formErrors[error.path] = error.msg
         })
-        console.log(formErrors);
         formik.setErrors(formErrors)
       }
     }

@@ -19,7 +19,6 @@ function SingleMember() {
         .then((response) => {
           setMemberData(response.data.memberData);
         })
-        .catch((err) => console.log(err));
     }
   }, [memberData]);
 

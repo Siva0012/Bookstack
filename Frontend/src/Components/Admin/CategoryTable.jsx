@@ -13,12 +13,10 @@ function CategoryTable() {
     const getCat = async () => {
         getCategories()
             .then((response) => {
-                console.log(response.data.catData);
                 if (response.data.catData) {
                     setCat(response.data.catData)
                 }
             })
-            .catch(err => console.log(err))
     }
 
     useEffect(() => {

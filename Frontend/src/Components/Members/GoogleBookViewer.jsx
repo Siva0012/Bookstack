@@ -12,7 +12,6 @@ function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookRe
   // Create alert message if book not found in Google Database
   function alertNotFound() {
     hideReader()
-    setNoData(true)
   }
   // Add a Google Books script tag and event listener if the tag has loaded
   useEffect(() => {
@@ -31,19 +30,17 @@ function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookRe
     else {
       if (window.viewer) {
         let viewer = new window.google.books.DefaultViewer(canvasRef.current);
-        console.log("first finished" , viewer);
         viewer.load("ISBN:" + ISBN_num, alertNotFound); 
       } else {
         window.google.books.load();
         window.google.books.setOnLoadCallback(() => {
           let viewer = new window.google.books.DefaultViewer(canvasRef.current);
           window.viewer = viewer;
-          console.log("loading finished" , viewer);
           viewer.load("ISBN:" + ISBN_num, alertNotFound);
         });
       }
     }
-  }, [loaded]);
+  }, [loaded , ISBN_num]);
   return (
     <div className={`${showViewer ? 'block' : 'hidden'} bg-black/10`}>
       {loaded && bookReader ? (

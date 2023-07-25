@@ -23,15 +23,12 @@ function ViewSingleBook() {
         const data = response.data.bookData;
         setBookData(response.data.bookData);
         setInputValues({ ...data, category: data.category._id });
-        console.log("sdfiojsdiofjasdifjsd", response.data.bookData);
       })
-      .catch((err) => console.log(err));
 
     getCategories()
       .then((response) => {
         setCats(response.data.catData);
       })
-      .catch((err) => console.log(err));
   }, []);
 
   const handleEdit = () => {
@@ -67,14 +64,11 @@ function ViewSingleBook() {
     formData.append("coverPhoto", inputValues.coverPhoto);
     updateBook(bookId, formData)
       .then((response) => {
-        console.log("response from update book function", response);
         if (response.data.updateBook) {
           const data = response.data.updateBook;
           setBookData({ ...data, category: data.category._id });
-          console.log("this is bookdata after submission", bookData);
         }
       })
-      .catch((err) => console.log(err));
   };
 
   return (

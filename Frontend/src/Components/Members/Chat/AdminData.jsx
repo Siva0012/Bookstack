@@ -12,7 +12,6 @@ function AdminData({ checkOnlineStatus }) {
     });
   }, []);
 
-  console.log("admindata", admin);
 
   return (
     // <div className="flex relative items-center mb-2 py-2 px-3 bg-[#471b00]/30 text-white rounded-xl">

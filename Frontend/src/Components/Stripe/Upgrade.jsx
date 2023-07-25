@@ -25,7 +25,6 @@ export default function Upgrade() {
       .then((res) => {
         setClientSecret(res.data.clientSecret);
       })
-      .catch((err) => console.log(err));
   }, []);
 
   const appearance = {

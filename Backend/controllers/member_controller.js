@@ -49,10 +49,7 @@ const verifyMember = async (req, res, next) => {
 const register = async (req, res, next) => {
     try {
         const { userName, email, password, phone } = req.body
-        // console.log(userName , email , password , phone , "form");
         const errors = validationResult(req)
-        console.log(errors);
-
         if(!errors.isEmpty()) {
             return res.status(404).json(errors.array())
         } else {
@@ -170,7 +167,6 @@ const login = async (req, res, next) => {
 const googleLogin = async (req, res, next) => {
     try {
         const { email, id, name } = req.body
-        console.log(email , id , name , "req body");
         const isExists = await Members.findOne({ email: email })
         if (isExists) {
             const payLoad = {

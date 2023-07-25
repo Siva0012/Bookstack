@@ -71,7 +71,6 @@ function BookBag() {
           setMember(response.data.memberData);
         }
       } catch (err) {
-        console.log(err);
       }
     }
     getData();

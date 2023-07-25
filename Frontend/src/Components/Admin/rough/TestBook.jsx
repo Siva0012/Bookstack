@@ -14,9 +14,8 @@ function TestBook() {
             axios.get(
                 `https://www.googleapis.com/books/v1/volumes?q=${values}&key=${apiKey}`
             ).then((response) => {
-                console.log(response.data.items[0]);
                 setBooks(response.data.items)
-            }).catch(err => console.log("Axios error" , err))
+            })
         }
     }
 

@@ -21,7 +21,6 @@ export default function Payment() {
       .then((res) => {
         setClientSecret(res.data.clientSecret);
       })
-      .catch((err) => console.log(err));
   }, []);
 
   const appearance = {

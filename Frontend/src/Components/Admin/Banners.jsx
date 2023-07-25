@@ -65,7 +65,6 @@ function Banners() {
         setBanners(response.data.bannerData);
       }
     } catch (err) {
-      console.log(err);
     }
   }, []);
 

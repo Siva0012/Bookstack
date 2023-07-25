@@ -31,7 +31,6 @@ function AddCategory() {
             //     throw new Error(response.data.error)
             // }
         }catch(err) {
-            console.log("error" , err);
             toast.error(err.response.data.error)
         }
     }
