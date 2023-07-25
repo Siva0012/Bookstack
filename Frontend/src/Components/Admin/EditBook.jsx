@@ -38,7 +38,6 @@ function EditBook() {
     category: Yup.string().required("Required"),
     isbn: Yup.string().required("Required"),
     stock: Yup.string().required("Required"),
-    publisher: Yup.string().required("Required"),
     maximumReservation: Yup.string().required("Required"),
     description: Yup.string().required("Required"),
   });

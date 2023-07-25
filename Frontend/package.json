@@ -10,11 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
-    "@hookform/devtools": "^4.3.1",
-    "@mantine/core": "^6.0.15",
-    "@material-tailwind/react": "^2.0.3",
     "@react-oauth/google": "^0.11.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@stripe/react-stripe-js": "^2.1.1",
@@ -23,7 +19,6 @@
     "chart.js": "^4.3.0",
     "dotenv": "^16.1.4",
     "firebase": "^9.22.2",
-    "flowbite": "^1.6.5",
     "formik": "^2.4.1",
     "moment": "^2.29.4",
     "multer": "^1.4.5-lts.1",
@@ -32,7 +27,6 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.44.3",
     "react-icons": "^4.9.0",
     "react-input-emoji": "^5.1.1",
     "react-loading-skeleton": "^3.3.1",
