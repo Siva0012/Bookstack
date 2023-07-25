@@ -8,13 +8,14 @@ import { TiTick } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 
 //member APIs
-import { addToBookBag , reserveBook } from "../../Utils/MemberApis";
+import { addToBookBag, reserveBook } from "../../Utils/MemberApis";
 import { toast } from "react-toastify";
 import BookCard from "../Cards/BookCard";
 
 function BooksShelf() {
   const [bookData, setBookdata] = useState([]);
   const [catData, setCatdata] = useState({});
+  const [update, setUpdate] = useState(false);
   const { catId } = useParams();
   const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ function BooksShelf() {
       .then((response) => {
         if (response.data.message) {
           toast.success(response.data.message);
+          setUpdate((prev) => !prev);
         }
       })
       .catch((err) => {
@@ -32,24 +34,25 @@ function BooksShelf() {
 
   const handleBookReserve = (bookId) => {
     reserveBook(bookId)
-    .then((response) => {
-      if(response.data.message) {
-        toast.success(response.data.message)
-      }
-    })
-    .catch((err) => {
-      if(err.response.data.error) {
-        toast.error(err.response.data.error)
-      }
-    })
-  }
+      .then((response) => {
+        if (response.data.message) {
+          toast.success(response.data.message);
+          setUpdate((prev) => !prev);
+        }
+      })
+      .catch((err) => {
+        if (err.response.data.error) {
+          toast.error(err.response.data.error);
+        }
+      });
+  };
 
   useEffect(() => {
-    getBooksByCategory(catId)
-      .then((response) => {
-        setBookdata(response.data.bookData);
-      })
-  }, [catId , handleAddtoBag , handleBookReserve]);
+    console.log("book shelf");
+    getBooksByCategory(catId).then((response) => {
+      setBookdata(response.data.bookData);
+    });
+  }, [catId, update]);
 
   return (
     <>
@@ -78,9 +81,14 @@ function BooksShelf() {
           className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-10 gap-x-12 h-auto"
         >
           {bookData &&
-            bookData.map((bookData , i) => {
+            bookData.map((bookData, i) => {
               return (
-                <BookCard key={i} bookData={bookData} handleAddtoBag={handleAddtoBag} handleBookReserve={handleBookReserve} />
+                <BookCard
+                  key={i}
+                  bookData={bookData}
+                  handleAddtoBag={handleAddtoBag}
+                  handleBookReserve={handleBookReserve}
+                />
               );
             })}
         </div>

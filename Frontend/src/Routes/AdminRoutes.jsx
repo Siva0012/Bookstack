@@ -5,8 +5,10 @@ import { Route, Router, Routes, useNavigate } from "react-router-dom";
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import AdminLayout from "../Layout/AdminLayout";
 import LoaderComp from "../Components/Loader/LoaderComp";
+import AdminLogin from '../Pages/Admin/Login'
+import ErrorPage from "../Pages/Admin/ErrorPage";
+import InternalErrorPage from "../Pages/Admin/InternalErrorPage";
 
-const AdminLogin = lazy(() => import("../Pages/Admin/Login"));
 const AdminHome = lazy(() => import("../Pages/Admin/Home"));
 const AdminBooks = lazy(() => import("../Pages/Admin/Books"));
 const MembersPage = lazy(() => import("../Pages/Admin/Members"));
@@ -19,11 +21,7 @@ const SingleBookPage = lazy(() => import("../Pages/Admin/SingleBookPage"));
 const LenderHistory = lazy(() => import("../Pages/Admin/LenderHistory"));
 const BannersPage = lazy(() => import("../Pages/Admin/BannersPage"));
 const EditBookPage = lazy(() => import("../Pages/Admin/EditBookPage"));
-const ErrorPage = lazy(() => import("../Pages/Admin/ErrorPage"));
 const ChatPage = lazy(() => import("../Pages/Admin/ChatPage"));
-const InternalErrorPage = lazy(() =>
-  import("../Pages/Admin/InternalErrorPage")
-);
 
 function AdminRoutes() {
   return (
@@ -31,7 +29,6 @@ function AdminRoutes() {
       <Route path="/login" element={<AdminLogin />} />
       <Route path="*" element={<ErrorPage />} />
       <Route path="/error" element={<InternalErrorPage />} />
-      <Route path="/loader" element={<LoaderComp />} />
       <Route
         element={<ProtectedRoutes role={"admin"} route={"/admin/login"} />}
       >
