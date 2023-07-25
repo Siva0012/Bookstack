@@ -4,7 +4,7 @@ import LoginComp from '../../Components/Admin/Login'
 
 function LoginPage() {
   return (
-    <div>
+    <div className='w-screen h-screen'>
       <LoginComp />
     </div>
   )

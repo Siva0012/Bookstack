@@ -4,12 +4,13 @@ const adminController = require('../controllers/admin_controller')
 const path = require('path')
 const { verifyAdminToken } = require('../middlewares/Auth')
 const upload = require('../middlewares/multer')
+const validator = require('../middlewares/validators')
 const { uploadCloudinary, removeFromCloudinary } = require('../config/cloudinary')
 
 
 
 admin_router.get('/is-auth', verifyAdminToken, adminController.verifyAdmin)
-admin_router.post('/login', adminController.login)
+admin_router.post('/login', validator.adminLoginValidator , adminController.login)
 
 //protected routes
 
@@ -23,7 +24,7 @@ admin_router.get('/categories', verifyAdminToken, adminController.getCategories)
 admin_router.get('/books', verifyAdminToken, adminController.getBooks)
 admin_router.get('/single-book/:bookId', verifyAdminToken, adminController.getSingleBook)
 // admin_router.post('/update-book/:bookId', verifyAdminToken, upload.single('coverPhoto'), adminController.updateBook)
-admin_router.patch('/update-book/:bookId' , verifyAdminToken , adminController.updateBook)
+admin_router.patch('/update-book/:bookId' , validator.editBookDataValidator ,verifyAdminToken , adminController.updateBook)
 admin_router.patch('/update-book-image/:bookId' , verifyAdminToken , upload.single('coverPhoto') , adminController.updateBookImage)
 admin_router.get('/remove-book/:bookId/:isListed', verifyAdminToken, adminController.removeBook)
 admin_router.post('/add-banner' , verifyAdminToken , upload.single('bannerPhoto') , adminController.addBanner)

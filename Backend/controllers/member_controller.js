@@ -27,6 +27,8 @@ const { v4: uuidv4 } = require('uuid');
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
 const { default: mongoose } = require('mongoose')
+const {validationResult} = require('express-validator')
+
 
 //member apis
 const verifyMember = async (req, res, next) => {
@@ -46,45 +48,54 @@ const verifyMember = async (req, res, next) => {
 
 const register = async (req, res, next) => {
     try {
-        const { name, email, password, phone } = req.body
-        const memberResponse = await Members.findOne({ email: email })
-        if (memberResponse) {
-            const isExists = await bcrypt.compare(password, memberResponse.password)
-            if (isExists) {
-                return res.status(404).json({ error: "The user has already registered" })
-            }
-        } else {
-            const encryptedPassword = await bcrypt.hash(password, 10)
-            const dateOfJoin = new Date()
-            const members = new Members({
-                name: name,
-                email: email,
-                phone: phone,
-                password: encryptedPassword,
-                dateOfJoin: dateOfJoin
-            })
-            const member = await members.save()
-            if (member) {
-                const verificationToken = await new Tokens(
-                    {
-                        memberId: member._id,
-                        token: crypto.randomBytes(32).toString('hex')
-                    }
-                ).save()
-                if (verificationToken) {
-                    const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
-                    const message = ` <p>Dear ${member.name},</p>
-                    <p>Thank you for registering with our website. To verify your email address, please click on the following link:</p>
-                    <p><a href="${url}"</a></p>
-                    <p>If you did not register with our website, please disregard this email.</p>
-                    <p>Best regards,</p>
-                    <p>Bookstack</p>`
-                    const sendMail = await sendEmail(member.email, "Verify Email", message)
-                    res.status(200).json({ message: "Created member successfully", memberCreated: true })
-                }
-            }
+        const { userName, email, password, phone } = req.body
+        // console.log(userName , email , password , phone , "form");
+        const errors = validationResult(req)
+        console.log(errors);
 
+        if(!errors.isEmpty()) {
+            return res.status(404).json(errors.array())
+        } else {
+            const memberResponse = await Members.findOne({ email: email })
+            if (memberResponse) {
+                const isExists = await bcrypt.compare(password, memberResponse.password)
+                if (isExists) {
+                    return res.status(404).json({ error: "The user has already registered" })
+                }
+            } else {
+                const encryptedPassword = await bcrypt.hash(password, 10)
+                const dateOfJoin = new Date()
+                const members = new Members({
+                    name: userName,
+                    email: email,
+                    phone: phone,
+                    password: encryptedPassword,
+                    dateOfJoin: dateOfJoin
+                })
+                const member = await members.save()
+                if (member) {
+                    const verificationToken = await new Tokens(
+                        {
+                            memberId: member._id,
+                            token: crypto.randomBytes(32).toString('hex')
+                        }
+                    ).save()
+                    if (verificationToken) {
+                        const url = `${process.env.FRONT_END_URL}/${member._id}/verify/${verificationToken.token}`
+                        const message = ` <p>Dear ${member.name},</p>
+                        <p>Thank you for registering with our website. To verify your email address, please click on the following link:</p>
+                        <p><a href="${url}"</a></p>
+                        <p>If you did not register with our website, please disregard this email.</p>
+                        <p>Best regards,</p>
+                        <p>Bookstack</p>`
+                        const sendMail = await sendEmail(member.email, "Verify Email", message)
+                        res.status(200).json({ message: "Created member successfully", memberCreated: true })
+                    }
+                }
+    
+            }
         }
+        
 
     } catch (err) {
         next(err)
