@@ -43,7 +43,7 @@ function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookRe
   }, [loaded , ISBN_num]);
   return (
     <div className={`${showViewer ? 'block' : 'hidden'} bg-black/10`}>
-      {loaded && bookReader ? (
+      {loaded ? (
         <div
           className="w-[800px] h-[600px]"
           ref={canvasRef}
