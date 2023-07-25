@@ -1,0 +1,43 @@
+:root {
+  --dark-color: #b400ae;
+  --light-color: #eb7ae7;
+}
+
+#dark {
+  fill: var(--dark-color);
+}
+
+#light {
+  fill: var(--light-color);
+}
+
+@keyframes slideAnimation {
+  0% {
+    transform: translateX(-100%);
+  }
+  25% {
+    transform: translateX(20%);
+  }
+  50% {
+    transform: translateX(75%);
+  }
+  75% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+#dark2 {
+  animation: slideAnimation 4s infinite;
+}
+#light2 {
+  animation: slideAnimation 2s infinite;
+}
+#dark1 {
+  animation: slideAnimation 2s infinite;
+}
+#light1 {
+  animation: slideAnimation 4s infinite;
+}

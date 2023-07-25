@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect , lazy , Suspense } from "react";
 import { Route, Router, Routes, useNavigate } from "react-router-dom";
 
-//elements
+//components
+import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
+import MemberLayout from "../Layout/MemberLayout";
+
 import Home from "../Pages/Members/Home";
 import RegisterPage from "../pages/Members/register";
 import LoginPage from "../Pages/Members/Login";
 import Profile from "../Pages/Members/Profile";
 import Books from "../Pages/Members/Books";
 import MembeshipPage from "../Pages/Members/MembeshipPage";
-import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
-import MemberLayout from "../Layout/MemberLayout";
 import PaymentPage from "../Pages/Members/PaymentPage";
 import BookBagPage from "../Pages/Members/BookBagPage";
 import UpgradePage from "../Pages/Members/UpgradePage";
