@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Test() {
+function Navbar() {
     return (
         <>
             <div id='color-div' className='py-4 px-3 bg-[#7E7C73]'>
@@ -32,4 +32,4 @@ function Test() {
     )
 }
 
-export default Test
+export default Navbar

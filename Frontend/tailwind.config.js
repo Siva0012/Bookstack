@@ -22,9 +22,9 @@ export default {
         "user-sign-from": "#DFC4B3",
         "user-sign-to": "#9C6846",
         "user-footer": "#73482C",
-        "user-profile-from" : "#DFC4B3",
-        "user-profile-to" : "#9C6846",
-        "user-sidebar-menu" : "#AF7752"
+        "user-profile-from": "#DFC4B3",
+        "user-profile-to": "#9C6846",
+        "user-sidebar-menu": "#AF7752"
       },
       fontFamily: {
         'nunito': ["nunito", "sans-serif"],
@@ -35,17 +35,13 @@ export default {
         'logo': "2rem",
         'nav-element': "1.5rem"
       },
-      minWidth : {
-        "home-content" : "500px"
+      minWidth: {
+        "home-content": "500px"
       },
-      listStyleType : {
-        "list-default" : "default"
+      listStyleType: {
+        "list-default": "default"
       }
     }
-  },
-  plugins: [
-    require('flowbite/plugin')
-  ],
-
+  }
 }
 

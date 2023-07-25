@@ -1,12 +1,12 @@
 const express = require('express')
 const cors = require('cors')
-const {connectToDatabase} = require('./config/mongoose')
+const { connectToDatabase } = require('./config/mongoose')
 const app = express()
-const {updateExpiredCheckoutStatus} = require('./utils/checkout_status_updator')
-const {updateFines} = require('./utils/fine_updator')
-const {preferenceUpdater} = require('./utils/preference_updater')
+const { updateExpiredCheckoutStatus } = require('./utils/checkout_status_updator')
+const { updateFines } = require('./utils/fine_updator')
+const { preferenceUpdater } = require('./utils/preference_updater')
 const server = require('http').createServer(app)
-const {configureSocket} = require('./config/socket')
+const { configureSocket } = require('./config/socket')
 const erroHandler = require('./middlewares/ErrorHandler')
 
 //socket setup
@@ -28,26 +28,26 @@ const message_router = require('./routes/message_router')
 
 //express parsers
 app.use(express.json())
-app.use(express.urlencoded({extended : true}))
+app.use(express.urlencoded({ extended: true }))
 
 //cors
 app.use(cors(
     {
-        origin : [process.env.FRONT_END_URL], //env
-        methods : ["GET" , "POST" , "PATCH"],
-        credentials : true
+        origin: [process.env.FRONT_END_URL], //env
+        methods: ["GET", "POST", "PATCH"],
+        // credentials : true
     }
 ))
 
 //mounting routes to the application
-app.use('/' , member_router)
-app.use('/admin' , adimn_router)
-app.use('/chat' , chat_router)
-app.use('/message' , message_router)
+app.use('/', member_router)
+app.use('/admin', adimn_router)
+app.use('/chat', chat_router)
+app.use('/message', message_router)
 
 //error handler
 app.use(erroHandler)
 
-server.listen(3000 , () =>{
+server.listen(3000, () => {
     console.log("server has started at port 3000");
 })

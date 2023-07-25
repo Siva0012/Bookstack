@@ -7,9 +7,9 @@ const configureSocket = (server) => {
 
       io = socket(server, {
             cors: {
-                  origin: process.env.FRONT_END_URL,
+                  origin: [process.env.FRONT_END_URL],
                   methods: ['GET', 'POST', 'PATCH'],
-                  credentials: true
+                  // credentials : true
             }
       })
 
@@ -27,22 +27,22 @@ const configureSocket = (server) => {
                               }
                         )
                   }
-                  io.emit('get-users' , activeUsers)
+                  io.emit('get-users', activeUsers)
             })
 
             //send message
-            socket.on("send-message" , (data) => {
-                  const {receiverId} = data
+            socket.on("send-message", (data) => {
+                  const { receiverId } = data
                   //getting the user
                   const user = activeUsers.find((user) => user.userId === receiverId)
                   //sending message to the particular user using the socketid 
-                  if(user) {
-                        io.to(user.socketId).emit("receive-message" , data)
+                  if (user) {
+                        io.to(user.socketId).emit("receive-message", data)
                   }
             })
 
             //disconnect
-            socket.on("disconnect" , () => {
+            socket.on("disconnect", () => {
                   activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
                   io.emit('get-users', activeUsers)
             })
@@ -54,13 +54,13 @@ const getSocketInstance = () => {
       return io
 }
 
-const sendNotificationToUser = (userId , notificationData) => {
+const sendNotificationToUser = (userId, notificationData) => {
       const memberId = userId.toString()
       const user = activeUsers.find((user) => user.userId === memberId)
-      if(user) {
-            const {socketId} = user
-            io.to(socketId).emit('receive-notification' , notificationData)
+      if (user) {
+            const { socketId } = user
+            io.to(socketId).emit('receive-notification', notificationData)
       }
 }
 
-module.exports = {configureSocket , getSocketInstance , sendNotificationToUser}
+module.exports = { configureSocket, getSocketInstance, sendNotificationToUser }

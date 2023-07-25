@@ -142,7 +142,6 @@ export default function Register() {
                   value={formik.values.phone}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  pattern="[0-9]"
                 />
                 {/* Error message */}
                 <div className="text-red-600 font-mono text-[12px] lg:text-[12px] font-semibold ">

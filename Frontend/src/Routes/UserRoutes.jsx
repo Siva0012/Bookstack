@@ -10,7 +10,6 @@ import Books from "../Pages/Members/Books";
 import MembeshipPage from "../Pages/Members/MembeshipPage";
 import ProtectedRoutes from "../ProtectedRoutes/ProtectedRoutes";
 import MemberLayout from "../Layout/MemberLayout";
-import { Modal } from "flowbite";
 import PaymentPage from "../Pages/Members/PaymentPage";
 import BookBagPage from "../Pages/Members/BookBagPage";
 import UpgradePage from "../Pages/Members/UpgradePage";
@@ -34,7 +33,6 @@ function UserRoutes() {
       <Route path="/error" element={<InternalErrorPage />} />
       <Route element={<ProtectedRoutes role={"user"} route={"/login"} />}>
         <Route element={<MemberLayout />}>
-          <Route path="/test" element={<Modal />} />
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/books/:catId" element={<Books />} />
