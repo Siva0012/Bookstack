@@ -36,12 +36,10 @@ function Nav() {
   const [newNotification, setNewNotification] = useState(null);
 
   useEffect(() => {
-    console.log("nav effect");
     // socket.current = io(baseUrl);
     socket.current = socketInstance
     socket.current.emit("add-new-user", memberId);
     socket.current.on("receive-notification", (notificationData) => {
-      console.log("notification data", notificationData);
       setNewNotification(true);
       setNotificationData(notificationData);
     });
@@ -74,7 +72,6 @@ function Nav() {
   const handleSearch = (e) => {
     setSearchKey(e.target.value);
     searchBooks(searchKey).then((response) => {
-      console.log(response.data.bookData);
       setSearchBookData(response.data.bookData);
     });
   };

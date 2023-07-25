@@ -29,11 +29,9 @@ count ++
     const {errors} = formState
 
     const onSubmit = (data) => {
-        console.log( "Form submission" , data);
     }
     
     const onError = (errors) => {
-        console.log("form errors" , errors)
     }
 
 

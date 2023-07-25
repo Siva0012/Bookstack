@@ -59,7 +59,6 @@ function Home() {
       const response = await downloadLenderData(dateData);
       if (response.data.lenderData) {
         setlenderData(response.data.lenderData);
-        console.log(response.data.lenderData);
         handlePrint()
       }
     } catch (err) {

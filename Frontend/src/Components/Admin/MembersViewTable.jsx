@@ -27,7 +27,6 @@ function MembersViewTable() {
           throw err;
         });
     } catch (err) {
-      console.log("axios error in members component", err);
     }
   };
   const handleSubmit = (id, member) => {
@@ -45,7 +44,6 @@ function MembersViewTable() {
           toast.success(`Blocked "${response.data.memberName}"`);
         }
       })
-      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
@@ -137,7 +135,6 @@ function MembersViewTable() {
                               <span
                                 onClick={() => {
                                   setShowConfirmationModal(true);
-                                  console.log("dafsdfds");
                                   setMemberId(member._id);
                                 }}
                                 className="relative inline-block px-3 py-1 font-semibold min-w-[90px] text-center  text-green-900 leading-tight hover:cursor-pointer"

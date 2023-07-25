@@ -39,7 +39,6 @@ export default function Login() {
         return toast.error(err.response.data.error);
       }
       if (err.response) {
-        console.log(err.response.data);
         const formErrors = {};
         err.response.data.forEach((error) => {
           formErrors[error.path] = error.msg;

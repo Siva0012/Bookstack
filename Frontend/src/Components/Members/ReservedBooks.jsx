@@ -9,7 +9,6 @@ function ReservedBooks() {
   const [reservedBooks, setReservedBooks] = useState([]);
 
   const cancelReservation = (reservationId) => {
-    console.log("cancel reservation" , reservationId);
     cancelReservationApi(reservationId)
     .then((response) => {
       if(response.data.message) {
@@ -24,7 +23,6 @@ function ReservedBooks() {
   useEffect(() => {
     getReservedBooks().then((response) => {
       if (response.data.reservedBooks) {
-        console.log(response.data.reservedBooks);
         setReservedBooks(response.data.reservedBooks);
       }
     });

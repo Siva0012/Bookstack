@@ -70,7 +70,6 @@ function ChatPage() {
     const online = onlineUsers.find((user) => user.userId === adminId)
     return online ? true : false
   }
-  console.log(onlineUsers , "onlineusers");
 
   return (
     <div className="text-white font-nunito">

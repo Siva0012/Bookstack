@@ -94,7 +94,6 @@ function Profile() {
       })
       .catch((err) => {
         setimageLoader(false);
-        console.log("catch errorrrrrr", err);
         toast.error(err.response.data.error);
       });
   };

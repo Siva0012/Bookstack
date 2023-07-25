@@ -18,10 +18,6 @@ function MobileNavDropdown() {
     });
   }, []);
 
-  // const handleCatClick = (catId) => {
-  //     console.log("called handleClick");
-  //     navigate(`/books/${catId}`)
-  // }
 
   return (
     <div className="relative flex flex-col items-start rounded-lg">

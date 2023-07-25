@@ -43,27 +43,10 @@ function EditBook() {
     description: Yup.string().required("Required"),
   });
 
-  // const onSubmit = useCallback(
-  //   (values, onSubmitProps) => {
-  //     updateBook(bookId, values)
-  //       .then((response) => {
-  //         if (response.data.updated) {
-  //           toast.success("Book data updated successfully");
-  //           setTimeout(() => {
-  //             navigate("/admin/books");
-  //           }, 800);
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   },
-  //   [bookId]
-  // );
+  
 
   const onSubmit = async (values) => {
     try{
-      console.log(values);
       const response = await updateBook(bookId , values)
       if(response.data.updated) {
         toast.success("Book data updated successfully")
@@ -161,7 +144,6 @@ function EditBook() {
           });
         }
       })
-      .catch((err) => console.log(err));
   }, [update]);
 
   const formik = useFormik({

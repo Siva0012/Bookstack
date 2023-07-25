@@ -10,7 +10,7 @@ const connectToDatabase = () =>{
             useUnifiedTopology : true
         }
     ).then(() =>{
-        console.log("Connected to Bookstock");
+        console.log("Connected to Bookstack");
     }).catch(err => console.log("Error connecting to server" + err))
 }
 

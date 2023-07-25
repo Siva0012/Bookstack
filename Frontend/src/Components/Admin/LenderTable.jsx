@@ -26,7 +26,6 @@ function LenderTable() {
         setlenderData(response.data.lenderData);
       }
     } catch (err) {
-      console.log(err);
     }
   };
 
@@ -46,7 +45,6 @@ function LenderTable() {
       }
       fetchLenderData();
     } catch (err) {
-      console.log(err);
     }
   };
 

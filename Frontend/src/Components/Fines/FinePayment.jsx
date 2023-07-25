@@ -25,7 +25,6 @@ export default function FinePayment() {
       .then((res) => {
         setClientSecret(res.data.clientSecret);
       })
-      .catch((err) => console.log(err));
   }, []);
 
   const appearance = {

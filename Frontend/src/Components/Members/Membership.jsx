@@ -26,7 +26,6 @@ function Membership() {
     });
   }, []);
 
-  console.log(memberData);
 
   const renewDate = moment(memberData.memberUpto).format(
     "MMMM Do YYYY, h:mm:ss a"

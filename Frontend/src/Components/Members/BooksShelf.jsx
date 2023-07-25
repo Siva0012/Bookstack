@@ -49,7 +49,6 @@ function BooksShelf() {
       .then((response) => {
         setBookdata(response.data.bookData);
       })
-      .catch((err) => console.log(err));
   }, [catId , handleAddtoBag , handleBookReserve]);
 
   return (

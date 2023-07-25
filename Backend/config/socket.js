@@ -27,7 +27,6 @@ const configureSocket = (server) => {
                               }
                         )
                   }
-                  console.log("connected users" , activeUsers);
                   io.emit('get-users' , activeUsers)
             })
 
@@ -36,11 +35,8 @@ const configureSocket = (server) => {
                   const {receiverId} = data
                   //getting the user
                   const user = activeUsers.find((user) => user.userId === receiverId)
-                  console.log("sending from socket to :" , receiverId);
-                  console.log("data" , data);
                   //sending message to the particular user using the socketid 
                   if(user) {
-                        console.log("receiver user details" , user);
                         io.to(user.socketId).emit("receive-message" , data)
                   }
             })
@@ -48,7 +44,6 @@ const configureSocket = (server) => {
             //disconnect
             socket.on("disconnect" , () => {
                   activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
-                  console.log("user disconnected" , activeUsers);
                   io.emit('get-users', activeUsers)
             })
       })
@@ -61,12 +56,9 @@ const getSocketInstance = () => {
 
 const sendNotificationToUser = (userId , notificationData) => {
       const memberId = userId.toString()
-      console.log("active users , memberId" , activeUsers , memberId);
       const user = activeUsers.find((user) => user.userId === memberId)
-      console.log("user" , user);
       if(user) {
             const {socketId} = user
-            console.log("notification" , notificationData);
             io.to(socketId).emit('receive-notification' , notificationData)
       }
 }

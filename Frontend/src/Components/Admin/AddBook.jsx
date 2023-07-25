@@ -36,7 +36,6 @@ export default function Example() {
       ...inputValues,
       coverPhoto: e.target.files[0],
     });
-    console.log(inputValues);
   };
 
   const handleSubmit = async (e) => {
@@ -77,7 +76,6 @@ export default function Example() {
         }
       });
     } catch (err) {
-      console.log(err);
     }
   };
 

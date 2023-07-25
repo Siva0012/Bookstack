@@ -7,10 +7,7 @@ const moment = require('moment/moment');
 
 const updateExpiredCheckoutStatus = async () => {
      const currentTime = new Date();
-     console.log("status /// updater");
      const date = new Date()
-     console.log(moment(date).format("hh:mm:ss"));
-
      try {
 
           //finding all the checkouts with status pending and approved and expiresIn less than currentTime(expired requests)
@@ -48,9 +45,7 @@ const updateExpiredCheckoutStatus = async () => {
                      sendNotificationToUser(memberId , notification)
                }
           }
-          // console.log('Checkout status updater: Updated status for expired requests');
      } catch (error) {
-          console.error('Checkout status updater: Error occurred while updating status:', error);
      }
 };
 
