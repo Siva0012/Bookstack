@@ -27,7 +27,7 @@ const { v4: uuidv4 } = require('uuid');
 const { uploadToCloudinary } = require('../config/cloudinary')
 const { removeFromCloudinary } = require('../config/cloudinary')
 const { default: mongoose } = require('mongoose')
-const {validationResult} = require('express-validator')
+const { validationResult } = require('express-validator')
 
 
 //member apis
@@ -50,15 +50,12 @@ const register = async (req, res, next) => {
     try {
         const { userName, email, password, phone } = req.body
         const errors = validationResult(req)
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             return res.status(404).json(errors.array())
         } else {
             const memberResponse = await Members.findOne({ email: email })
             if (memberResponse) {
-                const isExists = await bcrypt.compare(password, memberResponse.password)
-                if (isExists) {
-                    return res.status(404).json({ error: "The user has already registered" })
-                }
+                return res.status(404).json({ error: "The user has already registered" })
             } else {
                 const encryptedPassword = await bcrypt.hash(password, 10)
                 const dateOfJoin = new Date()
@@ -89,10 +86,10 @@ const register = async (req, res, next) => {
                         res.status(200).json({ message: "Created member successfully", memberCreated: true })
                     }
                 }
-    
+
             }
         }
-        
+
 
     } catch (err) {
         next(err)
@@ -304,6 +301,8 @@ const updateImage = async (req, res, next) => {
                     } else {
                         res.status(404).json({ error: "Couldn't upload image" })
                     }
+                } else {
+                    res.staus(404).json({ error: "Failed to upload image" })
                 }
             } else {
                 //removing image from cloudinary
