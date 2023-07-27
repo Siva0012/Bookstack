@@ -11,6 +11,13 @@ module.exports = async (email, subject, text) => {
                     auth: {
                          user: process.env.USER,
                          pass: process.env.PASS,
+                    },
+                    mail : {
+                         smtp : {
+                              ssl : {
+                                   version : 'TLSv1.2'
+                              }
+                         }
                     }
                }
           )
