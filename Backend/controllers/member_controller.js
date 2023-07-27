@@ -304,6 +304,8 @@ const updateImage = async (req, res, next) => {
                     } else {
                         res.status(404).json({ error: "Couldn't upload image" })
                     }
+                } else {
+                    res.staus(404).json({error : "Failed to upload image"})
                 }
             } else {
                 //removing image from cloudinary
