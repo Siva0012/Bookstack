@@ -12,6 +12,7 @@ function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookRe
   // Create alert message if book not found in Google Database
   function alertNotFound() {
     hideReader()
+    setLoaded(false)
   }
   // Add a Google Books script tag and event listener if the tag has loaded
   useEffect(() => {
@@ -19,7 +20,6 @@ function GoogleBookViewer({ isbn , showViewer , hideReader , showReader , bookRe
     scriptTag.src = "https://www.google.com/books/jsapi.js";
     scriptTag.addEventListener("load", () => {
       setLoaded(true)
-      showReader()
     });
     scriptTag.id = "google-script";
     document.body.appendChild(scriptTag);

@@ -24,7 +24,7 @@ function AdminData({ checkOnlineStatus }) {
         )}
         <img
           className="h-full w-full rounded-full"
-          src="../../../../public/public-images/image.jpg"
+          src="/public-images/image.jpg"
           alt=""
         />
       </div>

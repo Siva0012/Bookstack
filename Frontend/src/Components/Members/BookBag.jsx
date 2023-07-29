@@ -20,19 +20,19 @@ function BookBag() {
 
   const handleRemove = (bookId) => {
     setBookId(bookId);
-    setShowConfirmationModal(true);
-    // removeFromBookBag(bookId)
-    //   .then((response) => {
-    //     if (response.data.message) {
-    //       setupdate((prev) => !prev);
-    //       toast.success(response.data.message);
-    //     }
-    //   })
-    //   .catch((err) => toast.error(err.response.data.error));
+    // setShowConfirmationModal(true);
+    removeFromBookBag(bookId)
+      .then((response) => {
+        if (response.data.message) {
+          setupdate((prev) => !prev);
+          toast.success(response.data.message);
+        }
+      })
+      .catch((err) => toast.error(err.response.data.error));
   };
 
   const removeBook = (bookId) => {
-    setShowConfirmationModal(false);
+    // setShowConfirmationModal(false);
     removeFromBookBag(bookId)
       .then((response) => {
         if (response.data.message) {
@@ -59,6 +59,7 @@ function BookBag() {
           .catch((err) => {
             if (err.response.data.error) {
               toast.error(err.response.data.error);
+              setupdate((prev) => !prev);
             }
           });
   };
@@ -74,7 +75,7 @@ function BookBag() {
       }
     }
     getData();
-  }, [update, handleCheckout]);
+  }, [update]);
 
   return (
     <div className="p-2">
@@ -104,7 +105,7 @@ function BookBag() {
                           src={
                             data.book.coverPhoto
                               ? data.book.coverPhoto
-                              : "../../../public/public-images/image.jpg"
+                              : "/public-images/image.jpg"
                           }
                           alt=""
                         />

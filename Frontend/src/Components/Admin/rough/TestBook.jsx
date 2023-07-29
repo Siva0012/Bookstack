@@ -43,7 +43,7 @@ function TestBook() {
                             <div key={book.id} className="max-w-sm bg-white border mb-2 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                                 <Link to="#">
                                     {
-                                        book.volumeInfo.imageLinks ? (<img className="rounded-t-lg"  src= {book.volumeInfo.imageLinks.smallThumbnail} />) : (<img className="rounded-t-lg"  src= '../../../../public/public-images/image.jpg' />)
+                                        book.volumeInfo.imageLinks ? (<img className="rounded-t-lg"  src= {book.volumeInfo.imageLinks.smallThumbnail} />) : (<img className="rounded-t-lg"  src= '/public-images/image.jpg' />)
                                     }
 
                                 </Link>

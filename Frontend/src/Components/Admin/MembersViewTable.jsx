@@ -95,7 +95,7 @@ function MembersViewTable() {
                                     src={
                                       member.profilePicture
                                         ? member.profilePicture
-                                        : "../../../public/public-images/image.jpg"
+                                        : "/public-images/image.jpg"
                                     }
                                     alt=""
                                   />

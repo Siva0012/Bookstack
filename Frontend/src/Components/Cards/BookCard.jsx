@@ -52,7 +52,7 @@ function BookCard({ bookData, handleAddtoBag, handleBookReserve }) {
           src={
             bookData
               ? bookData.coverPhoto
-              : "../../../public/public-images/image.jpg"
+              : "/public-images/image.jpg"
           }
           className="w-[100%] h-[100%] hover:cursor-pointer"
           alt=""

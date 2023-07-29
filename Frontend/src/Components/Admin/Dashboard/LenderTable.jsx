@@ -49,7 +49,7 @@ function LenderTable({lenderData }) {
                         src={
                           data.member?.profilePicture
                             ? data.member?.profilePicture
-                            : "../../../public/public-images/image.jpg"
+                            : "/public-images/image.jpg"
                         }
                         // src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
                         alt=""
