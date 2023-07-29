@@ -1,4 +1,4 @@
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Modal from "../Modal/Modal";
@@ -10,7 +10,7 @@ import { getSingleBook } from "../../Utils/MemberApis";
 import GoogleBookViewer from "./GoogleBookViewer";
 
 function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
-  const readerRef = useRef()
+  const readerRef = useRef();
   const memberId = useSelector((state) => state.memberData.value._id);
   const [showModal, setShowModal] = useState(true);
   const [preview, setPreview] = useState(false);
@@ -21,15 +21,13 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
   };
 
   const handleScroll = () => {
-    if(readerRef.current) {
-      readerRef.current.scrollIntoView(
-        {
-          behavior : 'smooth',
-          block : 'start'
-        }
-      )
+    if (readerRef.current) {
+      readerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
-  }
+  };
 
   return (
     bookData && (
@@ -64,8 +62,9 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
           } */}
             <h2 className="lg:text-3xl lg:mb-3">{bookData.title}</h2>
             <span
-            onClick={handleScroll}
-             className="absolute right-4 top-7 text-2xl rounded-md hover:text-green-400 hover:shadow-lg hover:shadow-green-600">
+              onClick={handleScroll}
+              className="absolute right-4 top-7 text-2xl rounded-md hover:text-green-400 hover:shadow-lg hover:shadow-green-600"
+            >
               <BiBookReader />
             </span>
             <h2 className="lg:text-xl lg:mb-0.5 font-semibold text-black">
@@ -106,7 +105,7 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
               (bookData.availableStock > 0 &&
                 bookData.reservationOrder.length) ? (
               <div
-                onClick={() => handleAddtoBag(bookData._id)}
+                onClick={() => handleBookReserve(bookData._id)}
                 className=" hover:cursor-pointer lg:mt-6 lg:text-md text-white font-semibold bg-yellow-400 lg:py-1 rounded-md text-center hover:bg-white hover:text-green-700 hover:shadow-[0px_0px_8px_rgba(0,255,0,0.40)]"
               >
                 Reserve
@@ -118,9 +117,9 @@ function SingleBook({ bookData, handleAddtoBag, handleBookReserve }) {
             )}
           </div>
         </div>
-        <div ref={readerRef} className="mt-10 w-[800px] mx-auto">
+        {/* <div ref={readerRef} className="mt-10 w-[800px] mx-auto">
           <GoogleBookViewer isbn={bookData.isbn} showViewer={showModal} hideReader={() => setBookReader(false)} showReader={() => setBookReader(true)} bookReader={bookReader} />
-        </div>
+        </div> */}
       </>
     )
   );

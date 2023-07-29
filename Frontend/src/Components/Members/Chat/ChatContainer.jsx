@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { addMessage, getMessages } from "../../../Utils/MessageApis";
 import { getAdmin } from "../../../Utils/MemberApis";
-import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
 import {format} from 'timeago.js'
 
@@ -83,7 +82,7 @@ function ChatContainer({
                 <div className="lg:w-10 lg:h-10">
                   <img
                     className="h-full w-full rounded-full"
-                    src="../../../../public/public-images/image.jpg"
+                    src="/public-images/image.jpg"
                     alt=""
                   />
                 </div>

@@ -58,14 +58,14 @@ function Profile() {
 
   //image validator
   const validate = (image) => {
-    const fileExtension = image.name.split(".").pop().toLowerCase()
-    const acceptedFormats = ['jpg' , 'jpeg' , 'png']
-    if(!acceptedFormats.includes(fileExtension)) {
-      return false
+    const fileExtension = image.name.split(".").pop().toLowerCase();
+    const acceptedFormats = ["jpg", "jpeg", "png"];
+    if (!acceptedFormats.includes(fileExtension)) {
+      return false;
     } else {
-      return true
+      return true;
     }
-  }
+  };
 
   // image update
   const handleImageChange = (e) => {
@@ -75,10 +75,12 @@ function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setimageLoader(true);
-    if(!validate(image)) {
-      setimageLoader(false)
-      toast.error(`Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`)
-      return 
+    if (!validate(image)) {
+      setimageLoader(false);
+      toast.error(
+        `Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`
+      );
+      return;
     }
     const formData = new FormData();
     formData.append("profilePicture", image);
@@ -190,7 +192,7 @@ function Profile() {
               src={
                 memberData.profilePicture
                   ? memberData.profilePicture
-                  : "../../../public/public-images/image.jpg"
+                  : "/public-images/image.jpg"
               }
               alt=""
             />

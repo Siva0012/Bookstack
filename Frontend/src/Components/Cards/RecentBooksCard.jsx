@@ -3,7 +3,7 @@ import { TiTick } from "react-icons/ti";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-function RecentBooksCard({ bookData }) {
+function RecentBooksCard({ bookData , handleAddtoBag , handleBookReserve }) {
   const navigate = useNavigate();
   const memberId = useSelector((state) => state.memberData.value._id);
 
@@ -31,7 +31,7 @@ function RecentBooksCard({ bookData }) {
           src={
             bookData
               ? bookData.coverPhoto
-              : "../../../public/public-images/image.jpg"
+              : "/public-images/image.jpg"
           }
           className="w-[100%] h-[100%] hover:cursor-pointer"
           alt=""
@@ -48,26 +48,29 @@ function RecentBooksCard({ bookData }) {
               {bookData.title}
             </h1>
           </div>
-          <div id="rating" className="">
-            <AiFillStar className="text-md" color="#FF9529" />
-          </div>
         </div>
       </div>
       <div className="mt-4">
         {bookData &&
         bookData.nextCheckoutBy &&
         bookData.nextCheckoutBy.toString() === memberId.toString() && bookData.availableStock === 1 ? (
-          <button className="text-sm bg-blue-600 text-white font-bold w-full py-2 rounded-md hover:text-blue-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+          <button
+          onClick={() => handleAddtoBag(bookData._id)}
+           className="text-sm bg-blue-600 text-white font-bold w-full py-2 rounded-md hover:text-blue-600 hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
             Add to book-bag
           </button>
         ) : bookData.availableStock > 0 &&
           bookData.reservationOrder.length === 0 ? (
-          <button className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+          <button
+          onClick={() => handleAddtoBag(bookData._id)}
+           className="text-sm bg-button-green text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
             Add to book-bag
           </button>
         ) : bookData.availableStock === 0 &&
         bookData.reservationOrder.length < bookData.maxReservations || bookData.availableStock > 0 && bookData.reservationOrder.length ? (
-          <button className="text-sm bg-yellow-400 text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
+          <button
+          onClick={() => handleBookReserve(bookData._id)}
+           className="text-sm bg-yellow-400 text-white font-bold w-full py-2 rounded-md hover:text-button-green hover:bg-white shadow-[0px_0px_5px_rgba(0,0,0,0.3)]">
           Reserve
         </button>
         ) : (

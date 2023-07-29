@@ -88,7 +88,7 @@ function ChatContainer({
                     src={
                       memberData.profilePicture
                         ? memberData.profilePicture
-                        : "../../../../public/public-images/image.jpg"
+                        : "/public-images/image.jpg"
                     }
                     alt=""
                   />

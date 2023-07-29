@@ -153,11 +153,6 @@ export default function Login() {
                   >
                     Password
                   </label>
-                  <div className="text-sm">
-                    <Link className="font-semibold text-indigo-600 hover:text-indigo-500">
-                      Forgot password?
-                    </Link>
-                  </div>
                 </div>
                 <div className="mt-1">
                   <Field

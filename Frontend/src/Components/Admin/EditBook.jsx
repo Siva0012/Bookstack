@@ -87,7 +87,7 @@ function EditBook() {
     if (!validate(image)) {
       setimageLoader(false);
       toast.error(
-        `Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif'!!`
+        `Please upload image of type 'jpg' , 'jpeg' , 'png' , 'gif' !!`
       );
       return;
     }
@@ -169,7 +169,7 @@ function EditBook() {
                 src={
                   bookData.coverPhoto
                     ? bookData.coverPhoto
-                    : "../../../public/public-images/image.jpg"
+                    : "/public-images/image.jpg"
                 }
                 alt=""
               />
