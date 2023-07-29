@@ -680,7 +680,7 @@ const getBanners = async (req, res, next) => {
 
 const recentBooks = async (req, res, next) => {
     try {
-        const bookData = await Books.find()
+        const bookData = await Books.find({listed : true})
             .populate('category')
             .sort({ dateAdded: -1 })
             .limit(6)
