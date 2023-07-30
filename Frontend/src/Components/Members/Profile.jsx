@@ -18,12 +18,15 @@ import "react-toastify/dist/ReactToastify.css";
 
 //member apis
 import { updateProfileFields } from "../../Utils/MemberApis";
+import { useDispatch } from "react-redux";
+import { updateMemberData } from "../../Redux/Member/MemberDataSlice";
 
 function Profile() {
   const [memberData, setMemberData] = useState({});
   const [image, setImage] = useState("");
   const [showModal, setshowModal] = useState(false);
   const [imageLoader, setimageLoader] = useState(false);
+  const dispatch = useDispatch()
 
   //field change
   const [name, setName] = useState("");
@@ -47,7 +50,9 @@ function Profile() {
     updateProfileFields(data)
       .then((response) => {
         toast.success(response.data.message);
-        getMember().then((response) => {
+        getMember()
+        .then((response) => {
+          dispatch(updateMemberData(response.data.memberData))
           setMemberData(response.data.memberData);
         });
       })

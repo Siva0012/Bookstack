@@ -43,5 +43,6 @@ admin_router.get('/total-fine-amount' , verifyAdminToken , adminController.total
 admin_router.get('/lender-data' , verifyAdminToken , adminController.getLenderData)
 admin_router.get('/lender-data/:from/:to' , verifyAdminToken , adminController.downloadLenderData)
 admin_router.get('/get-bookwise-checkout-data' , verifyAdminToken , adminController.getBookWiseCheckoutData)
+admin_router.get('/get-admin' ,  verifyAdminToken , adminController.getAdminData)
 
 module.exports = admin_router

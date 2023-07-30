@@ -12,7 +12,7 @@ function MemberData({
   unreadCount,
 }) {
   const [memberData, setMemberData] = useState({});
-  const adminID = useSelector((state) => state.adminData.value._id);
+  const adminID = useSelector((state) => state.adminData?.value?._id);
   const memberId = data.members.find((id) => id !== adminId);
   useEffect(() => {
     if (memberId) {

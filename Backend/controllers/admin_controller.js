@@ -776,6 +776,20 @@ const getBookWiseCheckoutData = async (req , res , next) => {
     }
 }
 
+const getAdminData = async(req , res , next) => {
+    try{
+        const response = await Admin.find().select('-password')
+        if(response) {
+            const adminData = response[0]
+            res.status(200).json({message : "admin data" , adminData : adminData})
+        } else {
+            res.status(404).json({error : "No data found"})
+        }
+    }catch(err) {
+        next(err)
+    }
+}
+
 
 module.exports = {
     login,
@@ -806,5 +820,6 @@ module.exports = {
     totalFineAmount,
     getLenderData,
     downloadLenderData,
-    getBookWiseCheckoutData
+    getBookWiseCheckoutData,
+    getAdminData
 }

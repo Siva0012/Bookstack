@@ -23,7 +23,7 @@ import socketInstance from "../../Socket/socket";
 
 function Nav() {
   const dispatch = useDispatch()
-  const memberName = useSelector((state) => state.memberData?.value.name);
+  const memberName = useSelector((state) => state.memberData.value.name);
   const isMember = useSelector((state) => state.memberData.value.isMember);
   const [searchBookData, setSearchBookData] = useState([]);
   const [searchKey, setSearchKey] = useState("");

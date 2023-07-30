@@ -5,7 +5,24 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 import GoogleBooksScriptLoader from '../Components/Members/GoogleBooksScriptLoader'
+import { getMember } from "../Utils/MemberApis";
+import { useDispatch } from "react-redux";
+import { updateMemberData } from "../Redux/Member/MemberDataSlice";
+
+
 const MemberLayout = () => {
+
+  const dispatch = useDispatch()
+  const fetchMemberData = async () => {
+    try{
+      const response = await getMember()
+      if(response) {
+        dispatch(updateMemberData(response.data.memberData))
+      }
+    }catch(err) {
+
+    }
+  }
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -13,6 +30,8 @@ const MemberLayout = () => {
       const token = localStorage.getItem("userJwt");
       if (!token) {
         navigate("/login");
+      } else {
+        fetchMemberData()
       }
     };
     checkToken();

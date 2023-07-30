@@ -2,13 +2,16 @@ import React from 'react'
 import moment from 'moment/moment'
 import { useState , useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { updateAdminData } from '../../Redux/Admin/AdminDataSlice'
 
 function AdminHeader() {
 
     const navigate = useNavigate()
-
+    const dispatch = useDispatch()
     const logout = () => {
         localStorage.removeItem('adminJwt')
+        dispatch(updateAdminData({}))
         navigate('/admin/login')
     }
 
