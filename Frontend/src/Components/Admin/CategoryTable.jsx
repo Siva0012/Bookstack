@@ -52,7 +52,7 @@ function CategoryTable() {
                                         <>
                                             <tr key={category._id} className="bg-white border-4 hover:bg-gray-50">
 
-                                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize dark:text-white">
+                                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap capitalize">
                                                     {category.name}
                                                 </th>
                                                 <td className="px-6 py-4 text-gray-800">
