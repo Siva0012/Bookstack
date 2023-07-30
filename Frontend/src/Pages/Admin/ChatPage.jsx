@@ -2,7 +2,7 @@ import ChatContainer from "../../Components/Admin/Chat/ChatContainer";
 import MemberList from "../../Components/Admin/Chat/MemberList";
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import  socketInstance from "../../Socket/socket";
+import socketInstance from "../../Socket/socket";
 
 //socket
 // import { io } from "socket.io-client";
@@ -30,11 +30,11 @@ function ChatPage() {
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);
     });
-        socket.current.on("receive-message", (data) => {
-        setReceivedMessages(data);
-        handleReceivedMessages(data , currentChat)
-      });
-  }, [adminId , currentChat]);
+    socket.current.on("receive-message", (data) => {
+      setReceivedMessages(data);
+      handleReceivedMessages(data, currentChat);
+    });
+  }, [adminId, currentChat]);
 
   useEffect(() => {
     getChats(adminId).then((response) => {
@@ -42,7 +42,7 @@ function ChatPage() {
         setChats(response.data.chat);
       }
     });
-  }, [onlineUsers, receivedMessages , sendMessage]);
+  }, [onlineUsers, receivedMessages, sendMessage]);
 
   //sending message to socket server
   useEffect(() => {
@@ -51,34 +51,34 @@ function ChatPage() {
     }
   }, [sendMessage]);
 
-    //receive message from the socket server
+  //receive message from the socket server
 
   //handle received messages
-  const handleReceivedMessages = async (data , currentChat) => {
-    setReceivedMessages(data)
-    const {chatId} = data
-    setUnreadMessages( (prevState) => {
-      const currentChatId = currentChat?._id.toString()
-      if(prevState[chatId]) {
-        if(prevState[chatId] && currentChatId !== chatId.toString()) {
+  const handleReceivedMessages = async (data, currentChat) => {
+    // setReceivedMessages(data)
+    const { chatId } = data;
+    setUnreadMessages((prevState) => {
+      const currentChatId = currentChat?._id.toString();
+      if (prevState[chatId]) {
+        if (prevState[chatId] && currentChatId !== chatId.toString()) {
           return {
             ...prevState,
-            [chatId] : prevState[chatId] + 1
-          }
+            [chatId]: prevState[chatId] + 1,
+          };
         } else if (currentChatId === chatId.toString()) {
           return {
             ...prevState,
-            [chatId] : 0
-          }
+            [chatId]: 0,
+          };
         }
-      } else if(!prevState[chatId]) {
+      } else if (!prevState[chatId]) {
         return {
           ...prevState,
-          [chatId] : 1
-        }
+          [chatId]: 1,
+        };
       }
-    })
-  }
+    });
+  };
 
   //check online users
   const checkOnlineStatus = (chat) => {

@@ -3,7 +3,7 @@ import { getMessages, addMessage } from "../../../Utils/MessageApis";
 import { getChatMember } from "../../../Utils/AdminApis";
 import moment from "moment/moment";
 import InputEmoji from "react-input-emoji";
-import {format} from 'timeago.js'
+import { format } from "timeago.js";
 
 function ChatContainer({
   currentChat,
@@ -62,18 +62,16 @@ function ChatContainer({
       if (response.data.result) {
         setMessages([...messages, response.data.result]);
         setNewMessage("");
+        //send message to the socket server
+        const receiverId = currentChat.members.find((id) => id !== adminId);
+        setSendMessage({ ...message, receiverId });
       }
     });
-
-    //send message to the socket server
-    const receiverId = currentChat.members.find((id) => id !== adminId);
-    setSendMessage({ ...message, receiverId });
   };
 
   useEffect(() => {
     scroll.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
 
   return (
     <div className="rounded-2xl h-full px-3 py-4 shadow-[0px_0px_3px_rgba(255,255,255,0.8)]">

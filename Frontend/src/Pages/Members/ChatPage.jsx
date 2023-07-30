@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 const baseUrl = import.meta.env.VITE_REACT_APP_BASE_URL;
 
 //chat APIs
-import { getChats , createChat } from "../../Utils/ChatApis";
+import { getChats, createChat } from "../../Utils/ChatApis";
 
 function ChatPage() {
   const socket = useRef();
@@ -24,18 +24,17 @@ function ChatPage() {
 
   //creating a new chat
   const handleCreateChat = useCallback(() => {
-    createChat({senderId : memberId})
-    .then((response) => {
-      if(response.data.result) {
-        const newChatId = response.data.result._id
-        setchatId(newChatId)
+    createChat({ senderId: memberId }).then((response) => {
+      if (response.data.result) {
+        const newChatId = response.data.result._id;
+        setchatId(newChatId);
       }
-    })
-  } , [memberId])
+    });
+  }, [memberId]);
 
   useEffect(() => {
     // socket.current = io(baseUrl);
-    socket.current = socketInstance
+    socket.current = socketInstance;
     socket.current.emit("add-new-user", memberId);
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);
@@ -49,7 +48,7 @@ function ChatPage() {
         setchatId(response.data.chat[0]._id);
       }
     });
-  }, [handleCreateChat , chatId]);
+  }, [handleCreateChat, chatId]);
 
   //sending message to socket server
   useEffect(() => {
@@ -67,15 +66,19 @@ function ChatPage() {
 
   //check online users
   const checkOnlineStatus = (adminId) => {
-    const online = onlineUsers.find((user) => user.userId === adminId)
-    return online ? true : false
-  }
+    const online = onlineUsers.find((user) => user.userId === adminId);
+    return online ? true : false;
+  };
 
   return (
     <div className="text-white font-nunito">
       <div className="flex lg:h-[500px] ">
         <div className="lg:w-[30%] ">
-          <MemberList chatId={chatId} handleCreateChat={handleCreateChat} checkOnlineStatus={checkOnlineStatus} />
+          <MemberList
+            chatId={chatId}
+            handleCreateChat={handleCreateChat}
+            checkOnlineStatus={checkOnlineStatus}
+          />
         </div>
         <div className="lg:w-[67%] lg:ms-auto ">
           <ChatContainer

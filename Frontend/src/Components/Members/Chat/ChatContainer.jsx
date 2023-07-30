@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { addMessage, getMessages } from "../../../Utils/MessageApis";
 import { getAdmin } from "../../../Utils/MemberApis";
 import InputEmoji from "react-input-emoji";
-import {format} from 'timeago.js'
+import { format } from "timeago.js";
 
 function ChatContainer({
   currentChat,
@@ -56,19 +56,18 @@ function ChatContainer({
     //save the message to the database
     addMessage(message).then((response) => {
       if (response.data.result) {
+        //send message to the socket server
+        const receiverId = currentChat.members.find((id) => id !== memberId);
+        setSendMessage({ ...message, receiverId });
         setMessages([...messages, response.data.result]);
         setNewMessage("");
       }
     });
-
-    //send message to the socket server
-    const receiverId = currentChat.members.find((id) => id !== memberId);
-    setSendMessage({ ...message, receiverId });
   };
 
   useEffect(() => {
-    if(scroll.current) {
-      scroll.current.scrollTop = scroll.current.scrollHeight
+    if (scroll.current) {
+      scroll.current.scrollTop = scroll.current.scrollHeight;
     }
   }, [messages]);
 
