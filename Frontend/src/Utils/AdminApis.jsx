@@ -122,6 +122,10 @@ const getBookWiseCheckoutData = () => {
     return adminAxiosInstance.get('/get-bookwise-checkout-data')
 }
 
+const getAdmin = () => {
+    return adminAxiosInstance.get('/get-admin')
+}
+
 export {
     adminLogin , 
     addBook,
@@ -151,5 +155,6 @@ export {
     totalFines,
     getLenderData,
     downloadLenderData,
-    getBookWiseCheckoutData
+    getBookWiseCheckoutData,
+    getAdmin
 }

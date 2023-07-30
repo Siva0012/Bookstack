@@ -5,14 +5,32 @@ import AdminHeader from "../Components/Admin/AdminHeader";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { getAdmin } from "../Utils/AdminApis";
+import { useDispatch } from "react-redux";
+import { updateAdminData } from "../Redux/Admin/AdminDataSlice";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const fetchAdminData = async () => {
+    try {
+      const response = await getAdmin()
+      if(response) {
+        dispatch(updateAdminData(response.data?.adminData))
+      }
+    }catch(err) {
+
+    }
+  }
+
   useEffect(() => {
     const checkToken = () => {
       const token = localStorage.getItem("adminJwt");
       if (!token) {
-        navigate("/admin/login");
+       return navigate("/admin/login");
+      }
+      if(token) {
+        fetchAdminData()
       }
     };
     checkToken();
