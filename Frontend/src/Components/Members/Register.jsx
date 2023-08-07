@@ -44,11 +44,15 @@ export default function Register() {
       }
     }catch(err){
       if(err.response.data) {
-        const formErrors = {}
-        err.response.data.forEach((error) => {
-          formErrors[error.path] = error.msg
-        })
-        formik.setErrors(formErrors)
+        if(Array.isArray(err.response.data)) {
+          const formErrors = {}
+          err.response.data.forEach((error) => {
+            formErrors[error.path] = error.msg
+          })
+          formik.setErrors(formErrors)
+        } else {
+          toast.error(err.response.data.error)
+        }
       }
     }
   };
