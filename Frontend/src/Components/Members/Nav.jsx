@@ -218,26 +218,29 @@ function Nav() {
       {showNotifications && (
         <div className="absolute z-[1] lg:top-[95px] w-screen h-screen bg-transparent">
           <div className="relative lg:mx-auto rounded-md bg-white/50 w-[600px] lg:max-h-[350px] overflow-y-auto p-2">
-            {notificationData &&
-              notificationData.length > 0 ? 
+            {notificationData && notificationData.length > 0 ? (
               notificationData.map((notification, i) => {
                 return (
                   <div
                     key={i}
                     className="p-2 bg-white/50 mb-2 flex items-center rounded-md"
                   >
-                    <h1 className="text-sm lg:max-w-[420px] break-words">{notification.message}</h1>
+                    <h1 className="text-sm lg:max-w-[420px] break-words">
+                      {notification.message}
+                    </h1>
                     <span className="text-[11px] ms-auto self-end">
-                      {moment(notification.notificationDate).format('MMMM Do YYYY, h:mm:ss a')}
+                      {moment(notification.notificationDate).format(
+                        "MMMM Do YYYY, h:mm:ss a"
+                      )}
                     </span>
                   </div>
                 );
-              }) : (
-                <div className="p-1 bg-white/50 rounded-md">
-                  <h1 className="text-sm">No notifications ..</h1>
-                </div>
-              )
-              }
+              })
+            ) : (
+              <div className="p-1 bg-white/50 rounded-md">
+                <h1 className="text-sm">No notifications ..</h1>
+              </div>
+            )}
           </div>
         </div>
       )}

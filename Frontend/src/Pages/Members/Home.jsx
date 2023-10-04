@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 
 //member APIs
-import { getBanners, getRecentBooks, addToBookBag , reserveBook } from "../../Utils/MemberApis";
+import {
+  getBanners,
+  getRecentBooks,
+  addToBookBag,
+  reserveBook,
+} from "../../Utils/MemberApis";
 import Banner from "../../Components/Banner/Banner";
 import BookCard from "../../Components/Cards/BookCard";
 import RecentBooksCard from "../../Components/Cards/RecentBooksCard";
@@ -11,7 +16,7 @@ function Home() {
   const [banner, setBanner] = useState([]);
   const [recentBooks, setRecentBooks] = useState([]);
   const [update, setUpdate] = useState(false);
-
+  
   useEffect(() => {
     getBanners().then((response) => {
       if (response.data) {
@@ -48,17 +53,17 @@ function Home() {
 
   const handleBookReserve = (bookId) => {
     reserveBook(bookId)
-    .then((response) => {
-      if(response.data.message) {
-        toast.success(response.data.message)
-        setUpdate((prev => !prev))
-      }
-    })
-    .catch((err) => {
-      if(err.response.data.error) {
-        toast.error(err.response.data.error)
-      }
-    })
+      .then((response) => {
+        if(response.data.message) {
+          toast.success(response.data.message)
+          setUpdate((prev => !prev))
+        }
+      })
+      .catch((err) => {
+        if(err.response.data.error) {
+          toast.error(err.response.data.error)
+        }
+      })
   }
 
   return (
@@ -108,7 +113,14 @@ style="background: linear-gradient(90deg, #2b4554 0%, #767ba2 100%)"
           <div className="mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 md:gap-x-0 gap-y-6">
             {recentBooks &&
               recentBooks.map((book, i) => {
-                return <RecentBooksCard key={i} bookData={book} handleAddtoBag={handleAddtoBag} handleBookReserve={handleBookReserve} />;
+                return (
+                  <RecentBooksCard
+                    key={i}
+                    bookData={book}
+                    handleAddtoBag={handleAddtoBag}
+                    handleBookReserve={handleBookReserve}
+                  />
+                );
               })}
           </div>
         </div>
