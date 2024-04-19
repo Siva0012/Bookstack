@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }))
 //cors
 app.use(cors(
     {
-        origin: [process.env.FRONT_END_URL], //env
+        origin: [process.env.FRONT_END_URL, "http://localhost:5173"], //env
         methods: ["GET", "POST", "PATCH"],
         // credentials : true
     }
